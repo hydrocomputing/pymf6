@@ -1,0 +1,5 @@
+*.so.dSYM/
+*.so
+*.pyf
+obj/*
+*/__pycache__/*
