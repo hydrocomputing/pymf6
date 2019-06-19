@@ -8,8 +8,8 @@ import sys
 
 import numpy as np
 
-from fortran_io import get_value, set_value
-import mf6
+from pymf6.fortran_io import get_value, set_value
+from pymf6 import mf6
 
 
 sys.path.insert(0, os.getcwd())

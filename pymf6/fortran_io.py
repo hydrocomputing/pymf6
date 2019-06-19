@@ -1,7 +1,8 @@
 """Read and write Fortran values from MF6.
 """
 
-import mf6
+
+from pymf6 import mf6
 
 
 # Put this into a file?
