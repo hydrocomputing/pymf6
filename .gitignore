@@ -1,5 +1,8 @@
 *.so.dSYM/
 *.so
+*.pyd
 *.pyf
 obj/*
 */__pycache__/*
+*.o
+*.mod
