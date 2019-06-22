@@ -2,7 +2,7 @@
 """
 
 
-from pymf6 import mf6
+from . import mf6
 
 
 # Put this into a file?
