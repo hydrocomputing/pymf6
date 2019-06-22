@@ -58,4 +58,4 @@ This is a simple example:
             set_value('LRCH', 'SLN_1', lrch)
 
     if __name__ == '__main__':
-        mf6.mf6_sub(Func(10))
+        mf6.mf6_sub(Func())
