@@ -1,23 +1,11 @@
 """Read and write Fortran values from MF6.
 """
 
-
+from pymf6.mfnames import get_names
 from . import mf6
 
 
-# Put this into a file?
-
-MF6_DATA_TYPE_TABLE = {
-    ('NPER', 'TDIS'): {'data_type': 'int_scalar'},
-    ('DELT', 'TDIS'): {'data_type': 'float_scalar'},
-    ('NSTP', 'TDIS'): {'data_type': 'int_1d'},
-    ('PERLEN', 'TDIS'): {'data_type': 'float_1d'},
-    ('LRCH', 'SLN_1'): {'data_type': 'int_2d'},
-    ('MXITER', 'SLN_1'): {'data_type': 'int_scalar'},
-    ('AUXVAR', 'GWF_1 WEL'): {'data_type': 'float_2d'},
-    ('NAUX', 'GWF_1 WEL'): {'data_type': 'int_scalar'},
-    ('MAXBOUND', 'GWF_1 WEL'): {'data_type': 'int_scalar'},
-}
+MF6_DATA_TYPE_TABLE = get_names()
 
 
 def get_int(name, origin):
