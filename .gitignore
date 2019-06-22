@@ -6,3 +6,4 @@ obj/*
 */__pycache__/*
 *.o
 *.mod
+.idea
