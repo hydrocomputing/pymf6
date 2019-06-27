@@ -9,6 +9,24 @@ use shared_data
 
     contains
 
+    subroutine get_bool(name, origin)
+        character(len=*), intent(in) :: name
+        character(len=*), intent(in) :: origin
+        logical, pointer :: lpointer => NULL()
+
+        call mem_setptr(lpointer, name, origin)
+        bool_scalar = lpointer
+    end subroutine get_bool
+
+    subroutine set_bool(name, origin, value)
+        character(len=*), intent(in) :: name
+        character(len=*), intent(in) :: origin
+        logical, target:: value
+        logical, pointer :: lpointer => NULL()
+        call mem_setptr(lpointer, name, origin)
+        lpointer = value
+    end subroutine set_bool
+
     subroutine get_int(name, origin)
         character(len=*), intent(in) :: name
         character(len=*), intent(in) :: origin
@@ -88,7 +106,6 @@ use shared_data
            allocate (float_1d(dim))
         endif
         float_1d = fpointer
-
     end subroutine get_float_1d
 
     subroutine set_float_1d(name, origin, value)

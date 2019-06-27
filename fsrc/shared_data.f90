@@ -10,6 +10,7 @@ module shared_data
     ! Keep these values over the whole program run.
     save
 
+    logical, target :: bool_scalar
     integer(I4B), target :: int_scalar
     real(8), target :: float_scalar
     integer(I4B), allocatable, dimension(:), target :: int_1d

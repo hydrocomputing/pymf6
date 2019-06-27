@@ -8,6 +8,13 @@ from . import mf6
 MF6_DATA_TYPE_TABLE = get_names()
 
 
+def get_bool(name, origin):
+    """Get a boolean value.
+    """
+    mf6.access_memory.get_bool(name, origin)
+    return mf6.shared_data.bool_scalar
+
+
 def get_int(name, origin):
     """Get an integer scalar.
     """
@@ -51,6 +58,7 @@ def get_float_2d(name, origin):
 
 
 READING_FUNCTIONS = {
+    'bool_scalar': get_bool,
     'int_scalar': get_int,
     'float_scalar': get_float,
     'int_1d': get_int_1d,
@@ -61,6 +69,7 @@ READING_FUNCTIONS = {
 
 
 WRITING_FUNCTIONS = {
+    'bool_scalar': mf6.access_memory.set_bool,
     'int_scalar': mf6.access_memory.set_int,
     'float_scalar': mf6.access_memory.set_float,
     'int_1d': mf6.access_memory.set_int_1d,
