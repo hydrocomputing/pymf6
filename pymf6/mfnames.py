@@ -3,6 +3,7 @@ Read name and origin from MODFLOW 6 *list file
 """
 
 import pickle
+import os
 import subprocess
 
 
@@ -45,7 +46,8 @@ def read_lst(fname='mfsim.lst'):
 
 def get_names(force_generate=False,
               pickle_fname='data_mapping.pkl',
-              verbose=False):
+              verbose=False,
+              show_mf6_output=False):
     """
     Run MODFLOW til end with option:
 
@@ -61,6 +63,7 @@ def get_names(force_generate=False,
     :param verbose: show information what happens
     :return: None
     """
+    capture_output = not show_mf6_output
     if not force_generate:
         try:
             with open(pickle_fname, 'rb') as fobj:
@@ -69,11 +72,11 @@ def get_names(force_generate=False,
                 return pickle.load(fobj)
         except FileNotFoundError:
             pass
+    cmd_file = os.path.join(os.path.split(__file__)[0], 'mf6_init_run.py')
     if verbose:
         print('Run MODFLOW calculation to generate names and origins.')
-    subprocess.run(['python', '-c',
-                    'from pymf6 import mf6;mf6.mf6_sub(lambda:None)'],
-                   capture_output=True)
+    subprocess.run(['python', cmd_file],
+                   capture_output=capture_output)
     data = read_lst()
     with open(pickle_fname, 'wb') as fobj:
         pickle.dump(data, fobj)
