@@ -17,7 +17,7 @@ extras = ''
 if sys.platform == 'win32':
     mf6_fortran = 'mf6.cp37-win_amd64.pyd'
 elif sys.platform == 'darwin':
-    mf6_fortran = 'mf6.cp37.cpython-37m-darwin.so'
+    mf6_fortran = 'mf6.cpython-37m-darwin.so'
     extras = 'libgfortran.4.dylib'
 elif sys.platform.startswith('linux'):
     mf6_fortran = 'mf6.cpython-37m-x86_64-linux-gnu.so'
@@ -37,7 +37,7 @@ setup(
       packages = find_packages(),
       platforms='any',
       install_requires=['numpy'],
-      package_data={'': ['pymf6', '*.pyd', mf6_fortran, extras]},
+      package_data={'': ['pymf6', '*.pyd', '*.so',  mf6_fortran, extras]},
       include_package_data=True,
       zip_safe=False,
       classifiers=[
