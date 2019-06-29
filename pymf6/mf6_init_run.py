@@ -4,9 +4,55 @@ Script to run MF6 for one time step
 This is needed in order to generate the name-origin entries.
 """
 
+import os
+import shutil
 
 from pymf6 import mf6
 from pymf6.fortran_io import FortranValues
+
+PRINT_ALL = """
+BEGIN OPTIONS
+  MEMORY_PRINT_OPTION ALL
+END OPTIONS
+"""
+
+MFSIM_NAM = 'mfsim.nam'
+BACKUP_DIR = '__pymf6__backup'
+
+
+def prepare_nam_file(fname=MFSIM_NAM, backup_dir=BACKUP_DIR):
+    """
+    Create name file that saves all MF6 nam-origin pairs in lst file
+    :param fname: `mfsim.nam`
+    :param backup_dir: ``ackup directory for `mfsim.nam`
+    :return: None
+    """
+    print('start')
+    if not os.path.exists(backup_dir):
+        os.mkdir(backup_dir)
+    fname_backup = os.path.join(backup_dir, fname)
+    shutil.copy(fname, fname_backup)
+    do_write = True
+    with open(fname, 'w') as fobj_out, open(fname_backup) as fobj_in:
+        fobj_out.write(PRINT_ALL)
+        for line in fobj_in:
+            if line.strip().upper().startswith('BEGIN OPTIONS'):
+                do_write = False
+            if line.strip().upper().startswith('END OPTIONS'):
+                do_write = True
+                continue
+            if do_write:
+                fobj_out.write(line)
+
+
+def restore_name_file(fname=MFSIM_NAM, backup_dir=BACKUP_DIR):
+    """
+    Restore `mfsim.nam` file.
+    :param fname: `mfsim.nam`
+    :param backup_dir: ``ackup directory for `mfsim.nam`
+    :return: None
+    """
+    shutil.copy(os.path.join(backup_dir, fname), fname)
 
 
 class Func:
@@ -31,9 +77,17 @@ class Func:
         self.counter += 1
         print(self.counter)
         if self.counter >= self.stop:
+            restore_name_file()
             self.set_value('ENDOFSIMULATION', 'TDIS', True)
 
 
-if __name__ == '__main__':
-    print('start')
+def main():
+    """
+    Main function for initial run
+    """
+    prepare_nam_file()
     mf6.mf6_sub(Func())
+
+
+if __name__ == '__main__':
+    main()
