@@ -23,28 +23,35 @@ This is a simple example:
     """Simple callback test
     """
 
-    from pymf6.fortran_io import get_value, set_value
+    from pymf6.callback import Func
     from pymf6 import mf6
 
-    class Func:
+    class MyFunc(Func):
         """Class whose instances act like a function, i.e. are callables
         """
+
         def __call__(self):
+            super().__call__()
+            print(f'>>> Python: Called {self.counter} times')
             # For each MODFLOW 6 time step
             lrch = get_value('LRCH', 'SLN_1')
             print('LRCH', lrch.shape)
             lrch[0, 4:10] = 22
-            set_value('LRCH', 'SLN_1', lrch)
+            self.set_value('LRCH', 'SLN_1', lrch)
 
     if __name__ == '__main__':
-        mf6.mf6_sub(Func())
+        mf6.mf6_sub(MyFunc())
+
+Here `self.counter` is initialized with zero at instantiation and incremented
+with `super().__call__()` .
+
 
 ## Getting and Setting MODFLOW values
 
-The functions:
+The methods:
 
-1. `pymf6.fortran_io.get_value(name, origin)`
-2. `pymf6.fortran_io.set_value(name, origin), value`
+1. `self.get_value(name, origin)`
+2. `self.fortran_io.set_value(name, origin), value`
 
 make up the core of the `pymf6` API.
 They allow to access all variables exposed by the MODFLOW 6 memory manager.

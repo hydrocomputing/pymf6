@@ -4,23 +4,22 @@
 """
 
 
-from pymf6.fortran_io import FortranValues
+from pymf6.callback import Func
 from pymf6 import mf6
 
 
-class Func:
+class MyFunc(Func):
     # pylint: disable=too-few-public-methods
     """
     Callback
     """
 
     def __init__(self, stop=2, verbose=False):
-        self.counter = 0
+        super().__init__(verbose=verbose)
         self.stop = stop
-        self.set_value = FortranValues(verbose=verbose).set_value
 
     def __call__(self):
-        self.counter += 1
+        super().__call__()
         print(f'>>> Python: Called {self.counter} times')
         if self.counter >= self.stop:
             print(f'Stopping from Python after {self.stop} time steps.')
@@ -28,4 +27,4 @@ class Func:
 
 
 if __name__ == '__main__':
-    mf6.mf6_sub(Func(verbose=True))
+    mf6.mf6_sub(MyFunc(verbose=True))

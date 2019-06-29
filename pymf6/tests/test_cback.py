@@ -5,31 +5,18 @@
 
 import numpy as np
 
-from pymf6.fortran_io import FortranValues
+from pymf6.callback import Func
 from pymf6 import mf6
 
 
-class Func:
+class MyFunc(Func):
     # pylint: disable=too-few-public-methods
-    """Class whose instances act like a function, i.e. are callables
-
-    https://docs.python.org/3/reference/datamodel.html?highlight=__call__#object.__call__
-
-    Called when the instance is “called” as a function; if this method is
-    defined, `x(arg1, arg2, ...)` is a shorthand for
-    `x.__call__(arg1, arg2, ...).`
-
-
+    """
+    Callback
     """
 
-    def __init__(self):
-        self.counter = 0
-        fortran_values = FortranValues()
-        self.get_value = fortran_values.get_value
-        self.set_value = fortran_values.set_value
-
     def __call__(self):
-        self.counter += 1
+        super().__call__()
         print(f'>>> Python: Called {self.counter} time')
         if self.counter > 3:
             print('int', self.get_value('NPER', 'TDIS'))
@@ -62,4 +49,4 @@ class Func:
 
 
 if __name__ == '__main__':
-    mf6.mf6_sub(Func())
+    mf6.mf6_sub(MyFunc())
