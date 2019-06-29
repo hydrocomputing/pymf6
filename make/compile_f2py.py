@@ -121,7 +121,9 @@ def compile_ext(src=SRC, cmd=CMD, order=tuple(ORDER)):
                '-m', 'mf6',
                '-h', 'mf6.pyf']
     compile_cmd = [cmd, '--f90flags=-O2 -fbacktrace', '-c', 'mf6.pyf',
-                   '-I../obj/', '-I../mod/','../fsrc/mf6sub.f90',
+                   '-I../../modflow6/pymake/obj_temp/',
+                   '-I../../modflow6/pymake/mod_temp/',
+                   '../fsrc/mf6sub.f90',
                    '../fsrc/shared_data.f90',
                    '../fsrc/access_memory.f90',
                    ]
