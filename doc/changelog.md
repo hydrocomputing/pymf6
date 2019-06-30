@@ -15,6 +15,10 @@
 * Add read and write of `bool` datatype
 * Limit first MF6 run to get `name` and `origin` to one time step
 
+## Version 0.3.0
+
+* Add automatic setting of option `MEMORY_PRINT_OPTION ALL`
+* Add callback base class
 
 
 
