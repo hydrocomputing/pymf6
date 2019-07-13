@@ -12,8 +12,8 @@ Welcome to pymf6's documentation!
 
    readme.rst
    principle.md
-   changelog.md
    developer.rst
+   changelog.md
 
 Indices and tables
 ==================
