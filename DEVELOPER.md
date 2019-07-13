@@ -78,7 +78,7 @@ If this step is successful, these directories will be created:
      <path/to/repros>/modflow6/pymake/mod_temp
      <path/to/repros>/modflow6/pymake/obj_temp
      <path/to/repros>/modflow6/pymake/src_temp
-    
+
 Using `gfortran` on Linux requires some additional option:
 
     python makebin.py -ff="-fbacktrace -fPIC -O3 -funroll-loops" ../src/ ../bin/mf6
