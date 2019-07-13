@@ -34,7 +34,8 @@ release = '0.3.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'recommonmark'
+    'm2r',
+
 ]
 
 source_suffix = {
@@ -68,10 +69,4 @@ html_theme = 'alabaster'
 html_static_path = ['_static']
 
 
-def setup(app):
-    app.add_config_value('recommonmark_config', {
-            'url_resolver': lambda url: github_doc_root + url,
-            'auto_toc_tree_section': 'Contents',
-            }, True)
-    app.add_transform(AutoStructify)
 
