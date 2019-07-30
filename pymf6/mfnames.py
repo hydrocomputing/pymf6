@@ -13,7 +13,7 @@ def read_lst(fname='mfsim.lst'):
     :param fname: simulation list name, typically `mfsim.lst`
     :return: dict with this structure:
              {
-                 (name_, origin): {'data_type': 'int_scalar'},
+                 (name, origin): {'data_type': 'int_scalar'},
                  (name, origin): {'data_type': 'float_scalar'},
                  (name, origin): {'data_type': 'int_1d'},
                  ....

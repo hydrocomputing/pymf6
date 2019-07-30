@@ -23,6 +23,23 @@ class Func:
         fortran_values = FortranValues(verbose=verbose)
         self.get_value = fortran_values.get_value
         self.set_value = fortran_values.set_value
+        self._mf6_data_type_table = fortran_values.mf6_data_type_table
 
     def __call__(self):
         self.counter += 1
+
+
+    def show_all_names(self, show_data_types=False, limit=None):
+        n_names = len(self._mf6_data_type_table)
+        if limit:
+            print(f'Showing {limit} names out of {n_names}.')
+        else:
+            print(f'Showing all {n_names} names.')
+        for counter, ((name, group), data_type) in enumerate(
+                self._mf6_data_type_table.items()):
+            if limit and counter >= limit:
+                break
+            if show_data_types:
+                print(name, group, data_type['data_type'])
+            else:
+                print(name, group)
