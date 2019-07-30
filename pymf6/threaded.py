@@ -18,15 +18,15 @@ class MyFunc(Func):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.in_queue = Queue()
-        self.out_queue = Queue()
-        self.wait = True
+        self._in_queue = Queue()
+        self._out_queue = Queue()
+        self._wait = True
 
     def __call__(self):
         super().__call__()
-        if self.wait:
-            self.out_queue.put('next')
-            self.in_queue.get()
+        if self._wait:
+            self._out_queue.put('next')
+            self._in_queue.get()
 
 
 class MF6Threaded(Thread):
@@ -57,14 +57,14 @@ class MF6:
         """
         Do next MF6 time step.
         """
-        self.mf6.in_queue.put('next')
-        self.mf6.out_queue.get()
+        self.mf6._in_queue.put('next')
+        self.mf6._out_queue.get()
 
     def run_to_end(self):
         """
         Do next MF6 time step and run to end of simulation without
         further interactions.
         """
-        self.mf6.in_queue.put('next')
-        self.mf6.wait = False
+        self.mf6._in_queue.put('next')
+        self.mf6._wait = False
         self._mf6_threaded.join()
