@@ -1,12 +1,9 @@
 # Changelog
 
-
-
 ## Version 0.3.1
 
 * Add Sphinx and markdown documentation
 * Upload to readthedocs https://pymf6.readthedocs.io/en/latest/index.html
-
 
 ## Version 0.3.0
 
