@@ -52,11 +52,17 @@ class MF6:
         self._mf6_threaded = MF6Threaded()
         self._mf6_threaded.start()
         self.mf6 = self._mf6_threaded.cback
+        # Shorten the names for interactive use.
+        self.names = self.mf6.names
+        self.show_all_names = self.mf6.show_all_names
+        self.get_value = self.mf6.get_value
+        self.set_value = self.mf6.set_value
 
     def next_step(self):
         """
         Do next MF6 time step.
         """
+        #  pylint: disable=protected-access
         self.mf6._in_queue.put('next')
         self.mf6._out_queue.get()
 
@@ -65,6 +71,7 @@ class MF6:
         Do next MF6 time step and run to end of simulation without
         further interactions.
         """
+        #  pylint: disable=protected-access
         self.mf6._in_queue.put('next')
         self.mf6._wait = False
         self._mf6_threaded.join()

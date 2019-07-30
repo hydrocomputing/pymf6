@@ -28,8 +28,18 @@ class Func:
     def __call__(self):
         self.counter += 1
 
+    @property
+    def names(self):
+        """All name-group pairs"""
+        return self._mf6_data_type_table.keys()
 
     def show_all_names(self, show_data_types=False, limit=None):
+        """
+        Print all name-group pairs, optionally with their types
+        :param show_data_types: flag to show dat types or not
+        :param limit: limit to n name, None shows all
+        :return: None
+        """
         n_names = len(self._mf6_data_type_table)
         if limit:
             print(f'Showing {limit} names out of {n_names}.')
