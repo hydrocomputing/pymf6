@@ -7,6 +7,9 @@ import os
 import subprocess
 
 
+NOT_YET_SUPPORTED = set(['TIMESERIES'])
+
+
 def read_lst(fname='mfsim.lst'):
     """
     Read origin and name from `mfsim.lst`file
@@ -35,6 +38,9 @@ def read_lst(fname='mfsim.lst'):
             name = line[45:61].strip()
             datatype_entry = line[61:90].strip()
             raw_datatype, *raw_dim = datatype_entry.split()
+            #  TODO: Support these data types too
+            if raw_datatype in NOT_YET_SUPPORTED:
+                continue
             data_type = mapping[raw_datatype]
             if not raw_dim:
                 dim = 'scalar'
