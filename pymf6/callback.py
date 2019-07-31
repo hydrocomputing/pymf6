@@ -24,6 +24,7 @@ class Func:
         self.get_value = fortran_values.get_value
         self.set_value = fortran_values.set_value
         self._mf6_data_type_table = fortran_values.mf6_data_type_table
+        self.simulation = fortran_values.simulation
 
     def __call__(self):
         self.counter += 1

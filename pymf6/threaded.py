@@ -57,6 +57,7 @@ class MF6:
         self.show_all_names = self.mf6.show_all_names
         self.get_value = self.mf6.get_value
         self.set_value = self.mf6.set_value
+        self.simulation = self.mf6.simulation
 
     def next_step(self):
         """

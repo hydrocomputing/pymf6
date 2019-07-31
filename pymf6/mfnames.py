@@ -6,6 +6,7 @@ import pickle
 import os
 import subprocess
 
+from pymf6 import DATA_MAPPING, MFSIM_NAM
 
 NOT_YET_SUPPORTED = set(['TIMESERIES'])
 
@@ -51,11 +52,11 @@ def read_lst(fname='mfsim.lst'):
 
 
 def get_names(force_generate=False,
-              pickle_fname='data_mapping.pkl',
+              pickle_fname=DATA_MAPPING,
               verbose=False,
               show_mf6_output=False):
     """
-    Run MODFLOW til end with option:
+    Run MODFLOW till end with option:
 
         BEGIN OPTIONS
           MEMORY_PRINT_OPTION ALL
@@ -89,3 +90,72 @@ def get_names(force_generate=False,
     if verbose:
         print('Dumped names and origins into pickle file.')
     return data
+
+
+class Simulation:
+    """
+    Simulation data with nice
+    """
+
+    # pylint: disable=too-few-public-methods
+    def __init__(self):
+        self.models = read_model_data()
+
+    def __repr__(self):
+
+        def ljust_line(data):
+            """
+            Left justify list elements and add `|` separators.
+            :param data: List of strings
+            :return: Line string
+            """
+            sep = ' | '
+            left = '| '
+            right = ' |\n'
+            values = (entry.ljust(width) for entry, width in
+                      zip(data, col_widths))
+            return left + sep.join(values) + right
+
+        col_widths = [0, 0, 0]
+        for model in self.models:
+            for index, value in enumerate(model.values()):
+                col_widths[index] = max(col_widths[index], len(value))
+        for index, value in enumerate(self.models[0].keys()):
+            col_widths[index] = max(col_widths[index], len(value))
+
+        total_width = sum(col_widths) + len(col_widths) * 4 - 2
+        double_line = '=' * total_width + '\n'
+        single_line = '-' * total_width + '\n'
+        text_repr = double_line
+        text_repr += ljust_line(self.models[0].keys())
+        text_repr += single_line
+        for model in self.models:
+            text_repr += ljust_line(model.values())
+        text_repr += double_line
+        return text_repr
+
+
+def read_model_data(fname=MFSIM_NAM):
+    """
+    Read simulation data
+    :param fname: 'mfsim.name'
+    :return: List of dicts with data
+    """
+    models = []
+    started = False
+    with open(fname) as fobj:
+        for raw_line in fobj:
+            line = raw_line.strip()
+            if line.upper() == 'BEGIN MODELS':
+                started = True
+                continue
+            if started:
+                if line.upper() == 'END MODELS':
+                    break
+                if line.startswith('#'):
+                    continue
+                names = ['modeltype', 'namefile', 'modelname']
+                data = line.split()
+                models.append(
+                    {name: value for name, value in zip(names, data)})
+    return models
