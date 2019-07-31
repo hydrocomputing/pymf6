@@ -9,6 +9,7 @@ import shutil
 
 from pymf6 import mf6
 from pymf6.fortran_io import FortranValues
+from pymf6 import MFSIM_NAM, BACKUP_DIR
 
 PRINT_ALL = """
 BEGIN OPTIONS
@@ -16,18 +17,14 @@ BEGIN OPTIONS
 END OPTIONS
 """
 
-MFSIM_NAM = 'mfsim.nam'
-BACKUP_DIR = '__pymf6__backup'
-
 
 def prepare_nam_file(fname=MFSIM_NAM, backup_dir=BACKUP_DIR):
     """
     Create name file that saves all MF6 nam-origin pairs in lst file
     :param fname: `mfsim.nam`
-    :param backup_dir: ``ackup directory for `mfsim.nam`
+    :param backup_dir: ``backup directory for `mfsim.nam`
     :return: None
     """
-    print('start')
     if not os.path.exists(backup_dir):
         os.mkdir(backup_dir)
     fname_backup = os.path.join(backup_dir, fname)
