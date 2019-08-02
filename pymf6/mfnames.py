@@ -7,6 +7,7 @@ import os
 import subprocess
 
 from pymf6 import DATA_MAPPING, MFSIM_NAM
+from pymf6.tools.formatter import format_text_table, format_html_table
 
 NOT_YET_SUPPORTED = set(['TIMESERIES'])
 
@@ -102,37 +103,10 @@ class Simulation:
         self.models = read_model_data()
 
     def __repr__(self):
+        return format_text_table(self.models)
 
-        def ljust_line(data):
-            """
-            Left justify list elements and add `|` separators.
-            :param data: List of strings
-            :return: Line string
-            """
-            sep = ' | '
-            left = '| '
-            right = ' |\n'
-            values = (entry.ljust(width) for entry, width in
-                      zip(data, col_widths))
-            return left + sep.join(values) + right
-
-        col_widths = [0, 0, 0]
-        for model in self.models:
-            for index, value in enumerate(model.values()):
-                col_widths[index] = max(col_widths[index], len(value))
-        for index, value in enumerate(self.models[0].keys()):
-            col_widths[index] = max(col_widths[index], len(value))
-
-        total_width = sum(col_widths) + len(col_widths) * 4 - 2
-        double_line = '=' * total_width + '\n'
-        single_line = '-' * total_width + '\n'
-        text_repr = double_line
-        text_repr += ljust_line(self.models[0].keys())
-        text_repr += single_line
-        for model in self.models:
-            text_repr += ljust_line(model.values())
-        text_repr += double_line
-        return text_repr
+    def _repr_html_(self):
+        return format_html_table(self.models)
 
 
 def read_model_data(fname=MFSIM_NAM):
