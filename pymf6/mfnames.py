@@ -7,7 +7,7 @@ import os
 import subprocess
 
 from pymf6 import DATA_MAPPING, MFSIM_NAM
-from pymf6.tools.formatter import format_text_table, format_html_table
+from pymf6.tools.formatters import format_text_table, format_html_table
 
 NOT_YET_SUPPORTED = set(['TIMESERIES'])
 
