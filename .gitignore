@@ -3,7 +3,7 @@
 *.pyd
 *.pyf
 obj/*
-*/__pycache__/*
+**/__pycache__/**
 *.o
 *.mod
 .idea
