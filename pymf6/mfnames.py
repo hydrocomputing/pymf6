@@ -7,7 +7,7 @@ import os
 import subprocess
 
 from pymf6 import DATA_MAPPING, MFSIM_NAM
-from pymf6.tools.formatters import format_text_table, format_html_table
+
 
 NOT_YET_SUPPORTED = set(['TIMESERIES'])
 
@@ -93,23 +93,7 @@ def get_names(force_generate=False,
     return data
 
 
-class Simulation:
-    """
-    Simulation data with nice
-    """
-
-    # pylint: disable=too-few-public-methods
-    def __init__(self):
-        self.models = read_model_data()
-
-    def __repr__(self):
-        return format_text_table(self.models)
-
-    def _repr_html_(self):
-        return format_html_table(self.models)
-
-
-def read_model_data(fname=MFSIM_NAM):
+def read_simulation_data(fname=MFSIM_NAM):
     """
     Read simulation data
     :param fname: 'mfsim.name'
@@ -117,19 +101,26 @@ def read_model_data(fname=MFSIM_NAM):
     """
     models = []
     started = False
+    finished = False
+    sol_count = 0
     with open(fname) as fobj:
         for raw_line in fobj:
             line = raw_line.strip()
-            if line.upper() == 'BEGIN MODELS':
+            line_upper = line.upper()
+            if line_upper.strip().startswith('BEGIN SOLUTIONGROUP'):
+                sol_count += 1
+                continue
+            if line_upper == 'BEGIN MODELS':
                 started = True
                 continue
-            if started:
-                if line.upper() == 'END MODELS':
-                    break
+            if started and not finished:
+                if line_upper == 'END MODELS':
+                    finished = True
+                    continue
                 if line.startswith('#'):
                     continue
                 names = ['modeltype', 'namefile', 'modelname']
                 data = line.split()
                 models.append(
                     {name: value for name, value in zip(names, data)})
-    return models
+    return sol_count, models

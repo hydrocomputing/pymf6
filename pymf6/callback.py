@@ -3,6 +3,7 @@ Callback parent class
 """
 
 from pymf6.fortran_io import FortranValues
+from pymf6.datastructures import Simulation
 
 
 class Func:
@@ -24,7 +25,7 @@ class Func:
         self.get_value = fortran_values.get_value
         self.set_value = fortran_values.set_value
         self._mf6_data_type_table = fortran_values.mf6_data_type_table
-        self.simulation = fortran_values.simulation
+        self.simulation = Simulation(fortran_values, self._mf6_data_type_table)
 
     def __call__(self):
         self.counter += 1

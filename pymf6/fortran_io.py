@@ -1,7 +1,7 @@
 """Read and write Fortran values from MF6.
 """
 
-from pymf6.mfnames import get_names, Simulation
+from pymf6.mfnames import get_names
 from . import mf6
 
 
@@ -10,7 +10,6 @@ class FortranValues:
     Reading and writing of MF6 values
     """
     def __init__(self, mf6_data_type_table=None, verbose=False):
-        self.simulation = Simulation()
         if not mf6_data_type_table:
             mf6_data_type_table = get_names(verbose=verbose)
         self.mf6_data_type_table = mf6_data_type_table
