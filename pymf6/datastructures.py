@@ -52,23 +52,23 @@ class Simulation:
             if len(group) == 1:
                 var_name = group[0]
                 if var_name == 'TDIS':
-                    self.add_attr(self.TDIS, name, origin, value)
+                    self._add_attr(self.TDIS, name, origin, value)
                 if var_name.startswith('SLN_'):
-                    self.add_attr(self.get_sol_group(var_name), name, origin,
-                                  value)
+                    self._add_attr(self._get_sol_group(var_name), name, origin,
+                                   value)
                 if var_name in self.model_names:
-                    self.add_attr(self.get_model(var_name), name, origin,
-                                  value)
+                    self._add_attr(self._get_model(var_name), name, origin,
+                                   value)
             else:
                 obj_name, package_name = group
                 if obj_name.startswith('SLN_'):
-                    self.add_package_attr(self.get_sol_group(obj_name),
-                                          package_name, name, origin, value)
+                    self._add_package_attr(self._get_sol_group(obj_name),
+                                           package_name, name, origin, value)
                 if obj_name in self.model_names:
-                    self.add_package_attr(self.get_model(obj_name),
-                                          package_name, name, origin, value)
+                    self._add_package_attr(self._get_model(obj_name),
+                                           package_name, name, origin, value)
 
-    def add_attr(self, obj, name, origin, value):
+    def _add_attr(self, obj, name, origin, value):
         """
         Add a `Variable` instance as attribute.
         :param obj:
@@ -82,8 +82,8 @@ class Simulation:
                          name, origin, value['data_type']))
         obj.var_names.append(name)
 
-    def add_package_attr(self, obj_name, package_name, name, origin,
-                         value):
+    def _add_package_attr(self, obj_name, package_name, name, origin,
+                          value):
         # pylint: disable=too-many-arguments
         """
         Add a `Package` instance as attribute.
@@ -97,9 +97,9 @@ class Simulation:
             setattr(obj_name, package_name, package)
             obj_name.var_names.append(package_name)
             obj_name.package_names.append(package_name)
-        self.add_attr(package, name, origin, value)
+        self._add_attr(package, name, origin, value)
 
-    def get_model(self, model_name):
+    def _get_model(self, model_name):
         """
         Find `Model` instance by name
         :param model_name:
@@ -107,7 +107,7 @@ class Simulation:
         """
         return self.models[self.model_names.index(model_name)]
 
-    def get_sol_group(self, obj_name):
+    def _get_sol_group(self, obj_name):
         """
         Find `Solution` instance
         :param obj_name:
