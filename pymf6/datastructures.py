@@ -131,6 +131,20 @@ class Solution:
         self.var_names = []
         self.package_names = []
 
+    def __repr__(self):
+        repr_text = f'Solution {self.name} with {len(self.package_names)} packages'
+        repr_text += f' and {len(self.var_names)} variables.'
+        return repr_text
+
+    def _repr_html_(self):
+        html_text = f'<h3>Solution {self.name}</h3>'
+        html_text += '<table><tbody>'
+        html_text += '<tr><td>number of packages:</td>'
+        html_text += f'<td>{len(self.package_names)}</td></tr>'
+        html_text += '<tr><td>number of variables: </td>'
+        html_text += f'<td>{len(self.var_names)}</td></tr>'
+        html_text += '</tbody></table>'
+        return html_text
 
 class Model:
     """
