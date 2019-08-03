@@ -116,10 +116,10 @@ class Simulation:
         return self.solution_groups[int(obj_name.split('_')[-1]) - 1]
 
     def __repr__(self):
-        return format_text_table(self.models)
+        return format_text_table(self.models_meta)
 
     def _repr_html_(self):
-        return format_html_table(self.models)
+        return format_html_table(self.models_meta)
 
 
 class Solution:
