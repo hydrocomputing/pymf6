@@ -183,6 +183,7 @@ class Variable(MF6Object):
         self.name = name
         self.origin = origin
         self.data_type = data_type
+        self._arr = None
 
     @property
     def value(self):
@@ -193,6 +194,7 @@ class Variable(MF6Object):
         arr = self.fortran_values.get_value(self.name, self.origin)
         if arr.ndim == 0:
             return arr.reshape(1)[0]
+        self._arr = arr
         return arr
 
     @value.setter
@@ -201,3 +203,16 @@ class Variable(MF6Object):
         """
         self.fortran_values.set_value(self.name, self.origin,
                                       np.array(new_value))
+
+    def __setitem__(self, key, value):
+        fvalue = getattr(self, 'value')
+        fvalue.__setitem__(key, value)
+        self.value = fvalue
+
+    def __getitem__(self, item):
+        return self.value
+
+    def write_back(self):
+        if self._arr is None:
+            self.value
+        self.value = self._arr
