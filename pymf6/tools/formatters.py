@@ -2,6 +2,10 @@
 Formatters for `__repr__` and `_repr_html_` for some data structures.
 """
 
+import numpy as np
+
+np.set_printoptions(threshold=30)
+
 
 def format_text_table(data):
     """Format a list of dicts as text table"""
@@ -76,3 +80,40 @@ def format_html_table(data):
 </table>
 </div>"""
     return html_repr
+
+
+def make_repr(obj):
+    repr_text = f'{obj.__class__.__name__} {obj.name} '
+    if hasattr(obj, 'package_names'):
+        repr_text += f'\n{len(obj.package_names)} packages'
+    if hasattr(obj, 'var_names'):
+        repr_text += f'\n{len(obj.var_names)} variables.'
+    if hasattr(obj, 'value'):
+        repr_text += f'\nvalue: {repr(obj.value)}'
+        if obj.value.shape:
+            repr_text += f'\nvalue: {obj.value.shape}'
+    if hasattr(obj, 'origin'):
+        repr_text += f'\nlocation: {obj.origin}'
+    return repr_text
+
+
+def make_repr_html(obj):
+    html_text = f'<h3>{obj.__class__.__name__} {obj.name}</h3>'
+    html_text += '<table><tbody>'
+    if hasattr(obj, 'package_names'):
+        html_text += '<tr><td>number of packages:</td>'
+        html_text += f'<td>{len(obj.package_names)}</td></tr>'
+    if hasattr(obj, 'var_names'):
+        html_text += '<tr><td>number of variables: </td>'
+        html_text += f'<td>{len(obj.var_names)}</td></tr>'
+    if hasattr(obj, 'value'):
+        html_text += '<tr><td>value: </td>'
+        html_text += f'<td>{repr(obj.value)}</td></tr>'
+        if obj.value.shape:
+            html_text += '<tr><td>shape: </td>'
+            html_text += f'<td>{obj.value.shape}</td></tr>'
+    if hasattr(obj, 'origin'):
+        html_text += '<tr><td>location: </td>'
+        html_text += f'<td>{obj.origin}</td></tr>'
+    html_text += '</tbody></table>'
+    return html_text

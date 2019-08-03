@@ -5,7 +5,8 @@ Data structures representing MF6 runtime data
 import numpy as np
 
 from pymf6.mfnames import read_simulation_data
-from pymf6.tools.formatters import format_text_table, format_html_table
+from pymf6.tools.formatters import (
+    format_text_table, format_html_table, make_repr, make_repr_html)
 
 # pylint: disable=too-few-public-methods
 
@@ -122,7 +123,15 @@ class Simulation:
         return format_html_table(self.models_meta)
 
 
-class Solution:
+class MF6Object:
+
+    def __repr__(self):
+        return make_repr(self)
+
+    def _repr_html_(self):
+        return make_repr_html(self)
+
+class Solution(MF6Object):
     """
     A solution in the solution group
     """
@@ -132,21 +141,12 @@ class Solution:
         self.package_names = []
 
     def __repr__(self):
-        repr_text = f'Solution {self.name} with {len(self.package_names)} packages'
-        repr_text += f' and {len(self.var_names)} variables.'
-        return repr_text
+        return make_repr(self)
 
     def _repr_html_(self):
-        html_text = f'<h3>Solution {self.name}</h3>'
-        html_text += '<table><tbody>'
-        html_text += '<tr><td>number of packages:</td>'
-        html_text += f'<td>{len(self.package_names)}</td></tr>'
-        html_text += '<tr><td>number of variables: </td>'
-        html_text += f'<td>{len(self.var_names)}</td></tr>'
-        html_text += '</tbody></table>'
-        return html_text
+        return make_repr_html(self)
 
-class Model:
+class Model(MF6Object):
     """
     A Model such GWF_1
     """
@@ -156,7 +156,7 @@ class Model:
         self.package_names = []
 
 
-class Package:
+class Package(MF6Object):
     """
     A MF6 package
     """
@@ -165,7 +165,7 @@ class Package:
         self.var_names = []
 
 
-class Variable:
+class Variable(MF6Object):
     """A variable of a package"""
     def __init__(self, fortran_values, name, origin, data_type):
         self.fortran_values = fortran_values
