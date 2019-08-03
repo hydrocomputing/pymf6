@@ -138,6 +138,10 @@ class MF6Object:
     def _repr_html_(self):
         return make_repr_html(self)
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+
 class Solution(MF6Object):
     """
     A solution in the solution group
