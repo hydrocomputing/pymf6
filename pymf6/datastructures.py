@@ -11,6 +11,11 @@ from pymf6.tools.formatters import (
 # pylint: disable=too-few-public-methods
 
 
+def clean_name(name):
+    """Replace dashes and spaces with underscores"""
+    return '_'.join(name.split()).replace('-', '_')
+
+
 class Simulation:
     """
     Simulation data with nice formatting
@@ -78,6 +83,7 @@ class Simulation:
         :param value:
         :return: Name
         """
+        name = clean_name(name)
         setattr(obj, name,
                 Variable(self.fortran_values,
                          name, origin, value['data_type']))
@@ -92,6 +98,7 @@ class Simulation:
         :param package_name:
         :return: Name
         """
+        package_name = clean_name(package_name)
         package = getattr(obj_name, package_name, None)
         if package is None:
             package = Package(package_name)
