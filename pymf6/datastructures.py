@@ -49,8 +49,10 @@ class Simulation:
         self.time_unit = fortran_io.TIME_UNIT_NAMES[time_index]
         self.time_multiplier = fortran_io.TIME_UNIT_VALUES[time_index]
         for model in self.models:
+            #  TODO: support unstructed grids --> no DIS
             length_index = model.DIS.LENUNI.value
             model.length_unit = fortran_io.LENGTH_UNIT_NAMES[length_index]
+            model.shape_3d = model.DIS.MSHAPE.value
         self._is_initialized = True
 
     def _build_object_hierarchy(self):
@@ -186,6 +188,7 @@ class Model(MF6Object):
         self.var_names = []
         self.package_names = []
         self.length_unit = None
+        self.shape_3d = None
 
 
 class Package(MF6Object):
