@@ -45,8 +45,12 @@ class Simulation:
         if self._is_initialized:
             return
         time_index = self.TDIS.ITMUNI.value
+
         self.time_unit = fortran_io.TIME_UNIT_NAMES[time_index]
         self.time_multiplier = fortran_io.TIME_UNIT_VALUES[time_index]
+        for model in self.models:
+            length_index = model.DIS.LENUNI.value
+            model.length_unit = fortran_io.LENGTH_UNIT_NAMES[length_index]
         self._is_initialized = True
 
     def _build_object_hierarchy(self):
@@ -181,6 +185,7 @@ class Model(MF6Object):
         self.name = name
         self.var_names = []
         self.package_names = []
+        self.length_unit = None
 
 
 class Package(MF6Object):
