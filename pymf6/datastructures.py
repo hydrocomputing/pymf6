@@ -216,6 +216,20 @@ class Variable(MF6Object):
         self._arr = None
 
     @property
+    def value_3d(self):
+        """
+        Value as 3D array, if applicable.
+        :return:
+        """
+        if not self.model and not self.model.shape_3d:
+            raise NotImplemented
+        shape = self.model.shape_3d
+        value = self.value
+        if np.multiply.reduce(shape) != value.shape[0]:
+            raise NotImplemented
+        return value.reshape(shape)
+
+    @property
     def value(self):
         """
         Get Fortran value of current instance
