@@ -34,16 +34,20 @@ class Simulation:
         self.models = [Model(name) for name in self.model_names]
         self._build_object_hierarchy()
         self.time_unit = None
-        self._is_intialized = False
+        self.time_multiplier = None
+        self._is_initialized = False
 
     def init_after_first_call(self):
         """
         Initialize values from Fortran after
         :return: None
         """
-        if not self._is_intialized:
-            self.time_unit = fortran_io.TIME_UNIT_NAMES[self.TDIS.ITMUNI.value]
-            self._is_intialized = True
+        if self._is_initialized:
+            return
+        time_index = self.TDIS.ITMUNI.value
+        self.time_unit = fortran_io.TIME_UNIT_NAMES[time_index]
+        self.time_multiplier = fortran_io.TIME_UNIT_VALUES[time_index]
+        self._is_initialized = True
 
     def _build_object_hierarchy(self):
         """Create object hierarchy:
