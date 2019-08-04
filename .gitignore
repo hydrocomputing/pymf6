@@ -8,3 +8,4 @@ obj/*
 *.mod
 .idea
 doc/_build/*
+tools/**
