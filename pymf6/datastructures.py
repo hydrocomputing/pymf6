@@ -90,10 +90,12 @@ class Simulation:
                     self._add_package_attr(self._get_sol_group(obj_name),
                                            package_name, name, origin, value)
                 if obj_name in self.model_names:
+                    model = self.models[self.model_names.index(obj_name)]
                     self._add_package_attr(self._get_model(obj_name),
-                                           package_name, name, origin, value)
+                                           package_name, name, origin, value,
+                                           model=model)
 
-    def _add_attr(self, obj, name, origin, value):
+    def _add_attr(self, obj, name, origin, value, model=None):
         """
         Add a `Variable` instance as attribute.
         :param obj:
@@ -105,11 +107,11 @@ class Simulation:
         name = clean_name(name)
         setattr(obj, name,
                 Variable(self.fortran_values,
-                         name, origin, value['data_type']))
+                         name, origin, value['data_type'], model))
         obj.var_names.append(name)
 
     def _add_package_attr(self, obj_name, package_name, name, origin,
-                          value):
+                          value, model=None):
         # pylint: disable=too-many-arguments
         """
         Add a `Package` instance as attribute.
@@ -124,7 +126,7 @@ class Simulation:
             setattr(obj_name, package_name, package)
             obj_name.var_names.append(package_name)
             obj_name.package_names.append(package_name)
-        self._add_attr(package, name, origin, value)
+        self._add_attr(package, name, origin, value, model=model)
 
     def _get_model(self, model_name):
         """
@@ -205,11 +207,12 @@ class Package(MF6Object):
 
 class Variable(MF6Object):
     """A variable of a package"""
-    def __init__(self, fortran_values, name, origin, data_type):
+    def __init__(self, fortran_values, name, origin, data_type, model=None):
         self.fortran_values = fortran_values
         self.name = name
         self.origin = origin
         self.data_type = data_type
+        self.model = model
         self._arr = None
 
     @property
