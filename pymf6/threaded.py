@@ -58,6 +58,7 @@ class MF6:
         self.get_value = self.mf6.get_value
         self.set_value = self.mf6.set_value
         self.simulation = self.mf6.simulation
+        self.simulation.init_after_first_call()
 
     def next_step(self):
         """

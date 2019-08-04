@@ -4,6 +4,8 @@
 from pymf6.mfnames import get_names
 from . import mf6
 
+TIME_UNIT_NAMES = ('UNDEFINED', 'SECONDS', 'MINUTES', 'HOURS', 'YEARS', 'YEARS')
+TIME_UNIT_VALUES = (None, 1, 60, 3600, 86400, 31557600)
 
 class FortranValues:
     """

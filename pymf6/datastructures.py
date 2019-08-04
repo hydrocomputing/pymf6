@@ -4,6 +4,7 @@ Data structures representing MF6 runtime data
 
 import numpy as np
 
+from pymf6 import fortran_io
 from pymf6.mfnames import read_simulation_data
 from pymf6.tools.formatters import (
     format_text_table, format_html_table, make_repr, make_repr_html)
@@ -32,6 +33,17 @@ class Simulation:
         self.model_names = [entry['modelname'] for entry in self.models_meta]
         self.models = [Model(name) for name in self.model_names]
         self._build_object_hierarchy()
+        self.time_unit = None
+        self._is_intialized = False
+
+    def init_after_first_call(self):
+        """
+        Initialize values from Fortran after
+        :return: None
+        """
+        if not self._is_intialized:
+            self.time_unit = fortran_io.TIME_UNIT_NAMES[self.TDIS.ITMUNI.value]
+            self._is_intialized = True
 
     def _build_object_hierarchy(self):
         """Create object hierarchy:

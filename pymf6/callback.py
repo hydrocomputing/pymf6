@@ -29,6 +29,8 @@ class Func:
 
     def __call__(self):
         self.counter += 1
+        if self.counter == 1:
+            self.simulation.init_after_first_call()
 
     @property
     def names(self):
