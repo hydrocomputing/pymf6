@@ -215,6 +215,17 @@ class Variable(MF6Object):
         self.model = model
         self._arr = None
 
+    def get_value_by_lrc(self, layer, row, col):
+        """Return value by layer, row, col
+
+        :param layer: layer index (one-based)
+        :param row: row index (one-based)
+        :param col: column index (one-based)
+        :return: value for layer, row, col
+        """
+        value = self.value_3d
+        return value[layer - 1, row - 1, col - 1]
+
     @property
     def value_3d(self):
         """
