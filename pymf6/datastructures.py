@@ -17,12 +17,36 @@ def clean_name(name):
     return '_'.join(name.split()).replace('-', '_')
 
 
+class WriteBackArray(np.ndarray):
+    """NumPy array that automatically writes back changes with slicing"""
+
+    def __new__(cls, input_array, variable, writeback=True):
+        obj = np.asarray(input_array).view(cls)
+        obj.variable = variable
+        obj.writeback = writeback
+        return obj
+
+    def __array_finalize__(self, obj):
+        # pylint: disable=attribute-defined-outside-init
+        if obj is None:
+            return
+        self.variable = getattr(obj, 'variable', None)
+        self.writeback = getattr(obj, 'writeback', None)
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        # Write value back to Fortran
+        if self.writeback:
+            self.variable.write_back()
+
+
 class Simulation:
     """
     Simulation data with nice formatting
     """
 
-    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-few-public-methods,no-member
+    # # pylint: disable=too-many-instance-attributes
     def __init__(self, fortran_values, mf6_data_type_table):
         self.fortran_values = fortran_values
         self.mf6_data_type_table = mf6_data_type_table
@@ -104,6 +128,7 @@ class Simulation:
         :param value:
         :return: Name
         """
+        # pylint: disable=too-many-arguments
         name = clean_name(name)
         setattr(obj, name,
                 Variable(self.fortran_values,
@@ -152,7 +177,7 @@ class Simulation:
 
 
 class MF6Object:
-
+    """MF6 parent object"""
     def __repr__(self):
         return make_repr(self)
 
@@ -190,6 +215,11 @@ class Model(MF6Object):
         self.shape_3d = None
 
     def init_after_first_call(self):
+        """
+        Set some meta data after Fortran has finished initialization
+        :return:
+        """
+        # pylint: disable=no-member
         if hasattr(self, 'DIS'):
             length_index = self.DIS.LENUNI.value
             self.length_unit = fortran_io.LENGTH_UNIT_NAMES[length_index]
@@ -208,6 +238,7 @@ class Package(MF6Object):
 class Variable(MF6Object):
     """A variable of a package"""
     def __init__(self, fortran_values, name, origin, data_type, model=None):
+        # pylint: disable=too-many-arguments
         self.fortran_values = fortran_values
         self.name = name
         self.origin = origin
@@ -233,11 +264,11 @@ class Variable(MF6Object):
         :return:
         """
         if not self.model and not self.model.shape_3d:
-            raise NotImplemented
+            raise NotImplementedError
         shape = self.model.shape_3d
         value = self.value
         if np.multiply.reduce(shape) != value.shape[0]:
-            raise NotImplemented
+            raise NotImplementedError
         return value.reshape(shape)
 
     @property
@@ -246,7 +277,8 @@ class Variable(MF6Object):
         Get Fortran value of current instance
         :return:
         """
-        arr = self.fortran_values.get_value(self.name, self.origin)
+        farr = self.fortran_values.get_value(self.name, self.origin)
+        arr = WriteBackArray(farr, self)
         if arr.ndim == 0:
             return arr.reshape(1)[0]
         self._arr = arr
@@ -268,6 +300,11 @@ class Variable(MF6Object):
         return self.value
 
     def write_back(self):
+        """
+        Write array data back to Fortran.
+        :return: None
+        """
         if self._arr is None:
-            self.value
+            # Nothing to do.
+            return
         self.value = self._arr
