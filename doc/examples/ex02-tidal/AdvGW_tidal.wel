@@ -1,0 +1,35 @@
+#option block.  Note -- no comments allowed on auxiliary line
+BEGIN OPTIONS
+  AUXILIARY var1 var2 var3
+  PRINT_INPUT (echo input to listing file)
+  PRINT_FLOWS  (print the flows to the listing file)
+  SAVE_FLOWS
+  BOUNDNAMES
+  TS6 FILEIN  well_rates.ts
+END OPTIONS
+
+BEGIN DIMENSIONS
+  MAXBOUND 5
+END DIMENSIONS
+
+BEGIN PERIOD 2
+#        k         i         j      flow      var1  var2  var3
+         1        12         3     -50.0       -1    -2    -3
+         3         5         8   well_1_rate    1     2     3   well_1
+         3         4         3   well_2_rate    4     5     6   well_2
+END PERIOD
+
+BEGIN PERIOD 3
+#        k         i         j      flow      var1  var2  var3
+         3         4         3   well_2_rate    1     2     3   well_2
+         3         5         8   well_1_rate    4     5     6   well_1
+END PERIOD
+
+BEGIN PERIOD 4
+#        k         i         j      flow      var1  var2  var3
+         3         5         8   well_1_rate    1     2     3   well_1
+         3         4         3   well_2_rate    4     5     6   well_2
+         1        12         3     -10.0        7     8     9
+         1         3         5     -20.0       17    18    19   
+         1        14         6     -40.0       27    28    29   
+END PERIOD

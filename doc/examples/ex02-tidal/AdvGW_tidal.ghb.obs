@@ -1,0 +1,16 @@
+BEGIN OPTIONS
+  DIGITS 10
+  PRINT_INPUT
+END OPTIONS
+
+BEGIN CONTINUOUS FILEOUT ghb_obs.csv
+# obsname      type  lay row  col
+  ghb-2-6-10   GHB     2   6   10
+  ghb-3-6-10   GHB     3   6   10
+END CONTINUOUS
+
+BEGIN CONTINUOUS FILEOUT ghb_flows.csv
+# obsname        type  boundname (or L R C)
+  Estuary2       GHB   Estuary-L2
+  Estuary3       GHB   Estuary-L3      
+END CONTINUOUS
