@@ -83,6 +83,11 @@ def format_html_table(data):
 
 
 def make_repr(obj):
+    """
+    Make a representation text
+    :param obj: Python object
+    :return: representation text
+    """
     repr_text = f'{obj.__class__.__name__} {obj.name} '
     if hasattr(obj, 'package_names'):
         repr_text += f'\n{len(obj.package_names)} packages'
@@ -98,6 +103,11 @@ def make_repr(obj):
 
 
 def make_repr_html(obj):
+    """
+    Make a nice HTML table
+    :param obj: Python object
+    :return: HTML string
+    """
     html_text = f'<h3>{obj.__class__.__name__} {obj.name}</h3>'
     html_text += '<table><tbody>'
     if hasattr(obj, 'package_names'):
