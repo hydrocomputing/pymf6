@@ -35,7 +35,7 @@ release = '0.3.1'
 # ones.
 extensions = [
     'm2r',
-
+    'nbsphinx'
 ]
 
 source_suffix = {
@@ -70,3 +70,7 @@ html_static_path = ['_static']
 
 
 
+exclude_patterns = ['_build',
+                    '**.ipynb_checkpoints',
+                    'requirements.txt',
+                    'examples/**/description.txt']
