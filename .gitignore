@@ -10,3 +10,10 @@ obj/*
 doc/_build/*
 tools/**
 doc/notebooks/.ipynb_checkpoints/**
+**.cbc
+**.dis.grb
+**.hds
+**.lst
+**/__pymf6__backup/**
+**/data_mapping.pkl
+**.csv
