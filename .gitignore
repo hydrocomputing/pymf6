@@ -9,3 +9,4 @@ obj/*
 .idea
 doc/_build/*
 tools/**
+doc/notebooks/.ipynb_checkpoints/**
