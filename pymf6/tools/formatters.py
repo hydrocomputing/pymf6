@@ -96,7 +96,7 @@ def make_repr(obj):
     if hasattr(obj, 'value'):
         repr_text += f'\nvalue: {repr(obj.value)}'
         if obj.value.shape:
-            repr_text += f'\nvalue: {obj.value.shape}'
+            repr_text += f'\nshape: {obj.value.shape}'
     if hasattr(obj, 'origin'):
         repr_text += f'\nlocation: {obj.origin}'
     return repr_text
