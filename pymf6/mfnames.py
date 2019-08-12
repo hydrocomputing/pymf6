@@ -123,4 +123,6 @@ def read_simulation_data(fname=MFSIM_NAM):
                 data = line.split()
                 models.append(
                     {name: value for name, value in zip(names, data)})
+    for model in models:
+        model['modelname'] = model['modelname'].upper()
     return sol_count, models
