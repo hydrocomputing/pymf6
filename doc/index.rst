@@ -13,6 +13,7 @@ Welcome to pymf6's documentation!
    readme.rst
    principle.md
    notebooks/Interactive
+   examples.rst
    developer.rst
    changelog.md
 
