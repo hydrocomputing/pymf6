@@ -1,5 +1,6 @@
 channels:
   - conda-forge
+  - hydrocomputing
 dependencies:
   - python>=3
   - sphinx>=1.6
@@ -7,5 +8,6 @@ dependencies:
   - nbconvert!=5.4
   - ipykernel
   - r2w
+  - pymf6
   - pip:
     - nbsphinx
