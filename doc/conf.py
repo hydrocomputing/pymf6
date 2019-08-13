@@ -74,3 +74,5 @@ exclude_patterns = ['_build',
                     '**.ipynb_checkpoints',
                     'requirements.txt',
                     'examples/**/description.txt']
+
+nbsphinx_allow_errors = True
