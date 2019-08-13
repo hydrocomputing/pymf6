@@ -1,3 +1,5 @@
+# Change to directory `examples/ex02-tidal` before running this script.
+
 """Example program thats shows some temporal information from MF6.
 """
 
