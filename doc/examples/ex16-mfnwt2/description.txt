@@ -1,0 +1,1 @@
+This is the the second example problem described in the MODFLOW-NWT documentation (Niswonger and others, 2011) and is based on ``problem 2'' in McDonald and others (1991). A fourth steady-state stress period has been added to the problem for comparison with fig. 8D in Niswonger and others(2011).

@@ -1,0 +1,12 @@
+begin options
+  digits 10
+end options
+
+#
+# Blocks defining continuous observations
+#
+
+begin continuous FILEOUT test034_nwtp2.csv
+  l01head      head   1 1 1
+  l10head      head  10 1 1
+end continuous
