@@ -1,2 +1,4 @@
 sphinx==2.1.2
 m2r==0.2.1
+ipykernel
+nbsphinx
