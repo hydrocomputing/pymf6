@@ -9,7 +9,8 @@ obj/*
 .idea
 doc/_build/*
 tools/**
-doc/notebooks/.ipynb_checkpoints/**
+**/.ipynb_checkpoints/**
+**/Untitled*.ipynb
 **.cbc
 **.dis.grb
 **.hds
