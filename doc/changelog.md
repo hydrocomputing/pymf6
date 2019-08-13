@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.4.0
+
+* Add higher-level data structures for `Simulation`, `Model`, `Package` and
+  `Variable` that represents MF6 data 
+* Add new example scripts, using this new data structures
+* Add threaded, interactive API
+* Update documentation
+
+
 ## Version 0.3.1
 
 * Add Sphinx and markdown documentation
