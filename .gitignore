@@ -18,3 +18,6 @@ tools/**
 **/__pymf6__backup/**
 **/data_mapping.pkl
 **.csv
+build/**
+dist/**
+pymf6.egg-info/**
