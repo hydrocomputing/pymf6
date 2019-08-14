@@ -3,4 +3,4 @@ m2r==0.2.1
 ipykernel
 nbsphinx
 numpy
-pymf6==0.4.1
+pymf6
