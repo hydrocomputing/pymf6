@@ -21,6 +21,7 @@ elif sys.platform == 'darwin':
     extras = 'libgfortran.4.dylib'
 elif sys.platform.startswith('linux'):
     mf6_fortran = 'mf6.cpython-37m-x86_64-linux-gnu.so'
+    extras = 'libgfortran.so.4'
 else:
     raise Exception(f'Platform {sys.platform} not supported.')
 
