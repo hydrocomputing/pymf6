@@ -76,7 +76,7 @@ class MyFunc(Func):
             self._first_step()
         self.ask_user()
         tdis = self.simulation.TDIS
-        delt = dis.DELT.value
+        delt = tdis.DELT.value
         self.run_time += delt
         print_from_python(
             f'Called {self.counter} times',
