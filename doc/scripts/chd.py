@@ -1,6 +1,6 @@
 # Change to directory `examples/ex16-mfnwt2` before running this script.
 
-"""Example program that shows some temporal information from MF6.
+"""Example program that shows modifying constant head values of MF6.
 """
 
 from pymf6.callback import Func
