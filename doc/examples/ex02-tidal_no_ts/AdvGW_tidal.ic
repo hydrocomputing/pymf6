@@ -1,0 +1,21 @@
+begin options
+end options
+
+BEGIN GRIDDATA
+  strt LAYERED
+    CONSTANT    50.0  Initial Head layer   1
+    CONSTANT    50.0  Initial Head layer   2
+    CONSTANT    50.0  Initial Head layer   3
+END GRIDDATA
+
+
+#begin basdata
+#  ibound LAYERED
+#    CONSTANT          1  IBOUND layer   1
+#    CONSTANT          1  IBOUND layer   2
+#    CONSTANT          1  IBOUND layer   3
+#  strt LAYERED
+#    CONSTANT   100.0  Initial Head layer   1
+#    CONSTANT   100.0  Initial Head layer   2
+#end basdata
+

@@ -1,0 +1,49 @@
+# Options block
+BEGIN OPTIONS
+  PRINT_INPUT    (echo input to listing file)
+  PRINT_FLOWS    (print the flows to the listing file)
+  SAVE_FLOWS
+  TS6 FILEIN tides.ts
+  BOUNDNAMES  
+  OBS6 FILEIN           AdvGW_tidal.ghb.obs
+END OPTIONS
+
+# Dimensions block
+BEGIN DIMENSIONS
+  MAXBOUND 30
+END DIMENSIONS
+
+# Stress-period block(s)
+BEGIN PERIOD 1
+#Lay Row  Col  ExtHead Cond    boundname
+  2   1   10   tides   15.0    Estuary-L2
+  2   2   10   tides   15.0    Estuary-L2
+  2   3   10   tides   15.0    Estuary-L2 
+  2   4   10   tides   15.0    Estuary-L2
+  2   5   10   tides   15.0    Estuary-L2 
+  2   6   10   tides   15.0    Estuary-L2 
+  2   7   10   tides   15.0    Estuary-L2
+  2   8   10   tides   15.0    Estuary-L2  
+  2   9   10   tides   15.0    Estuary-L2  
+  2  10   10   tides   15.0    Estuary-L2
+  2  11   10   tides   15.0    Estuary-L2  
+  2  12   10   tides   15.0    Estuary-L2  
+  2  13   10   tides   15.0    Estuary-L2
+  2  14   10   tides   15.0    Estuary-L2  
+  2  15   10   tides   15.0    Estuary-L2  
+  3   1   10   tides   1500.   Estuary-L3
+  3   2   10   tides   1500.   Estuary-L3
+  3   3   10   tides   1500.   Estuary-L3 
+  3   4   10   tides   1500.   Estuary-L3
+  3   5   10   tides   1500.   Estuary-L3 
+  3   6   10   tides   1500.   Estuary-L3 
+  3   7   10   tides   1500.   Estuary-L3
+  3   8   10   tides   1500.   Estuary-L3  
+  3   9   10   tides   1500.   Estuary-L3  
+  3  10   10   tides   1500.   Estuary-L3
+  3  11   10   tides   1500.   Estuary-L3  
+  3  12   10   tides   1500.   Estuary-L3  
+  3  13   10   tides   1500.   Estuary-L3
+  3  14   10   tides   1500.   Estuary-L3  
+  3  15   10   tides   1500.   Estuary-L3  
+END PERIOD

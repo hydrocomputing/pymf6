@@ -1,0 +1,1 @@
+This problem demonstrates the time series and observation capabilities of MODFLOW 6.  Use of multiple boundary packages for a single simulation is also demonstrated by including three recharge packages.
