@@ -21,3 +21,5 @@ tools/**
 build/**
 dist/**
 pymf6.egg-info/**
+**/fort.*
+doc/lib_path.txt
