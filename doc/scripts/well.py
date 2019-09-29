@@ -1,22 +1,16 @@
-"""Example program that synchronizes an extraction and an injection well.
+"""Example program thats shows some temporal information from MF6.
 """
-
-from contextlib import redirect_stdout
 
 from pymf6.callback import Func
 from pymf6 import mf6
 
+import sys
+
+sys.stdout = open('screen.txt', 'w')
 
 class Well:
-    """
-    A pumping well.
 
-    Can be used of extraction or injection.
-    """
-
-    # pylint: disable=too-many-instance-attributes
     def __init__(self, name, simulation, model, index, pumping_capacity):
-        # pylint: disable=too-many-arguments
         self.name = name
         self.simulation = simulation
         self.model = model
@@ -27,27 +21,21 @@ class Well:
 
     @property
     def water_level(self):
-        """Water level at well."""
         if not self.node_index:
             self.node_index = self.model.WEL.NODELIST.value[self.index]
         return self.simulation.X.value[self.node_index]
 
     @property
     def pumping_rate(self):
-        """Current well pumping rate."""
         return self.model.WEL.BOUND.value[0, self.index]
 
     @pumping_rate.setter
     def pumping_rate(self, value):
-        """Set new pumping rate."""
         self.model.WEL.BOUND.value[0, self.index] = value
 
-    def adjust_pumping_rate(self, change_value):
-        """Adjust pumping rate with `change_value`.
 
-        Make sure that the pumping capacity is not exceeded.
-        Make sure it works for negative rates too.
-        """
+
+    def adjust_pumping_rate(self, change_value):
         new_potential_rate = self.pumping_rate + change_value
         if self.pumping_capacity < 0:
             new_potential_rate = min(new_potential_rate, 0)
@@ -64,11 +52,10 @@ class MyFunc(Func):
 
     # PyLint cannot understand MF6 variable access such as
     # `self.simulation.TDIS`
-    # pylint: disable=no-member, too-many-instance-attributes
+    # pylint: disable=no-member
 
-    def __init__(self, verbose=False):
+    def __init__(self):
         super().__init__()
-        self.verbose = verbose
         self.model = self.simulation.models[0]
         self.sim = self.simulation.solution_groups[0]
         self.target_water_level = 16
@@ -86,13 +73,11 @@ class MyFunc(Func):
             model=self.model,
             index=0,
             pumping_capacity=-self.withdrawal_well.pumping_capacity)
-        if self.verbose:
-            print('      {:>10s} {:>6s} {:>10s} {:>6s}'.format(
-                'withdrawal', 'rate', 'infil.', 'rate'))
+
+        print('      {:>10s} {:>7s} {:>10s} {:>7s}'.format('withdrawal', 'rate', 'infil.', 'rate'))
 
     @property
     def current_stress_period(self):
-        """The current stress period."""
         return self.simulation.TDIS.KPER.value
 
     def __call__(self):
@@ -110,21 +95,9 @@ class MyFunc(Func):
                 self.withdrawal_well.adjust_pumping_rate(self.decrement)
             self.infiltration_well.pumping_rate = -self.withdrawal_well.pumping_rate
             self.withdrawal_well.pumping_rate = self.withdrawal_well.pumping_rate
-            withd = self.withdrawal_well
-            infil = self.infiltration_well
-            if self.verbose:
-                print(f'      {withd.water_level:10.2f} {withd.pumping_rate:6.2f}',
-                      f'{infil.water_level:10.2f} {infil.pumping_rate:6.2f}')
-
+            print(f'      {self.withdrawal_well.water_level:10.2f} {self.withdrawal_well.pumping_rate:7.2f}',
+                  f'{self.infiltration_well.water_level:10.2f} {self.infiltration_well.pumping_rate:7.2f}')
 
 if __name__ == '__main__':
     # pylint: disable=c-extension-no-member
-    def main(screen_file='screen.txt'):
-        """
-        Sample run with redirected `print`.
-        :param screen_file: File name for printed output.
-        :return: None
-        """
-        with open(screen_file, 'w') as screen, redirect_stdout(screen):
-            mf6.mf6_sub(MyFunc(verbose=True))
-    main()
+    mf6.mf6_sub(MyFunc())
