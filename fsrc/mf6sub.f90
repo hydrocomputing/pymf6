@@ -120,7 +120,7 @@ subroutine mf6_sub(cback)
     !
     ! -- TIME UPDATE (TU)
     call tdis_tu()
-    call cback()
+    
     !
     !
     ! -- READ AND PREPARE (RP)
@@ -142,6 +142,7 @@ subroutine mf6_sub(cback)
       call sp%sln_rp()
     enddo
     !
+    call cback()
     !
     ! -- CALCULATE (CA)
     call converge_reset()
