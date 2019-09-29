@@ -41,7 +41,34 @@ with this content:
     [build]
     compiler = mingw32
 
-## Clone the Needed Repos
+There are two ways of building.
+Which one works depends on your compiler setup.
+The full compile should work for all compliers.
+The
+
+## Full Compilation
+
+From `<path/to/repros>/pymf6/make/` type:
+
+    python compile_full_f2py.py
+
+This creates the extension (`*.pyd` or `*.so`) and moved into
+`<path/to/repros>/pymf6/pymf6`.
+
+
+## Partial Compilation
+
+The advantage of partial compilation is a much faster compilation step.
+However, compilation has only be done for these cases:
+
+1. Compile for a new MF6 version
+2. Fix a bug in the wrapping code on the Fortran side
+3. Add new functionality to Fortran wrapping code
+
+All of these should be a relative rare tasks.
+Therefore, the compilation time does not matter that much.
+
+### Clone the Needed Repos
 
 Currently, `pymf6` is still in its very early stages.
 The process contains several manual steps that can be automated in the
@@ -52,6 +79,7 @@ In general the changes to the MODFLOW 6 Fortran source are minor and
 rather "formal", i.e. no changes in functionality but just moving the
 main program in to a subroutine and adding another outer calling layer.
 This is needed to give `f2py` the opportunity to hand in a Python callback.
+
 
 As of June 2019, the source only lives in this
 [cloned repo of MODFLOW 6](https://github.com/hydrocomputing/modflow6)
@@ -105,3 +133,5 @@ This creates the extension (`*.pyd` or `*.so`) and moved into
 `<path/to/repros>/pymf6/pymf6`.
 
 **Done for the compilation part. :)**
+
+
