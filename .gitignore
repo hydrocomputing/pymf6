@@ -23,3 +23,4 @@ dist/**
 pymf6.egg-info/**
 **/fort.*
 doc/lib_path.txt
+**/screen.txt
