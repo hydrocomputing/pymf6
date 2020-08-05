@@ -14,6 +14,7 @@ Welcome to pymf6's documentation!
    principle.md
    notebooks/Interactive
    examples.rst
+   binder.rst
    developer.rst
    changelog.md
 
