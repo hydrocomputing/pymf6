@@ -33,7 +33,7 @@ class MyFunc(Func):
         if self.simulation.TDIS.KPER.value == 3:
             # set all constant head boundary conditions to 10
             self.model.CHD_1.BOUND[:] = 10
-            # Change ths values to see how the calculated water level changes.
+            # Change this values to see how the calculated water level changes.
         else:
             # other set them to 25.
             self.model.CHD_1.BOUND[:] = 25
