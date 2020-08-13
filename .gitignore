@@ -25,3 +25,6 @@ pymf6.egg-info/**
 doc/lib_path.txt
 **/screen.txt
 scratch/**
+**/ueflow_MF6_benchmarks.xlsx
+**/~*
+**/.simulations
