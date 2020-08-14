@@ -7,7 +7,6 @@ from pathlib import Path
 import flopy
 import flopy.mf6 as mf6
 
-from .base_data import data as DATA
 
 class BaseModel:
     """A base model that can run allone or can be modified.
@@ -22,10 +21,8 @@ class BaseModel:
     """
     #  pylint: disable-msg=too-many-instance-attributes
     def __init__(
-            self, name, sim_path=Path('.simulations',), data=None,
+            self, name, data, sim_path=Path('.simulations',),
             exe_name='mf6'):
-        if data is None:
-            data = DATA
         self.sim_path = sim_path / name
         self._budget_file = f'{name}.bud'
         self._head_file = f'{name}.hds'
