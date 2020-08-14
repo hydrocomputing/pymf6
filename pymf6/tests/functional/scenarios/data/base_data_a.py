@@ -9,7 +9,7 @@ data = {
         'inner_maximum': 200,
         'inner_hclose': 1e-5,
         },
-    'time': {
+    'tdis': {
         'time_units': 'seconds',
         'stress_periods':[
             {'lenght': 1, 'unit': 's'},
@@ -28,7 +28,7 @@ data = {
         'lower_bot': -20.0,
         'length_units': 'METERS'
         },
-    'init': {
+    'ic': {
         'initial_head': 0
         },
     'npf': {

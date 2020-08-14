@@ -35,7 +35,7 @@ class BaseModel:
         """Create data for `TDIS` package
         """
         if data is None:
-            data = self.data['time']
+            data = self.data['tdis']
         #  pylint: disable-msg=attribute-defined-outside-init
         self.tdis = mf6.ModflowTdis(self.sim, **self._clean_time_data(data))
 
@@ -60,7 +60,7 @@ class BaseModel:
         """Create data for `IC` package
         """
         if data is None:
-            data = self.data['init']
+            data = self.data['ic']
         #  pylint: disable-msg=invalid-name, attribute-defined-outside-init
         self.ic = mf6.ModflowGwfic(self.gwf, **self._clean_init_data(data))
 
@@ -201,8 +201,7 @@ class BaseModel:
     def write_simulation(self):
         """Write the MF6 input files.
         """
-        names = ['tdis', 'ims', 'dis', 'ic', 'npf', 'oc', 'sto', 'rch', 'chd']
-        for name in names:
+        for name in self.data.keys():
             if not hasattr(self, name):
                 getattr(self, f'make_{name}')()
         self.sim.write_simulation()
