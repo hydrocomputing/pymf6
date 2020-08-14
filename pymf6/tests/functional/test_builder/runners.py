@@ -13,7 +13,7 @@ from pymf6 import run
 def mf6_pure(model_name, base_data, data=None):
     """Run an M6 model with `flopy``
 
-`base_data` and `data` will be merged
+    `base_data` and `data` will be merged
     """
     model_data = deepcopy(base_data)
     if data:
