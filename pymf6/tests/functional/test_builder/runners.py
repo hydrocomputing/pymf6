@@ -23,13 +23,17 @@ def mf6_pure(model_name, base_data, data=None):
     model.run_simulation()
 
 
-def mf6_pymf6(model_name, cb_cls, data, sim_dir='.simulations'):
+def mf6_pymf6(model_name, cb_cls, data, sim_dir='.simulations', kwargs=None):
     """Run a MF6 mode wot `pymf6` using `cb_cls`
     """
     model = BaseModel(model_name, data)
     model.write_simulation()
     with TempDir(f'{sim_dir}/{model_name}'):
-        run(cb_cls())
+        if kwargs:
+            run(cb_cls(**kwargs))
+        else:
+            run(cb_cls())
+    model.plot_head()
 
 
 def read_head(model_name, head_file=None, sim_dir='.simulations'):
@@ -47,5 +51,5 @@ def show_diff(name1, name2):
     header = f'Head Difference between scenario "{name1}" and "{name2}"'
     print(header)
     print('=' * len(header))
-    print(f'Min diff: {diff.min()}, Max diff: {diff.max()}')
+    print(f'Min diff: {diff.min():8.4e}, Max diff: {diff.max():8.4e}')
     print()
