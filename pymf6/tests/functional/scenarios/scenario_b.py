@@ -20,8 +20,7 @@ class MyFunc(Func):
         self.rates = rates
         self.model = self.simulation.models[0]
         self.sim = self.simulation.solution_groups[0]
-        self.wel_rate_changed_first = False
-        self.wel_rate_changed_second = False
+        self.wel_rate_changed = False
 
     def __call__(self):
         """
@@ -29,17 +28,11 @@ class MyFunc(Func):
         """
         super().__call__()
         # pylint: disable-msg=no-member
-        if (not self.wel_rate_changed_first and
+        if (not self.wel_rate_changed and
                 self.simulation.TDIS.KPER.value == 3):
-            self.wel_rate_changed_first = True
+            self.wel_rate_changed = True
             self.model.WEL_0.BOUND[0][0][0] = self.rates['abs']
             self.model.WEL_0.BOUND[0][0][1] = self.rates['inj']
-
-        # elif (not self.wel_rate_changed_second and
-        #       self.simulation.TDIS.KPER.value == 3):
-        #     self.wel_rate_changed_second = True
-        #     self.model.WEL_0.BOUND[0][0][0] = 0
-        #     self.model.WEL_0.BOUND[0][0][1] = 0
 
 
 def main():
