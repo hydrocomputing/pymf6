@@ -22,7 +22,7 @@ data = {
         'nrow': 100,
         'ncol': 300,
         'len_x': 3000,
-        'len_y': -1000,
+        'len_y': 1000,
         'top': 0,
         'upper_bot': -10.0,
         'lower_bot': -20.0,
