@@ -1,0 +1,58 @@
+Scenario A
+
+Head Difference between scenario "a_base" and "a_mf6_pure"
+==========================================================
+Min diff: -2.0000e+00, Max diff: 4.0000e+00
+
+Head Difference between scenario "a_mf6_pure" and "b_pymf6"
+===========================================================
+Min diff: -4.0000e+00, Max diff: 2.0000e+00
+
+Head Difference between scenario "a_base" and "a_pymf6_base"
+============================================================
+Min diff: 0.0000e+00, Max diff: 0.0000e+00
+
+Head Difference between scenario "a_base" and "a_pymf6"
+=======================================================
+Min diff: -2.0000e+00, Max diff: 4.0000e+00
+
+
+
+Scenario B
+
+Head Difference between scenario "b_base" and "b_mf6_pure"
+==========================================================
+Min diff: -4.4809e-01, Max diff: 8.2111e+00
+
+Head Difference between scenario "b_mf6_pure" and "b_pymf6_wel"
+===============================================================
+Min diff: 0.0000e+00, Max diff: 6.9914e-08
+
+Head Difference between scenario "b_base" and "b_pymf6_base"
+============================================================
+Min diff: 0.0000e+00, Max diff: 0.0000e+00
+
+Head Difference between scenario "b_base" and "b_pymf6_wel"
+===========================================================
+Min diff: -4.4809e-01, Max diff: 8.2111e+00
+
+
+Scenario C
+
+Head Difference between scenario "c_base" and "c_mf6_pure"
+==========================================================
+Min diff: -1.4671e-01, Max diff: 4.6531e+00
+
+Head Difference between scenario "c_mf6_pure" and "c_pymf6_riv"
+===============================================================
+Min diff: -1.0483e-05, Max diff: 0.0000e+00
+
+Head Difference between scenario "c_base" and "c_pymf6_base"
+============================================================
+Min diff: 0.0000e+00, Max diff: 0.0000e+00
+
+Head Difference between scenario "c_base" and "c_pymf6_riv"
+===========================================================
+Min diff: -1.4671e-01, Max diff: 4.6531e+00
+
+
