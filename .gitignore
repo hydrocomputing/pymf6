@@ -28,3 +28,4 @@ scratch/**
 **/ueflow_MF6_benchmarks.xlsx
 **/~*
 **/.simulations
+pymf6/tests/functional/scenarios/*.png
