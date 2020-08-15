@@ -4,6 +4,8 @@
 from copy import deepcopy
 from pathlib import Path
 
+from matplotlib import pyplot as plt
+import matplotlib as mpl
 import flopy
 import flopy.mf6 as mf6
 
@@ -23,6 +25,7 @@ class BaseModel:
     def __init__(
             self, name, data, sim_path=Path('.simulations',),
             exe_name='mf6'):
+        self.name = name
         self.sim_path = sim_path / name
         self._budget_file = f'{name}.bud'
         self._head_file = f'{name}.hds'
@@ -115,6 +118,17 @@ class BaseModel:
             self.gwf,
             **self._clean_chd_data(data, self._mf6_dis_data))
 
+    def make_wel(self, data=None):
+        """Create data for `WEL`package
+        """
+        if data is None:
+            data = self.data['wel']
+        self.wel = mf6.ModflowGwfwel(
+            self.gwf,
+            boundnames=True,
+            save_flows=True,
+            **self._clean_wel_data(data))
+
     @staticmethod
     def _clean_solver_data(solver_data):
         solver_mf6 = deepcopy(solver_data)
@@ -198,10 +212,31 @@ class BaseModel:
         del chd_mf6['stress_periods']
         return chd_mf6
 
+    def _clean_wel_data(self, wel_data):
+        keys = list(wel_data.keys())
+        wel = {}
+        wel['maxbound'] = len(keys)
+        stress_periods = range(len(wel_data[keys[0]]['rates']))
+        empty = flopy.mf6.ModflowGwfwel.stress_period_data.empty
+        stresses = empty(
+            self.gwf, maxbound=wel['maxbound'], boundnames=True,
+            stress_periods=stress_periods)
+        for period in range(len(stresses)):
+            for index, well in enumerate(wel_data.values()):
+                stresses[period][index] = (
+                    well['coords'],
+                    well['rates'][period],
+                    well['name']
+                )
+        wel['stress_period_data'] = stresses
+        return wel
+
     def write_simulation(self):
         """Write the MF6 input files.
         """
-        for name in self.data.keys():
+        names = list(self.data.keys())
+        names.append('oc')
+        for name in names:
             if not hasattr(self, name):
                 getattr(self, f'make_{name}')()
         self.sim.write_simulation()
@@ -211,12 +246,21 @@ class BaseModel:
         """
         self.sim.run_simulation()
 
-    def plot_head(self):
+    def plot_head(self, show=False, save=True, layers=2):
         """Plot the head.
         """
         head_path = self.sim_path / self._head_file
         head = flopy.utils.HeadFile(str(head_path)).get_data()
-        pmv = flopy.plot.PlotMapView(self.gwf)
-        head_plot = pmv.plot_array(head)
-        pmv.ax.figure.colorbar(head_plot)
-        return pmv.ax.figure.show()
+        vmin = head.min()
+        vmax = head.max()
+
+        fig, axes = plt.subplots(nrows=layers, ncols=1,
+                                 sharex=True, sharey=True)
+        for layer, ax in enumerate(axes.flat):
+            pmv = flopy.plot.PlotMapView(self.gwf, layer=layer, ax=ax)
+            head_plot = pmv.plot_array(head, vmin=vmin, vmax=vmax)
+
+        cax, kw = mpl.colorbar.make_axes([ax for ax in axes.flat])
+        plt.colorbar(head_plot, cax=cax, **kw)
+        if save:
+            plt.savefig(f'{self.name}.png')
