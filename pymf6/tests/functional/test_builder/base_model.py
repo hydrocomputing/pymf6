@@ -39,7 +39,7 @@ class BaseModel:
         """
         if data is None:
             data = self.data['tdis']
-        #  pylint: disable-msg=attribute-defined-outside-init
+        # pylint: disable-msg=attribute-defined-outside-init
         self.tdis = mf6.ModflowTdis(self.sim, **self._clean_time_data(data))
 
     def make_ims(self, data=None):
@@ -119,15 +119,28 @@ class BaseModel:
             **self._clean_chd_data(data, self._mf6_dis_data))
 
     def make_wel(self, data=None):
-        """Create data for `WEL`package
+        """Create data for `WEL` package
         """
         if data is None:
             data = self.data['wel']
+        # pylint: disable-msg=attribute-defined-outside-init
         self.wel = mf6.ModflowGwfwel(
             self.gwf,
             boundnames=True,
             save_flows=True,
             **self._clean_wel_data(data))
+
+    def make_riv(self, data=None):
+        """Create data for `RIV` package
+        """
+        if data is None:
+            data = self.data['riv']
+        # pylint: disable-msg=attribute-defined-outside-init
+        self.riv = mf6.ModflowGwfriv(
+            self.gwf,
+            boundnames=True,
+            save_flows=True,
+            **self._clean_riv_data(data))
 
     @staticmethod
     def _clean_solver_data(solver_data):
@@ -221,7 +234,7 @@ class BaseModel:
         stresses = empty(
             self.gwf, maxbound=wel['maxbound'], boundnames=True,
             stress_periods=stress_periods)
-        for period in range(len(stresses)):
+        for period, _ in enumerate(stresses):
             for index, well in enumerate(wel_data.values()):
                 stresses[period][index] = (
                     well['coords'],
@@ -230,6 +243,22 @@ class BaseModel:
                 )
         wel['stress_period_data'] = stresses
         return wel
+
+    @staticmethod
+    def _clean_riv_data(riv_data):
+        stresses = []
+        for col in riv_data['columns']:
+            stresses.append(
+                (
+                    (riv_data['layer'], riv_data['row'], col),
+                    riv_data['stage'],
+                    riv_data['cond'],
+                    riv_data['rbot'],
+                    riv_data['name']
+                )
+            )
+        riv = {'stress_period_data': {riv_data['kper']: stresses}}
+        return riv
 
     def write_simulation(self):
         """Write the MF6 input files.
@@ -246,7 +275,7 @@ class BaseModel:
         """
         self.sim.run_simulation()
 
-    def plot_head(self, show=False, save=True, layers=2):
+    def plot_head(self, save=True, layers=2):
         """Plot the head.
         """
         head_path = self.sim_path / self._head_file
@@ -254,13 +283,12 @@ class BaseModel:
         vmin = head.min()
         vmax = head.max()
 
-        fig, axes = plt.subplots(nrows=layers, ncols=1,
-                                 sharex=True, sharey=True)
+        _, axes = plt.subplots(nrows=layers, ncols=1, sharex=True, sharey=True)
         for layer, ax in enumerate(axes.flat):
             pmv = flopy.plot.PlotMapView(self.gwf, layer=layer, ax=ax)
             head_plot = pmv.plot_array(head, vmin=vmin, vmax=vmax)
 
-        cax, kw = mpl.colorbar.make_axes([ax for ax in axes.flat])
-        plt.colorbar(head_plot, cax=cax, **kw)
+        cax, kwargs = mpl.colorbar.make_axes(list(axes.flat))
+        plt.colorbar(head_plot, cax=cax, **kwargs)
         if save:
             plt.savefig(f'{self.name}.png')
