@@ -24,7 +24,7 @@ class MyFunc(Func):
 
     def __call__(self):
         """
-        Change `WEL` for stress period 2.
+        Change `WEL` for stress period 3.
         """
         super().__call__()
         # pylint: disable-msg=no-member
