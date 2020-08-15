@@ -19,6 +19,3 @@ data['wel'] = {
             'rates': [0, 0, 0]
         },
         }
-
-    # absrate = -100/86400
-    # injrate = 100/86400
