@@ -12,10 +12,10 @@ data['wel'] = {
             'name': 'Abstraction Well',
             'coords': (0, 49, 100),
             'rates': [0, 0, 0]
-        },
+            },
         'inj': {
             'name': 'Injection Well',
             'coords': (1, 49, 200),
             'rates': [0, 0, 0]
-        },
+            },
         }
