@@ -8,7 +8,7 @@ from . mf6 import mf6_sub  # pylint: disable-msg=no-name-in-module
 
 __all__ = ['__version__', '__name__', '__author__']
 
-__version__ = '0.4.2'
+__version__ = '0.5.0'
 __name__ = 'pymf6'  # pylint: disable=redefined-builtin
 __author__ = 'Mike Müller'
 
