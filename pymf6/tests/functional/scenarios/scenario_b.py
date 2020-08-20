@@ -35,6 +35,10 @@ class MyFunc(Func):
             self.model.WEL_0.BOUND[0][0][1] = self.rates['inj']
 
 
+class Empty:
+    pass
+
+
 def main():
     """Run all models
     """
@@ -50,7 +54,7 @@ def main():
 
     mf6_pure('b_base', base_data=base_data)
     mf6_pure(model_name='b_mf6_pure', base_data=base_data, data=data)
-    mf6_pymf6(model_name='b_pymf6_base', data=base_data, cb_cls=Func)
+    mf6_pymf6(model_name='b_pymf6_base', data=base_data, cb_cls=Empty)
     mf6_pymf6(
         model_name='b_pymf6_wel', data=base_data, cb_cls=MyFunc,
         kwargs={'rates': frozendict(rates)})

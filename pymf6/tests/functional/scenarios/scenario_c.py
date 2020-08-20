@@ -36,6 +36,10 @@ class MyFunc(Func):
             self.model.RIV_0.BOUND[0][0][:] = self.stage
 
 
+class Empty:
+    pass
+
+
 
 def main():
     """Run all models
@@ -54,7 +58,7 @@ def main():
 
     mf6_pure('c_base', base_data=base_data)
     mf6_pure(model_name='c_mf6_pure', base_data=base_data, data=data)
-    mf6_pymf6(model_name='c_pymf6_base', data=base_data, cb_cls=Func)
+    mf6_pymf6(model_name='c_pymf6_base', data=base_data, cb_cls=Empty)
     mf6_pymf6(
         model_name='c_pymf6_riv', data=base_data, cb_cls=MyFunc,
         kwargs={'stage': stage, 'rates': frozendict(rates)})
