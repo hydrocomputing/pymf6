@@ -12,13 +12,15 @@ requirements:
   build:
     - python
     - setuptools
-    - numpy
+    - numpy >=1.19
 
   run:
     - numpy
+    - matplotlib
+    - flopy
     - m2w64-toolchain  # [win]
+    - frozendict
 
 about:
   home: hydrocomputing
   license: MIT
-
