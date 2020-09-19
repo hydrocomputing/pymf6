@@ -4,6 +4,7 @@
 from copy import deepcopy
 
 import flopy
+import numpy as np
 
 from pymf6.tools.tempdir import TempDir
 from pymf6.tests.functional.test_builder.base_model import BaseModel
@@ -53,3 +54,26 @@ def show_diff(name1, name2):
     print('=' * len(header))
     print(f'Min diff: {diff.min():8.4e}, Max diff: {diff.max():8.4e}')
     print()
+
+
+def rmse(predictions, targets):
+    """Calculate RMSE: (Root mean squared error)
+    """
+    return np.sqrt(((predictions - targets) ** 2).mean())
+
+
+def mse(predictions, targets):
+    """Calculate MSE: (Mean squared error)
+    """
+    return ((predictions - targets) ** 2).mean()
+
+
+def calc_errors(target_name, prediction_name):
+    """Calculate RMSE and MSE
+    """
+    predictions = read_head(prediction_name)
+    targets = read_head(target_name)
+    return {
+        'RMSE': rmse(predictions, targets),
+        'MSE': mse(predictions, targets)
+    }
