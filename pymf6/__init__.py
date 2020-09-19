@@ -17,15 +17,25 @@ BACKUP_DIR = '__pymf6__backup'
 DATA_MAPPING = 'data_mapping.pkl'
 
 
-def run(callback):
+def func(callback, kwargs):
+    """Helper function for run with `multiprocessing`
+    """
+    from pymf6.callback import Func
+    
+    class MyFunc(callback, Func):
+         pass
+
+    if kwargs is None:
+        kwargs = {}
+        
+    mf6_sub(MyFunc(**kwargs))
+
+
+def run(callback, kwargs):
     """Run the MF6 model in the current paths with `callback`
     """
 
-    def func():
-        """Helper function for run with `multiprocessing`
-        """
-        mf6_sub(callback)
-
-    process = Process(target=func)
+    
+    process = Process(target=func, args=(callback, kwargs))
     process.start()
     process.join()

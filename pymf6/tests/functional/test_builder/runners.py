@@ -25,15 +25,12 @@ def mf6_pure(model_name, base_data, data=None):
 
 
 def mf6_pymf6(model_name, cb_cls, data, sim_dir='.simulations', kwargs=None):
-    """Run a MF6 mode wot `pymf6` using `cb_cls`
+    """Run a MF6 mode with `pymf6` using `cb_cls`
     """
     model = BaseModel(model_name, data)
     model.write_simulation()
     with TempDir(f'{sim_dir}/{model_name}'):
-        if kwargs:
-            run(cb_cls(**kwargs))
-        else:
-            run(cb_cls())
+        run(cb_cls, kwargs)
     model.plot_head()
 
 
