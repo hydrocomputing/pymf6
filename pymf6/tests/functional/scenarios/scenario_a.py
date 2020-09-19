@@ -31,6 +31,10 @@ class MyFunc(Func):
             self.model.CHD_0.BOUND[0][0][1::2] = 5
 
 
+class Empty:
+    pass
+
+
 def run_base():
     """Run all models
     """
@@ -44,7 +48,7 @@ def run_base():
             }
     mf6_pure(model_name='a_mf6_pure', base_data=base_data, data=data)
     mf6_pymf6(model_name='a_pymf6', data=base_data, cb_cls=MyFunc)
-    mf6_pymf6(model_name='a_pymf6_base', data=base_data, cb_cls=Func)
+    mf6_pymf6(model_name='a_pymf6_base', data=base_data, cb_cls=Empty)
 
     show_diff('a_base', 'a_mf6_pure')
     print(calc_errors('a_base', 'a_mf6_pure'))
