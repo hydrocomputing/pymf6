@@ -1,4 +1,4 @@
-"""Test sceanrio A (see Excel file `'ueflow_MF6_benchmarks.xlsx)
+"""Test sceanrio A (see Excel file `pymf6_MF6_benchmarks.xlsx`)
 """
 
 from copy import deepcopy

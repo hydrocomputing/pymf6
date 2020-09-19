@@ -1,4 +1,4 @@
-"""Test sceanrio A (see Excel file `'ueflow_MF6_benchmarks.xlsx)
+"""Test sceanrio A (see Excel file `pymf6_MF6_benchmarks.xlsx`)
 """
 
 from copy import deepcopy
@@ -32,7 +32,7 @@ class MyFunc(Func):
         # pylint: disable-msg=no-member
         if (not self.riv_stage_changed  and
                 self.simulation.TDIS.KPER.value == 3):
-            self.riv_stage_changed  = True
+            self.riv_stage_changed = True
             self.model.WEL_0.BOUND[0][0][0] = self.rates['abs']
             self.model.RIV_0.BOUND[0][0][:] = self.stage
 

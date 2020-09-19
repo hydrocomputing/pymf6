@@ -1,4 +1,4 @@
-"""Test sceanrio A (see Excel file `'ueflow_MF6_benchmarks.xlsx)
+"""Test sceanrio A (see Excel file `pymf6_MF6_benchmarks.xlsx`)
 """
 
 from pprint import pprint
@@ -38,7 +38,7 @@ class Empty:
 def run_base():
     """Run all models
     """
-    mf6_pure('a_base', base_data=base_data)
+    
     data = {'chd': {
                 'stress_periods': [
                     {'h_west': 6, 'h_east': 3},
@@ -46,6 +46,7 @@ def run_base():
                     ]
                 }
             }
+    mf6_pure('a_base', base_data=base_data)
     mf6_pure(model_name='a_mf6_pure', base_data=base_data, data=data)
     mf6_pymf6(model_name='a_pymf6', data=base_data, cb_cls=MyFunc)
     mf6_pymf6(model_name='a_pymf6_base', data=base_data, cb_cls=Empty)
@@ -53,6 +54,7 @@ def run_base():
     show_diff('a_base', 'a_mf6_pure')
     print(calc_errors('a_base', 'a_mf6_pure'))
     show_diff('a_mf6_pure', 'a_pymf6')
+    print(calc_errors('a_pymf6', 'a_mf6_pure'))
     show_diff('a_base', 'a_pymf6_base')
     show_diff('a_base', 'a_pymf6')
 
