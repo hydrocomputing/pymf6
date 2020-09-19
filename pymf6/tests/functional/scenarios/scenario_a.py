@@ -9,7 +9,7 @@ from pymf6.tests.functional.test_builder.runners import (
     mf6_pure, mf6_pymf6, show_diff, calc_errors)
 
 
-class MyFunc:
+class MyFunc(Func):
     """Class whose instances act like a function, i.e. are callables
     """
 
@@ -31,12 +31,7 @@ class MyFunc:
             self.model.CHD_0.BOUND[0][0][1::2] = 5
 
 
-class Empty:
-    pass
-
-
-
-def main():
+def run_base():
     """Run all models
     """
     mf6_pure('a_base', base_data=base_data)
@@ -49,13 +44,14 @@ def main():
             }
     mf6_pure(model_name='a_mf6_pure', base_data=base_data, data=data)
     mf6_pymf6(model_name='a_pymf6', data=base_data, cb_cls=MyFunc)
-    mf6_pymf6(model_name='a_pymf6_base', data=base_data, cb_cls=Empty)
+    mf6_pymf6(model_name='a_pymf6_base', data=base_data, cb_cls=Func)
 
     show_diff('a_base', 'a_mf6_pure')
-    show_diff('a_mf6_pure', 'a_pymf6')
+    print(calc_errors('a_base', 'a_mf6_pure'))
+    show_diff('a_mf6_pure', 'b_pymf6')
     show_diff('a_base', 'a_pymf6_base')
     show_diff('a_base', 'a_pymf6')
 
 
 if __name__ == '__main__':
-    main()
+    run_base()
