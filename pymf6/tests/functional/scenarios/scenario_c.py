@@ -2,13 +2,14 @@
 """
 
 from copy import deepcopy
+from pprint import pprint
 
 from frozendict import frozendict
 
 from data.base_data_c import data as base_data
 from pymf6.callback import Func
 from pymf6.tests.functional.test_builder.runners import (
-    mf6_pure, mf6_pymf6, show_diff)
+    mf6_pure, mf6_pymf6, show_diff, calc_errors)
 
 
 class MyFunc(Func):
@@ -61,7 +62,9 @@ def main():
 
     show_diff('c_base', 'c_mf6_pure')
     show_diff('c_mf6_pure', 'c_pymf6_riv')
+    pprint(calc_errors('c_mf6_pure', 'c_pymf6_riv'))
     show_diff('c_base', 'c_pymf6_base')
+    pprint(calc_errors('c_base', 'c_pymf6_base'))
     show_diff('c_base', 'c_pymf6_riv')
 
 

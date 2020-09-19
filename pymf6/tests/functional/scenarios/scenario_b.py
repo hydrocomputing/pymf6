@@ -3,12 +3,14 @@
 
 from copy import deepcopy
 
+from pprint import pprint
+
 from frozendict import frozendict
 
 from data.base_data_b import data as base_data
 from pymf6.callback import Func
 from pymf6.tests.functional.test_builder.runners import (
-    mf6_pure, mf6_pymf6, show_diff)
+    mf6_pure, mf6_pymf6, show_diff, calc_errors)
 
 
 class MyFunc(Func):
@@ -57,7 +59,9 @@ def main():
 
     show_diff('b_base', 'b_mf6_pure')
     show_diff('b_mf6_pure', 'b_pymf6_wel')
+    pprint(calc_errors('b_mf6_pure', 'b_pymf6_wel'))
     show_diff('b_base', 'b_pymf6_base')
+    pprint(calc_errors('b_base', 'b_pymf6_base'))
     show_diff('b_base', 'b_pymf6_wel')
 
 
