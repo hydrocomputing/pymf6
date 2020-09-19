@@ -52,7 +52,7 @@ def run_base():
 
     show_diff('a_base', 'a_mf6_pure')
     print(calc_errors('a_base', 'a_mf6_pure'))
-    show_diff('a_mf6_pure', 'b_pymf6')
+    show_diff('a_mf6_pure', 'a_pymf6')
     show_diff('a_base', 'a_pymf6_base')
     show_diff('a_base', 'a_pymf6')
 
