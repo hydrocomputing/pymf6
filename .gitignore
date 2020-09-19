@@ -30,3 +30,4 @@ scratch/**
 pymf6/tests/functional/scenarios/*.png
 pymf6/tests/functional/local_commmands.txt
 pymf6/tests/functional/scenarios/.notebooks
+**.~lock.**
