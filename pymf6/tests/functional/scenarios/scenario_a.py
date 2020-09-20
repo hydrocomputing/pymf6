@@ -58,9 +58,9 @@ def run_base():
 
     show_diff('a_base', 'a_mf6_pure')
     show_diff('a_mf6_pure', 'a_pymf6')
-    print(calc_errors('a_pymf6', 'a_mf6_pure'))
+    pprint(calc_errors('a_pymf6', 'a_mf6_pure'))
     show_diff('a_base', 'a_pymf6_base')
-    print(calc_errors('a_base', 'a_pymf6_base'))
+    pprint(calc_errors('a_base', 'a_pymf6_base'))
     show_diff('a_base', 'a_pymf6')
 
 
@@ -90,5 +90,5 @@ def run_all():
     )
 
 if __name__ == '__main__':
-    run_base()
-    #run_all()
+    # run_base()
+    run_all()
