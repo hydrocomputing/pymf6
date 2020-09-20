@@ -6,11 +6,12 @@ from pprint import pprint
 
 from frozendict import frozendict
 
-from data.base_data_c import data as base_data_c
 from pymf6.callback import Func
 from pymf6.tests.functional.test_builder.runners import (
-    mf6_pure, mf6_pymf6, show_diff, calc_errors, run_parameter_sweep)
+    mf6_pure, mf6_pymf6, show_diff, calc_errors, run_parameter_sweep,
+    make_error_stats)
 
+from data.base_data_c import data as base_data_c
 
 class MyFunc(Func):
     """Class whose instances act like a function, i.e. are callables
@@ -36,8 +37,9 @@ class MyFunc(Func):
             self.model.RIV_0.BOUND[0][0][:] = self.data['riv']['stage']
 
 
-class Empty:
-    pass
+class Empty:  # pylint: disable-msg=too-few-public-methods
+    """Do nothing
+    """
 
 
 
@@ -46,7 +48,7 @@ def main():
     """
 
     rates = {
-        'abs': -100/86400,
+        'abs': round(-100/86400, 6),
         }
     stage = -1
 
@@ -57,7 +59,7 @@ def main():
     data = {'wel': wel_data, 'riv': riv_data}
 
     mf6_pure('c_base', base_data=base_data_c)
-    mf6_pure(model_name='c_mf6_pure', base_data=base_data, data=data)
+    mf6_pure(model_name='c_mf6_pure', base_data=base_data_c, data=data)
     mf6_pymf6(model_name='c_pymf6_base', data=base_data_c, cb_cls=Empty)
     mf6_pymf6(
         model_name='c_pymf6_riv', data=base_data_c, cb_cls=MyFunc,
@@ -93,17 +95,19 @@ def run_scenario_c(key, rates=None, stage=None, data=None, new_base_data=None):
 
 
 def run_all():
+    """Run all calculations
+    """
     run_scenario_c(
         key='-100-1',
         rates={
-        'abs': -100/86400,
+        'abs': round(-100/86400, 6),
         },
         stage=-1
     )
     run_scenario_c(
         key='-200-1',
         rates={
-        'abs': -200/86400,
+        'abs': round(-200/86400, 6),
         },
         stage=-1
     )
@@ -114,7 +118,7 @@ def run_all():
             'layer': 0,
             'row': 50,
             'columns': range(180, 199),
-            'cond': 10 / 86400,
+            'cond': round(10 / 86400, 6),
             'rbot': -2,
             'stage': -2,
             'kper': 2,
@@ -123,12 +127,20 @@ def run_all():
     run_scenario_c(
         key='-100-1coords',
         rates={
-            'abs': -100/86400,
+            'abs': round(-100/86400, 6),
             },
         stage=-1,
         data=data,
         new_base_data=data,
     )
+
+def show_errors():
+    """Show cumulated error statistics
+    """
+    pprint(make_error_stats('c'))
+
+
 if __name__ == '__main__':
     # main()
-    run_all()
+    # run_all()
+    show_errors()
