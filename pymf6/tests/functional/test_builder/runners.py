@@ -136,3 +136,30 @@ def run_parameter_sweep(
     flag = 'a' if os.path.exists(f'{scenario_name}_param.db.dat') else 'c'
     with shelve.open(f'{scenario_name}_param.db', flag) as dbase:
         dbase[key] = res
+
+
+def make_error_stats(scenario_name):
+    """Calculate some statistics for MSE and RSE
+    """
+    mse = []
+    rmse = []
+    with shelve.open(f'{scenario_name}_param.db') as dbase:
+        for value in dbase.values():
+            for entry in value['errors'].values():
+                try:
+                    mse.append(entry['MSE'])
+                    rmse.append(entry['RMSE'])
+                except IndexError:
+                    pass
+    def make_stats(values):
+        """Calculate simple statistics
+        """
+        val = np.array(values)
+        return {
+            'mean': val.mean(),
+            'min': val.min(),
+            'max': val.max(),
+            'std': val.std(),
+            'n': val.size}
+
+    return  {'RMSE': make_stats(rmse), 'MSE': make_stats(mse)}
