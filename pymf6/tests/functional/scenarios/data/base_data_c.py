@@ -28,7 +28,7 @@ data['riv'] = {
     'layer': 0,
     'row': 50,
     'columns': range(190, 209),
-    'cond': 10 / 86400,
+    'cond': round(10 / 86400, 6),
     'rbot': -2,
     'stage': -2,
     'kper': 2,
