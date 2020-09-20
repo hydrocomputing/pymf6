@@ -7,10 +7,12 @@ from pprint import pprint
 
 from frozendict import frozendict
 
-from data.base_data_b import data as base_data_b
 from pymf6.callback import Func
 from pymf6.tests.functional.test_builder.runners import (
-    mf6_pure, mf6_pymf6, show_diff, calc_errors, run_parameter_sweep)
+    mf6_pure, mf6_pymf6, show_diff, calc_errors, run_parameter_sweep,
+    make_error_stats)
+
+from data.base_data_b import data as base_data_b
 
 
 class MyFunc(Func):
@@ -19,7 +21,7 @@ class MyFunc(Func):
 
     def __init__(self, data):
         super().__init__()
-        self.data = data
+        self.wel = data['wel']
         self.model = self.simulation.models[0]
         self.sim = self.simulation.solution_groups[0]
         self.wel_rate_changed = False
@@ -33,12 +35,13 @@ class MyFunc(Func):
         if (not self.wel_rate_changed and
                 self.simulation.TDIS.KPER.value == 3):
             self.wel_rate_changed = True
-            self.model.WEL_0.BOUND[0][0][0] = self.data['wel']['abs']['rates'][2]
-            self.model.WEL_0.BOUND[0][0][1] = self.data['wel']['inj']['rates'][2]
+            self.model.WEL_0.BOUND[0][0][0] = self.wel['abs']['rates'][2]
+            self.model.WEL_0.BOUND[0][0][1] = self.wel['inj']['rates'][2]
 
 
-class Empty:
-    pass
+class Empty:  # pylint: disable-msg=too-few-public-methods
+    """Do nothing
+    """
 
 
 def main():
@@ -46,8 +49,8 @@ def main():
     """
 
     rates = {
-        'abs': -5000/86400,
-        'inj': 50/86400
+        'abs': round(-5000/86400, 6),
+        'inj': round(50/86400, 6)
         }
     wel_data = deepcopy(base_data_b['wel'])
     wel_data['abs']['rates'] = [0, 0, rates['abs']]
@@ -86,51 +89,61 @@ def run_scenario_b(key, rates=None, data=None, new_base_data=None):
 
 
 def run_all():
+    """Run all calculations
+    """
     run_scenario_b(
         key='-5000_50',
         rates={
-            'abs': -5000/86400,
-            'inj': 50/86400
+            'abs': round(-5000/86400, 6),
+            'inj': round(50/86400, 6)
             }
             )
 
     run_scenario_b(
         key='-500_500',
         rates={
-            'abs': -500/86400,
-            'inj': 500/86400
+            'abs': round(-500/86400, 6),
+            'inj': round(500/86400, 6)
             }
             )
     run_scenario_b(
         key='-5000_50_coords',
         data={'wel': {
-        'abs': {
-            'name': 'Abstraction Well',
-            'coords': (0, 49, 50),
-            'rates': [0, 0, -5000/86400,]
-            },
-        'inj': {
-            'name': 'Injection Well',
-            'coords': (1, 49, 250),
-            'rates': [0, 0, 50/86400]
-            },
-                    },
+            'abs': {
+                'name': 'Abstraction Well',
+                'coords': (0, 49, 50),
+                'rates': [0, 0, round(-5000/86400, 6)]
+                },
+            'inj': {
+                'name': 'Injection Well',
+                'coords': (1, 49, 250),
+                'rates': [0, 0, round(50/86400, 6)]
+                },
+        },
         },
         new_base_data={'wel': {
-        'abs': {
-            'name': 'Abstraction Well',
-            'coords': (0, 49, 50),
-            'rates': [0, 0, 0]
-            },
-        'inj': {
-            'name': 'Injection Well',
-            'coords': (1, 49, 250),
-            'rates': [0, 0, 0]
-            },
+            'abs': {
+                'name': 'Abstraction Well',
+                'coords': (0, 49, 50),
+                'rates': [0, 0, 0]
+                },
+            'inj': {
+                'name': 'Injection Well',
+                'coords': (1, 49, 250),
+                'rates': [0, 0, 0]
+                },
         },
         }
             )
 
+
+def show_errors():
+    """Show cumulated error statistics
+    """
+    pprint(make_error_stats('b'))
+
+
 if __name__ == '__main__':
     # main()
-    run_all()
+    # run_all()
+    show_errors()
