@@ -47,6 +47,23 @@ def read_head(model_name, head_file=None, sim_dir='.simulations'):
     return flopy.utils.HeadFile(head_file).get_data()
 
 
+def read_budget(model_name, budget_file=None, sim_dir='.simulations'):
+    """Read head file of given run
+    """
+    if budget_file is None:
+        budget_file = f'{sim_dir}/{model_name}/{model_name}.bud'
+    bud = flopy.utils.CellBudgetFile(budget_file, precision='double')
+    names = [name.decode('utf-8').strip() for name in bud.textlist]
+    values = {}
+    for name in names:
+        data = bud.get_data(text=name)[-1]
+        if isinstance(data, np.recarray):
+            values[name] = data['q']
+        else:
+            values[name] = data
+    return values
+
+
 def show_diff(name1, name2):
     """Show maximun and minimum head difference between two models
     """
@@ -73,17 +90,29 @@ def mse(predictions, targets):
 def calc_errors(target_name, prediction_name):
     """Calculate RMSE and MSE
     """
-    predictions = read_head(prediction_name)
-    targets = read_head(target_name)
-    return {
-        'RMSE': rmse(predictions, targets),
-        'MSE': mse(predictions, targets)
+    head_predictions = read_head(prediction_name)
+    head_targets = read_head(target_name)
+    res = {
+        'head':
+         {
+             'RMSE': rmse(head_predictions, head_targets),
+             'MSE': mse(head_predictions, head_targets)
+             }
     }
+    budget_predictions = read_budget(prediction_name)
+    budget_targets = read_budget(target_name)
+    assert budget_predictions.keys() == budget_targets.keys()
+    for name, target_value in budget_targets.items():
+        res[f'budget_{name}'] = {
+            'RMSE': rmse(budget_predictions[name], target_value),
+            'MSE': mse(budget_predictions[name], target_value)
+             }
+    return res
 
 
 def run_parameter_sweep(
         key,
-        CallbackFunc,
+        callback,
         data,
         new_base_data=None,
         base_data=None,
@@ -98,12 +127,12 @@ def run_parameter_sweep(
         for dkey, value in new_base_data.items():
             base_data[dkey].update(value)
     mf6_pure(model_name=model_name_mf6, base_data=base_data, data=data)
-    mf6_pymf6(model_name=model_name_pymf6, data=base_data, cb_cls=CallbackFunc,
+    mf6_pymf6(model_name=model_name_pymf6, data=base_data, cb_cls=callback,
               kwargs=frozendict({'data': data}))
     res = {}
     res['errors'] = calc_errors(model_name_pymf6, model_name_mf6)
     res['data'] = data
     res['new_base_data'] = new_base_data
     flag = 'a' if os.path.exists(f'{scenario_name}_param.db.dat') else 'c'
-    with shelve.open(f'{scenario_name}_param.db', flag) as db:
-        db[key] = res
+    with shelve.open(f'{scenario_name}_param.db', flag) as dbase:
+        dbase[key] = res
