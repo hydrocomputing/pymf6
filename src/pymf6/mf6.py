@@ -45,7 +45,7 @@ class MF6:
             MF6.old_mf6 = self._mf6
             self._mf6.initialize(str(self.nam_file))
             self.__class__.is_initialized = True
-            self.mf6:vars = self._get_vars()
+            self.vars = self._get_vars()
 
     def finalize(self):
         """Finalize the model run."""
