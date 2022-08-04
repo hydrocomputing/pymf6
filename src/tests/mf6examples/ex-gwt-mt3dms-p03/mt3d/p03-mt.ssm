@@ -1,0 +1,5 @@
+ T F F F F F F F F F F F F F F F
+        63
+         1         0 # stress period 1
+         1        16        16      1000         2
+        -1         0 # stress period 2

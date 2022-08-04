@@ -35,3 +35,4 @@ pymf6/tests/functional/scenarios/*_param.db.*
 **.stdout
 src/scratch/**
 src/.vscode/**
+src/tests/mf6examples/**/run.bat

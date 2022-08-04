@@ -1,0 +1,6 @@
+ T F F F F F F F F F F F F F F F
+        66
+         3         0 # stress period 1
+         1        16        16      1000         2
+         1         5        16      -711         2
+         1        27        16      -711         2
