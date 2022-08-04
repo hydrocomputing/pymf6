@@ -36,3 +36,7 @@ pymf6/tests/functional/scenarios/*_param.db.*
 src/scratch/**
 src/.vscode/**
 src/tests/mf6examples/**/run.bat
+**.uzt.bin
+**.bud
+**.ucn
+**.disv.grb
