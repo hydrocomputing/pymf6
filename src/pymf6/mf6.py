@@ -11,6 +11,8 @@ from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
+from . datastructures import Simulation
+
 
 class MF6:
     """
@@ -32,7 +34,6 @@ class MF6:
             self.dll_path = Path(self.ini_data['paths']['dll_path'])
         else:
             self.dll_path = Path(dll_path)
-        self.sol_count, self.models = read_simulation_data(self.nam_file)
         with cd(self.model_path):
             # Finalze if intialized instance exists.
             # This is helpful for interactive work in Notebooks.
@@ -45,6 +46,7 @@ class MF6:
             MF6.old_mf6 = self._mf6
             self._mf6.initialize(str(self.nam_file))
             self.__class__.is_initialized = True
+            self.simulation = Simulation(self._mf6, self.nam_file)
             self.vars = self._get_vars()
 
     def finalize(self):
@@ -95,35 +97,4 @@ class MF6:
                     xmi_error[name] = err
         return values
 
-def read_simulation_data(fname):
-    """
-    Read simulation data
-    :param fname: 'mfsim.name'
-    :return: List of dicts with data
-    """
-    models = []
-    started = False
-    finished = False
-    sol_count = 0
-    with open(fname, encoding='ascii') as fobj:
-        for raw_line in fobj:
-            line = raw_line.strip()
-            line_upper = line.upper()
-            if line_upper.strip().startswith('BEGIN SOLUTIONGROUP'):
-                sol_count += 1
-                continue
-            if line_upper == 'BEGIN MODELS':
-                started = True
-                continue
-            if started and not finished:
-                if line_upper == 'END MODELS':
-                    finished = True
-                    continue
-                if line.startswith('#'):
-                    continue
-                names = ['modeltype', 'namefile', 'modelname']
-                data = line.split()
-                models.append(dict(zip(names, data)) )
-    for model in models:
-        model['modelname'] = model['modelname'].upper()
-    return sol_count, models
+
