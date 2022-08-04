@@ -33,6 +33,7 @@ class Simulation:
                                 (range(1, sol_count + 1))]
         self.model_names = [entry['modelname'] for entry in self.models_meta]
         self.models = [Model(name) for name in self.model_names]
+        self.exchanges = {}
         self.TDIS = Package('TDIS')  # pylint: disable=invalid-name
         self._name_map_orig_internal = {}
         self._name_map_internal_original = {}
@@ -87,8 +88,7 @@ class Simulation:
             elif component_name in self.model_names:
                 obj = self._get_model(component_name)
             else:
-                print(self.model_names)
-                raise NameError(f'unknown component {component_name}')
+                obj = self.exchanges.setdefault(component_name, Exchange(component_name))
             if subcomponent_name:
                 self._add_package_attr(
                     obj, subcomponent_name, var_name, full_name)
@@ -196,6 +196,14 @@ class Package(MF6Object):
         self.name = name
         self.var_names = []
 
+class Exchange(MF6Object):
+    """
+    A MF6 exchange
+    """
+    def __init__(self, name):
+        self.name = name
+        self.var_names = []
+        self.package_names = []
 
 class Variable(MF6Object):
     """A variable of a package"""
