@@ -86,6 +86,9 @@ class Simulation:
                 obj = self._get_sol_group(component_name)
             elif component_name in self.model_names:
                 obj = self._get_model(component_name)
+            else:
+                print(self.model_names)
+                raise NameError(f'unknown component {component_name}')
             if subcomponent_name:
                 self._add_package_attr(
                     obj, subcomponent_name, var_name, full_name)
@@ -230,35 +233,40 @@ class Variable(MF6Object):
         return self.value
 
 
+def get_sections(nam_file):
+    """Read secstion of nam file.
+    """
+    with open(nam_file, encoding='ascii') as fobj:
+        sections = {}
+        in_section = False
+        for raw_line in fobj:
+            line = raw_line.strip()
+            if line.startswith('#'):
+                continue
+            upper_line = line.upper()
+            if upper_line.startswith('BEGIN'):
+                name = upper_line.split()[1]
+                sections[name] = []
+                in_section = True
+                continue
+            if upper_line.startswith('END'):
+                in_section = False
+                continue
+            if in_section:
+                sections[name].append(line)
+    return sections
+
+
 def read_simulation_data(nam_file):
     """
     Read simulation data
     :param fname: 'mfsim.name'
     :return: List of dicts with data
     """
-    models = []
-    started = False
-    finished = False
-    sol_count = 0
-    with open(nam_file, encoding='ascii') as fobj:
-        for raw_line in fobj:
-            line = raw_line.strip()
-            line_upper = line.upper()
-            if line_upper.strip().startswith('BEGIN SOLUTIONGROUP'):
-                sol_count += 1
-                continue
-            if line_upper == 'BEGIN MODELS':
-                started = True
-                continue
-            if started and not finished:
-                if line_upper == 'END MODELS':
-                    finished = True
-                    continue
-                if line.startswith('#'):
-                    continue
-                names = ['modeltype', 'namefile', 'modelname']
-                data = line.split()
-                models.append(dict(zip(names, data)) )
+    sections = get_sections(nam_file)
+    names = ['modeltype', 'namefile', 'modelname']
+    models = [dict(zip(names, line.split())) for line in sections['MODELS']]
     for model in models:
         model['modelname'] = model['modelname'].upper()
+    sol_count = len(sections['SOLUTIONGROUP'])
     return sol_count, models
