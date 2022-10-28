@@ -1,0 +1,3 @@
+
+set MF6_EXAMPLE_PATH=C:\Users\mike\Dev\pymf6\src\tests\mf6examples
+set DLL_PATH=C:\Users\mike\mf6.3.0\bin\libmf6.dll
