@@ -1,6 +1,6 @@
 # pymf6
 
-Higgh-Level Python Interface for MODFLOW 6
+High-Level Python Interface for MODFLOW 6
 
 ## Installation
 
