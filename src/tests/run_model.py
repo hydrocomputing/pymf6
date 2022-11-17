@@ -1,23 +1,26 @@
 
-
+import os
+from pathlib import Path
 import sys
 
 from pymf6.mf6 import MF6
 
+DLL_PATH = os.getenv('DLL_PATH')
 
 def run_model():
     nam_file=sys.argv[1]
+    model_dir = Path(nam_file).parent
     try:
         print('#' * 80)
-        mf6 = MF6(nam_file=nam_file)
+        mf6 = MF6(
+            nam_file=nam_file,
+            sim_file=model_dir / 'mfsim.nam',
+            dll_path=DLL_PATH)
         print(f'    START {nam_file}')
-        mf6 = XmiWrapper(dll_path)
         print(f'    INSTANCE')
-        mf6.initialize(nam_file)
-        print(f'    INITIALIZED')
         current_time = mf6.get_current_time()
         end_time = mf6.get_end_time()
-
+        print(f'    LOOP START')
         while current_time < end_time:
             mf6.update()
             current_time = mf6.get_current_time()
@@ -31,4 +34,3 @@ def run_model():
 
 if __name__ == '__main__':
     run_model()
-
