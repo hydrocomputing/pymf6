@@ -40,3 +40,5 @@ src/tests/mf6examples/**/run.bat
 **.bud
 **.ucn
 **.disv.grb
+src/tests/Scratch.ipynb
+src/tests/errors.txt
