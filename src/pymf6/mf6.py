@@ -25,10 +25,11 @@ class MF6:
     # experience in Notebooks.
     old_mf6 = None
 
-    def __init__(self, nam_file='mfsim.nam', dll_path=None):
+    def __init__(self, nam_file, sim_file='mfsim.nam', dll_path=None):
 
         self.nam_file = Path(nam_file).resolve()
         self.model_path = self.nam_file.parent
+        self.sim_file = self.model_path / sim_file
         self.ini_path, self.ini_data = self._read_ini()
         if dll_path is None:
             self.dll_path = Path(self.ini_data['paths']['dll_path'])
@@ -46,7 +47,7 @@ class MF6:
             MF6.old_mf6 = self._mf6
             self._mf6.initialize(str(self.nam_file))
             self.__class__.is_initialized = True
-            self.simulation = Simulation(self._mf6, self.nam_file)
+            self.simulation = Simulation(self._mf6, self.sim_file)
             self.vars = self._get_vars()
 
     def finalize(self):
@@ -56,6 +57,15 @@ class MF6:
     def do_time_step(self):
         """Do one time step."""
         self._mf6.do_time_step()
+
+    def get_current_time(self):
+        return self._mf6.get_current_time()
+
+    def get_end_time(self):
+        return self._mf6.get_end_time()
+
+    def update(self):
+        return self._mf6.update()
 
     def _read_ini(self):
         """Read ini file.
@@ -96,5 +106,3 @@ class MF6:
                 except XMIError as err:
                     xmi_error[name] = err
         return values
-
-
