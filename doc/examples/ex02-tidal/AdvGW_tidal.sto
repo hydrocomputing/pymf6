@@ -1,0 +1,23 @@
+BEGIN OPTIONS
+  SAVE_FLOWS
+END OPTIONS
+
+BEGIN GRIDDATA
+  #iconvert is 0:confined, 1:convertible
+  ICONVERT
+    CONSTANT 1
+  #ss: specific storage
+  SS
+    CONSTANT 1.e-6
+  #sy: specific yield
+  SY
+    CONSTANT 0.2
+END GRIDDATA
+
+BEGIN PERIOD 1
+  STEADY-STATE
+END PERIOD
+
+BEGIN PERIOD 2
+  TRANSIENT
+END PERIOD
