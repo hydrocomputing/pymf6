@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pymf6"
+description = "'Python Wrapper for MODFLOW 6'"
+readme = "README.md"
+# url = "https://github.com/hydrocomputing/pymf6"
+requires-python = ">=3.7"
+keywords = ["packaging", "example"]
+license = {text = "MIT License"}
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+]
+
+dependencies = ["numpy"]
+version = "1.0.0-alpha"
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests"]
+
+
+[tool.setuptools.package-dir]
+pymf6 = "src/pymf6"
+
+
