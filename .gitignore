@@ -43,3 +43,4 @@ src/tests/mf6examples/**/run.bat
 src/tests/Scratch.ipynb
 src/tests/errors.txt
 **.bin
+src/pymf6.egg-info/**
