@@ -2,11 +2,14 @@
 High-level interface to MODFLOW 6.
 """
 
+import sys
+
 try:
     import xmipy
-except ImportError:
+except ModuleNotFoundError:
     print('Please install xmipy:')
     print('    pip install xmipy')
+    sys.exit()
 from ._version import __version__
 from .mf6 import MF6
 
