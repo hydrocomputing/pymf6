@@ -67,7 +67,8 @@ class MF6:
     def update(self):
         return self._mf6.update()
 
-    def _read_ini(self):
+    @staticmethod
+    def _read_ini():
         """Read ini file.
 
         This looks for `pymf6.ini` in the current working directory
