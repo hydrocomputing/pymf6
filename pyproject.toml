@@ -26,7 +26,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Hydrology"
 ]
 
-dependencies = ["numpy"]
+dependencies = ["numpy", "xmipy"]
 dynamic = ["version"]
 
 [project.urls]
