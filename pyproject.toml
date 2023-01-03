@@ -29,6 +29,9 @@ classifiers = [
 dependencies = ["numpy", "xmipy"]
 dynamic = ["version"]
 
+[project.scripts]
+pymf6 = "pymf6.main:info"
+
 [project.urls]
 homepage = "https://github.com/hydrocomputing/pymf6"
 documentation = "https://pymf6.readthedocs.io/en/latest/index.html"
