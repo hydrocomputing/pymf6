@@ -4,9 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pymf6"
-description = "'Python Wrapper for MODFLOW 6'"
+description = "High-level Python Wrapper for MODFLOW 6"
 readme = "README.md"
-# url = "https://github.com/hydrocomputing/pymf6"
 requires-python = ">=3.7"
 keywords = ["packaging", "example"]
 license = {text = "MIT License"}
@@ -14,10 +13,26 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
+  "Environment :: Console",
+  "Framework :: Jupyter :: JupyterLab",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: MacOS :: MacOS X",
+  "Programming Language :: Python :: >=3.7",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Hydrology"
 ]
 
 dependencies = ["numpy"]
 dynamic = ["version"]
+
+[project.urls]
+homepage = "https://github.com/hydrocomputing/pymf6"
+documentation = "https://pymf6.readthedocs.io/en/latest/index.html"
+repository = "https://github.com/hydrocomputing/pymf6"
 
 [tool.setuptools]
 zip-safe = false
@@ -26,11 +41,8 @@ zip-safe = false
 where = ["src"]
 exclude = ["tests"]
 
-
 [tool.setuptools.package-dir]
 pymf6 = "src/pymf6"
 
 [tool.setuptools_scm]
 write_to = "src/pymf6/_version.py"
-
-
