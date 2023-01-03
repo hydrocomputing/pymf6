@@ -7,7 +7,7 @@ try:
 except ImportError:
     print('Please install xmipy:')
     print('    pip install xmipy')
-from ._version import version as __version__
+from ._version import __version__
 from .mf6 import MF6
 
 
