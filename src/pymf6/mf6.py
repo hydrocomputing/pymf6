@@ -30,7 +30,7 @@ class MF6:
         self.nam_file = Path(nam_file).resolve()
         self.model_path = self.nam_file.parent
         self.sim_file = self.model_path / sim_file
-        self.ini_path, self.ini_data = self._read_ini()
+        self.ini_path, self.ini_data = self.read_ini()
         if dll_path is None:
             self.dll_path = Path(self.ini_data['paths']['dll_path'])
         else:
@@ -68,7 +68,7 @@ class MF6:
         return self._mf6.update()
 
     @staticmethod
-    def _read_ini():
+    def read_ini():
         """Read ini file.
 
         This looks for `pymf6.ini` in the current working directory
