@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,7 +17,8 @@ classifiers = [
 ]
 
 dependencies = ["numpy"]
-version = "1.0.0-alpha"
+# version = "1.0.0-alpha"
+dynamic = ["version"]
 
 [tool.setuptools]
 zip-safe = false
@@ -29,5 +30,8 @@ exclude = ["tests"]
 
 [tool.setuptools.package-dir]
 pymf6 = "src/pymf6"
+
+[tool.setuptools_scm]
+write_to = "src/pymf6/_version.py"
 
 
