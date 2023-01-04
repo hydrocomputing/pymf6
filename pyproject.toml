@@ -30,7 +30,7 @@ dependencies = ["numpy", "xmipy"]
 dynamic = ["version"]
 
 [project.scripts]
-pymf6 = "pymf6.main:info"
+pymf6 = "pymf6.main:main"
 
 [project.urls]
 homepage = "https://github.com/hydrocomputing/pymf6"

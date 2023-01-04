@@ -11,7 +11,7 @@ package:
 build:
   noarch: python
   entry_points:
-    - pymf6 = pymf6.main:info
+    - pymf6 = pymf6.main:main
 
 requirements:
   build:
