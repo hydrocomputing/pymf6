@@ -11,12 +11,16 @@ def info():
     """Show version and paths information"""
     header = 'pymf6 configuration data'
     ini_path = pymf6.__ini_path__
+    dll_path = pymf6.__dll_path__
     print(header)
     print('=' * len(header))
     print(f'pxmf6 version: {pymf6.__version__}')
     print(f'xmipy version: {pymf6.__xmipy_version__}')
     print(f'ini file path: {ini_path}')
-    print(f'dll file path: {pymf6.__dll_path__}')
+    print(f'dll file path: {dll_path}')
+    if dll_path:
+        mf6 = pymf6.MF6(dll_path=dll_path)
+        print(f'MODFLOW version: {mf6.version}')
 
     if ini_path is None:
         if sys.platform == 'win32':
