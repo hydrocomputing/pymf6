@@ -34,7 +34,7 @@ pymf6/tests/functional/scenarios/.notebooks
 pymf6/tests/functional/scenarios/*_param.db.*
 **.stdout
 src/scratch/**
-src/.vscode/**
+**/.vscode/**
 src/tests/mf6examples/**/run.bat
 **.uzt.bin
 **.bud
