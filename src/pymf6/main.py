@@ -1,6 +1,7 @@
 """Main"""
 
 from os import sep
+from pathlib import Path
 import sys
 import textwrap
 
@@ -52,6 +53,41 @@ def info():
         `libmf6.{ext}`.
         """))
 
+def run_model(nam_file):
+    """Run one model without modifications."""
+    text = f'running {nam_file}'
+    line = '=' * len(text)
+    print(line)
+    print(text)
+    print(line)
+    model_dir = Path(nam_file).parent
+    try:
+        mf6 = pymf6.MF6(nam_file=nam_file)
+        print(f'    INSTANCE')
+        current_time = mf6.get_current_time()
+        end_time = mf6.get_end_time()
+        print(f'    LOOP START')
+        while current_time < end_time:
+            mf6.update()
+            current_time = mf6.get_current_time()
+        mf6.finalize()
+        print(f'    GOOD {nam_file}')
+    except:
+        print(f'    BAD {nam_file}')
+        raise
+    print(line)
+    print(line)
+
+
+def main():
+    """Main program of pymf6"""
+    args = sys.argv
+    if len(args) == 2:
+        run_model(args[1])
+    else:
+        info()
+
 
 if __name__ == '__main__':
-    info()
+    main()
+
