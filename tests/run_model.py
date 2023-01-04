@@ -5,18 +5,17 @@ import sys
 
 from pymf6.mf6 import MF6
 
-DLL_PATH = os.getenv('DLL_PATH')
 
-def run_model():
-    nam_file=sys.argv[1]
+def run_model(nam_file):
+    """Run one model without modifications."""
+    text = f'running {nam_file}'
+    line = '=' * len(text)
+    print(line)
+    print(text)
+    print(line)
     model_dir = Path(nam_file).parent
     try:
-        print('#' * 80)
-        mf6 = MF6(
-            nam_file=nam_file,
-            sim_file=model_dir / 'mfsim.nam',
-            dll_path=DLL_PATH)
-        print(f'    START {nam_file}')
+        mf6 = MF6(nam_file=nam_file)
         print(f'    INSTANCE')
         current_time = mf6.get_current_time()
         end_time = mf6.get_end_time()
@@ -29,8 +28,9 @@ def run_model():
     except:
         print(f'    BAD {nam_file}')
         raise
-
+    print(line)
+    print(line)
 
 
 if __name__ == '__main__':
-    run_model()
+    run_model(nam_file=sys.argv[1])
