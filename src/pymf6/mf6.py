@@ -25,30 +25,36 @@ class MF6:
     # experience in Notebooks.
     old_mf6 = None
 
-    def __init__(self, nam_file, sim_file='mfsim.nam', dll_path=None):
+    def __init__(self, nam_file=None, sim_file='mfsim.nam', dll_path=None):
 
-        self.nam_file = Path(nam_file).resolve()
-        self.model_path = self.nam_file.parent
-        self.sim_file = self.model_path / sim_file
+        def init_mf6():
+            # Finalize if initialized instance exists.
+            # This is helpful for interactive work in Notebooks.
+            # Use class `MF6` nit `self.__class__` to prevent child class
+            # from initializing an instance at the same time an instance of
+            # the parent class is still initialized.
+            if MF6.old_mf6:
+                MF6.old_mf6.finalize()
+            self._mf6 = XmiWrapper(str(self.dll_path))
+            MF6.old_mf6 = self._mf6
+
         self.ini_path, self.ini_data = self.read_ini()
         if dll_path is None:
             self.dll_path = Path(self.ini_data['paths']['dll_path'])
         else:
             self.dll_path = Path(dll_path)
-        with cd(self.model_path):
-            # Finalze if intialized instance exists.
-            # This is helpful for interactive work in Notebooks.
-            # Use class `MF6` nit `self.__class__` to prevent child class
-            # from intializing an instance at the same time an instance of
-            # the parent class is still intialzed.
-            if MF6.old_mf6:
-                MF6.old_mf6.finalize()
-            self._mf6 = XmiWrapper(str(self.dll_path))
-            MF6.old_mf6 = self._mf6
-            self._mf6.initialize(str(self.nam_file))
-            self.__class__.is_initialized = True
-            self.simulation = Simulation(self._mf6, self.sim_file)
-            self.vars = self._get_vars()
+        if nam_file:
+            self.nam_file = Path(nam_file).resolve()
+            self.model_path = self.nam_file.parent
+            self.sim_file = self.model_path / sim_file
+            with cd(self.model_path):
+                init_mf6()
+                self._mf6.initialize(str(self.nam_file))
+                self.__class__.is_initialized = True
+                self.simulation = Simulation(self._mf6, self.sim_file)
+                self.vars = self._get_vars()
+        else:
+            init_mf6()
 
     def finalize(self):
         """Finalize the model run."""
@@ -88,6 +94,10 @@ class MF6:
         else:
             ini_data = None
         return ini_path, ini_data
+
+    @property
+    def version(self):
+        return self._mf6.get_version()
 
     def _get_vars(self):
         """Get all variables in dictionary.
