@@ -9,6 +9,24 @@ model state.
 With some basic Python programming, many different problems that may be to
 difficult to represent with crafting input data in a appropriate manner, may be
 solved with `pymf6`.
+Example usage include:
+
+* dependent boundary conditions, i.e. the value of one boundary cell depends
+  on the value of other model cells, that are calculated during the model run
+* "technical" boundary conditions such as coupled extraction and injections
+  wells, where the level of the extraction well should not drop under a given
+  value and the injection rate should be the extractions rate, that in turn
+  is a result of running model
+* coupling with other models such reactive transport, unsaturated zone models,
+  or sewage pipe models
+
+
+## Usage Requirements
+
+In order to use `pymf6` you need to
+
+* understand the MODFLOW 6 variables as defined in the input files
+* have a working knowledge of Python programming
 
 ## Installation
 
@@ -106,19 +124,17 @@ separators and file extensions (see chapter "Configuration" above).
 
 To test the install run a model with command_
 
-    pymf6 path/to/nam/file/mymodel.nam
+    pymf6 path/to/my/model/mfsim.nam
 
-where `path/to/nam/file/mymodel.nam` is an absolute path to a MODFLOW nam file
+where `path/to/my/model/` is an absolute path to a MODFLOW nam file
 that is in a directory of a working MODFLOW model.
 For example any model in the directory `examples` that comes with MODFLOW 6
 will do.
 The output should look similar to this:
 
-    ====================================
-    running path/to/nam/file/mymodel.nam
-    ====================================
-        INSTANCE
-        LOOP START
-        GOOD path/to/nam/file/mymodel.nam
-    ====================================
-    ====================================
+    ==================================
+    running path/to/my/model/mfsim.nam
+    ==================================
+    GOOD path/to/my/model/mfsim.nam
+    ==================================
+    ==================================
