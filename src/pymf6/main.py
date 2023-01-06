@@ -60,20 +60,13 @@ def run_model(nam_file):
     print(line)
     print(text)
     print(line)
-    model_dir = Path(nam_file).parent
     try:
         mf6 = pymf6.MF6(nam_file=nam_file)
-        print(f'    INSTANCE')
-        current_time = mf6.get_current_time()
-        end_time = mf6.get_end_time()
-        print(f'    LOOP START')
-        while current_time < end_time:
-            mf6.update()
-            current_time = mf6.get_current_time()
-        mf6.finalize()
-        print(f'    GOOD {nam_file}')
+        for step in mf6.steps():
+            pass
+        print(f'GOOD {nam_file}')
     except:
-        print(f'    BAD {nam_file}')
+        print(f'BAD {nam_file}')
         raise
     print(line)
     print(line)
