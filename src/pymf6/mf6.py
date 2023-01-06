@@ -20,7 +20,7 @@ class MF6:
     """
     # pylint: disable=too-many-instance-attributes
 
-    # Only one instance can be intitialzed but not finalized.
+    # Only one instance can be initialized but not finalized.
     # Store the active instance here to improve interactive
     # experience in Notebooks.
     old_mf6 = None
@@ -117,3 +117,31 @@ class MF6:
                 except XMIError as err:
                     xmi_error[name] = err
         return values
+
+
+    def steps(self):
+        """Generator for iterating over all time steps.
+        It allows to modify MODFLOW variables for each time
+        step.
+
+        Example:
+
+            mf6 = MF6(nam_file=nam_file)
+            wel = mf6.vars['<model_name>/WEL/BOUND']
+            for step in mf6.steps():
+                # modify MODFLOW variables here
+                if step > 10 and step < 20:
+                    wel[:] = -10
+                else:
+                    wel[:] = 0
+        """
+        current_time = self.get_current_time()
+        end_time = self.get_end_time()
+        while current_time < end_time:
+            dt = self._mf6.get_time_step()
+            self._mf6.prepare_time_step(dt)
+            yield current_time
+            self._mf6.do_time_step()
+            self._mf6.finalize_time_step()
+            current_time = self.get_current_time()
+        self.finalize()
