@@ -16,7 +16,10 @@
 
 import recommonmark
 from recommonmark.transform import AutoStructify
-from importlib.metadata import version
+try:
+    from importlib.metadata import version
+except ModuleNotFoundError:
+    from importlib_metadata import version
 
 # -- Project information -----------------------------------------------------
 
