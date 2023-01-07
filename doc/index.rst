@@ -6,8 +6,9 @@ Welcome to pymf6's documentation!
    :maxdepth: 1
 
    readme.rst
-.. principle.md
-.. notebooks/Interactive
+   principle.md
+   examples/head_controlled_well/Head_Controlled_Well
+
 .. examples.rst
 .. binder.rst
 .. developer.rst
