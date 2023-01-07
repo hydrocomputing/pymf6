@@ -36,8 +36,11 @@ version = '.'.join(release.split('.')[:2])
 # ones.
 extensions = [
     'm2r',
-    'nbsphinx'
+    'nbsphinx',
+    'myst_nb',
 ]
+
+jupyter_execute_notebooks = "off"
 
 source_suffix = {
     '.rst': 'restructuredtext',
