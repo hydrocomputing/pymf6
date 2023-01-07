@@ -2,4 +2,3 @@ m2r
 nbsphinx
 myst_nb
 setuptools_scm
-importlib-metadata

@@ -16,10 +16,8 @@
 
 import recommonmark
 from recommonmark.transform import AutoStructify
-try:
-    from importlib.metadata import version
-except ModuleNotFoundError:
-    from importlib_metadata import version
+from setuptools_scm import get_version
+
 
 # -- Project information -----------------------------------------------------
 
@@ -29,8 +27,7 @@ author = 'Mike Müller'
 
 # The full version, including alpha/beta/rc tags
 
-release = version(project)
-version = '.'.join(release.split('.')[:2])
+version = get_version(root='..', relative_to=__file__)
 
 # -- General configuration ---------------------------------------------------
 
