@@ -19,7 +19,7 @@ infos = get_infos()
 __ini_path__ = infos['ini_path']
 __dll_path__ = infos['dll_path']
 __xmipy_version__ = infos['xmipy_version']
-__version__ = infos['pymf6_version']
-__infos__ = ['modflow_version']
+__version__ = __pymf6_version__ = infos['pymf6_version']
+__modflow_version__ = infos['modflow_version']
 
 del xmipy
