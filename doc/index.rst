@@ -7,6 +7,7 @@ Welcome to pymf6's documentation!
 
    readme.rst
    principle.md
+   Interactive
    examples/head_controlled_well/Head_Controlled_Well
 
 .. examples.rst
