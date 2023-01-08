@@ -122,7 +122,7 @@ separators and file extensions (see chapter "Configuration" above).
 
 ## Run a model
 
-To test the install run a model with command_
+To test the install run a model with command:
 
     pymf6 path/to/my/model/mfsim.nam
 
