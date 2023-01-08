@@ -110,7 +110,7 @@ The output should look similar to this on Windows:
 
     pymf6 configuration data
     ========================
-    pxmf6 version: 1.0.0a0
+    pymf6 version: 1.0.0
     xmipy version: 1.2.0
     ini file path: <Home>\pymf6.ini
     dll file path: <Home>\mf6.4.1\bin\libmf6.dll

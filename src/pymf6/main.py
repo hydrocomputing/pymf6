@@ -15,7 +15,7 @@ def info():
     dll_path = pymf6.__dll_path__
     print(header)
     print('=' * len(header))
-    print(f'pxmf6 version: {pymf6.__version__}')
+    print(f'pymf6 version: {pymf6.__version__}')
     print(f'xmipy version: {pymf6.__xmipy_version__}')
     print(f'ini file path: {ini_path}')
     print(f'dll file path: {dll_path}')
