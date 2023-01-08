@@ -11,7 +11,7 @@ from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
 from . datastructures import Simulation
-from .tools.infos import get_infos, info, read_ini
+from .tools.info import get_info, info, read_ini
 
 
 class MF6:
@@ -37,7 +37,7 @@ class MF6:
                 MF6.old_mf6.finalize()
             self._mf6 = XmiWrapper(str(self.dll_path))
             MF6.old_mf6 = self._mf6
-        self._infos = get_infos()
+        self._infos = get_info()
         self.ini_path, self.ini_data = read_ini()
         if dll_path is None:
             if self.ini_data is None:
@@ -69,7 +69,7 @@ class MF6:
         :return: HTML string
         """
         html_text = '<h3>MF6</h3>'
-        html_text += '<h4>A Representation of a MODFLOW 6 model by pymf6</h4>'
+        html_text += '<h4>pymf6 configuration data</h4>'
         html_text += '<table><tbody>'
         for name, value in self._infos.items():
             if not name.startswith('_'):
@@ -79,9 +79,9 @@ class MF6:
         return html_text
 
     @property
-    def infos(self):
+    def info(self):
         """Information about versions and paths."""
-        info()
+        info(self._infos)
 
     def finalize(self):
         """Finalize the model run."""

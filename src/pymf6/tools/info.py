@@ -6,7 +6,7 @@ import sys
 
 import xmipy
 
-from .. _version import __version__
+from .._version import __version__
 
 
 def read_ini():
@@ -31,9 +31,9 @@ def read_ini():
     return ini_path, ini_data
 
 
-def get_infos():
+def get_info():
     """Find all versions."""
-    infos = {}
+    info = {}
     path, ini = read_ini()
     ini_path = str(path) if path else path
     if ini:
@@ -45,41 +45,42 @@ def get_infos():
                 )
     else:
         dll_path = None
-    infos['ini_path'] = ini_path
-    infos['dll_path'] = dll_path
-    infos['xmipy_version'] = xmipy.__version__
-    infos['pymf6_version'] = __version__
+    info['ini_path'] = ini_path
+    info['dll_path'] = dll_path
+    info['xmipy_version'] = xmipy.__version__
+    info['pymf6_version'] = __version__
     if dll_path:
-        infos['modflow_version'] = xmipy.XmiWrapper(str(dll_path)).get_version()
+        info['modflow_version'] = xmipy.XmiWrapper(str(dll_path)).get_version()
 
     if ini_path is None:
         if sys.platform == 'win32':
-            infos['_find_home'] = 'set HOMEPATH'
-            infos['_ext'] = 'dll'
-            infos['_sep'] = os.sep
+            info['_find_home'] = 'set HOMEPATH'
+            info['_ext'] = 'dll'
+            info['_sep'] = os.sep
         else:
-            infos['_find_home'] = 'echo $HOME'
-            infos['_ext'] = 'so'
+            info['_find_home'] = 'echo $HOME'
+            info['_ext'] = 'so'
             if sys.platform == 'darwin':
-                infos['_ext'] = 'dylib'
-    return infos
+                info['_ext'] = 'dylib'
+    return info
 
 
-def info():
+def info(info=None):
     """Show version and paths information"""
     header = 'pymf6 configuration data'
-    infos = get_infos()
+    if info is None:
+        info = get_info()
     print(header)
     print('=' * len(header))
-    print(f'pymf6 version: {infos["pymf6_version"]}')
-    print(f'xmipy version: {infos["xmipy_version"]}')
-    print(f'ini file path: {infos["ini_path"]}')
-    print(f'dll file path: {infos["dll_path"]}')
-    if 'modflow_version' in infos:
-        print(f'MODFLOW version: {infos["modflow_version"]}')
-    if infos['ini_path'] is None:
-        sep = infos['_sep']
-        ext = infos['_ext']
+    print(f'pymf6 version: {info["pymf6_version"]}')
+    print(f'xmipy version: {info["xmipy_version"]}')
+    print(f'ini file path: {info["ini_path"]}')
+    print(f'dll file path: {info["dll_path"]}')
+    if 'modflow_version' in info:
+        print(f'MODFLOW version: {info["modflow_version"]}')
+    if info['ini_path'] is None:
+        sep = info['_sep']
+        ext = info['_ext']
         print(textwrap.dedent(f"""
         No configuration file found. Need to specify the path to the
         MODFLOW 6 DLL for each run. Consider using a configuration file
@@ -89,7 +90,7 @@ def info():
         Put a file named `pymf6.ini` in your home directory.
         You can find your home path with the command:
 
-            {infos['_find_home']}
+            {info['_find_home']}
 
         The content of `pymf6.ini` should be:
 

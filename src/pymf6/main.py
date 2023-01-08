@@ -4,7 +4,7 @@ from os import sep
 from pathlib import Path
 import sys
 
-from .tools.infos import info
+from .tools.info import info
 
 
 def run_model(nam_file):
