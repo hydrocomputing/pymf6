@@ -11,21 +11,15 @@ except ModuleNotFoundError:
     print('Please install xmipy:')
     print('    pip install xmipy')
     sys.exit()
-from ._version import __version__
-from .mf6 import MF6
 
+from .tools.infos import get_infos
 
-path, ini = MF6.read_ini()
-__ini_path__ = str(path) if path else path
-if ini:
-    __dll_path__ = ini['paths']['dll_path']
-    if not Path(__dll_path__).exists():
-        raise ValueError(
-            f'dll path `{__dll_path__}` does not exist\n'
-            'Please specify correct path.'
-            )
-else:
-    __dll_path__ = None
-__xmipy_version__ = xmipy.__version__
+infos = get_infos()
+
+__ini_path__ = infos['ini_path']
+__dll_path__ = infos['dll_path']
+__xmipy_version__ = infos['xmipy_version']
+__version__ = infos['pymf6_version']
+__infos__ = ['modflow_version']
 
 del xmipy

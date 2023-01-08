@@ -2,7 +2,6 @@
 Wrapper around XmiWrapper.
 """
 
-from configparser import ConfigParser
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -12,6 +11,7 @@ from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
 from . datastructures import Simulation
+from .tools.infos import get_infos, info, read_ini
 
 
 class MF6:
@@ -37,9 +37,15 @@ class MF6:
                 MF6.old_mf6.finalize()
             self._mf6 = XmiWrapper(str(self.dll_path))
             MF6.old_mf6 = self._mf6
-
-        self.ini_path, self.ini_data = self.read_ini()
+        self._infos = get_infos()
+        self.ini_path, self.ini_data = read_ini()
         if dll_path is None:
+            if self.ini_data is None:
+                raise ValueError(
+                    'No DLL path and no ini file found.\n'
+                    'Please provide the DLL path as argument or '
+                    'create an ini file with the path to MODFLOW 6 DLL.'
+                    )
             self.dll_path = Path(self.ini_data['paths']['dll_path'])
         else:
             self.dll_path = Path(dll_path)
@@ -55,6 +61,27 @@ class MF6:
                 self.vars = self._get_vars()
         else:
             init_mf6()
+
+    def _repr_html_(self):
+        """
+        Make a nice HTML table
+        :param obj: Python object
+        :return: HTML string
+        """
+        html_text = '<h3>MF6</h3>'
+        html_text += '<h4>A Representation of a MODFLOW 6 model by pymf6</h4>'
+        html_text += '<table><tbody>'
+        for name, value in self._infos.items():
+            if not name.startswith('_'):
+                html_text += f'<tr><td>{name}:</td>'
+                html_text += f'<td>{value}</td></tr>'
+        html_text += '</tbody></table>'
+        return html_text
+
+    @property
+    def infos(self):
+        """Information about versions and paths."""
+        info()
 
     def finalize(self):
         """Finalize the model run."""
@@ -73,27 +100,6 @@ class MF6:
     def update(self):
         return self._mf6.update()
 
-    @staticmethod
-    def read_ini():
-        """Read ini file.
-
-        This looks for `pymf6.ini` in the current working directory
-        first. If not found there, it looks in the user's home directory.
-        If no file is found `ini_data` will be `None`.
-        """
-        ini_path = Path('pymf6.ini')
-        if not ini_path.exists():
-            ini_path = ini_path.home() / ini_path
-        if not ini_path.exists():
-            ini_path = None
-        if ini_path:
-            ini_path = ini_path.resolve()
-            parser = ConfigParser()
-            parser.read(ini_path)
-            ini_data = parser
-        else:
-            ini_data = None
-        return ini_path, ini_data
 
     @property
     def version(self):
@@ -145,3 +151,4 @@ class MF6:
             self._mf6.finalize_time_step()
             current_time = self.get_current_time()
         self.finalize()
+
