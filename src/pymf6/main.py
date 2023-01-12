@@ -4,6 +4,7 @@ from os import sep
 from pathlib import Path
 import sys
 
+from .mf6 import MF6
 from .tools.info import info
 
 
@@ -15,7 +16,7 @@ def run_model(nam_file):
     print(text)
     print(line)
     try:
-        mf6 = pymf6.MF6(nam_file=nam_file)
+        mf6 = MF6(nam_file=nam_file)
         for step in mf6.steps():
             pass
         print(f'GOOD {nam_file}')
