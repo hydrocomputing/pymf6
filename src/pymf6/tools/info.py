@@ -53,10 +53,10 @@ def get_info():
         info['modflow_version'] = xmipy.XmiWrapper(str(dll_path)).get_version()
 
     if ini_path is None:
+        info['_sep'] = os.sep
         if sys.platform == 'win32':
             info['_find_home'] = 'set HOMEPATH'
             info['_ext'] = 'dll'
-            info['_sep'] = os.sep
         else:
             info['_find_home'] = 'echo $HOME'
             info['_ext'] = 'so'
