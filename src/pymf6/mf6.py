@@ -29,6 +29,7 @@ class MF6:
     # Store the active instance here to improve interactive
     # experience in Notebooks.
     old_mf6 = None
+    _demo = False
 
     def __init__(self, nam_file=None, sim_file='mfsim.nam', dll_path=None):
 
@@ -43,7 +44,7 @@ class MF6:
             self._mf6 = XmiWrapper(str(self.dll_path))
             MF6.old_mf6 = self._mf6
         self._info_data = get_info_data()
-        self._info_texts = make_info_texts(self._info_data)
+        self._info_texts = make_info_texts(self._info_data, demo=self._demo)
         self.ini_path, self.ini_data = read_ini()
         if dll_path is None:
             if self.ini_data is None:

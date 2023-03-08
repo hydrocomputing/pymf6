@@ -72,7 +72,7 @@ def get_info_data():
     return info
 
 
-def make_info_texts(info_data=None):
+def make_info_texts(info_data=None, demo=False):
     """Show version and paths information"""
     if info_data is None:
         info_data= get_info_data()
@@ -81,9 +81,17 @@ def make_info_texts(info_data=None):
     info_texts['entries'] = [
         ('pymf6 version', f'{info_data["pymf6_version"]}'),
         ('xmipy version', f'{info_data["xmipy_version"]}'),
-        ('ini file path', f'{info_data["ini_path"]}'),
-        ('dll file path', f'{info_data["dll_path"]}'),
     ]
+    if demo:
+        info_texts['entries'].extend([
+            ('ini file path', 'HOME/pymf6.ini'),
+            ('dll file path', 'path/to/dll/libmf6.dll'),
+            ])
+    else:
+        info_texts['entries'].extend([
+            ('ini file path', f'{info_data["ini_path"]}'),
+            ('dll file path', f'{info_data["dll_path"]}'),
+            ])
     if info_data["modflow_version"]:
         info_texts['entries'].append(
             ('MODFLOW version', f'{info_data["modflow_version"]}')
