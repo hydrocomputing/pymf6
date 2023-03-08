@@ -7,6 +7,7 @@ import sys
 import xmipy
 
 from .._version import __version__
+import pymf6
 
 
 def read_ini():
@@ -49,8 +50,14 @@ def get_info():
     info['dll_path'] = dll_path
     info['xmipy_version'] = xmipy.__version__
     info['pymf6_version'] = __version__
+    info['modflow_version'] = None
+    info['mf6_doc_path'] = None
     if dll_path:
-        info['modflow_version'] = xmipy.XmiWrapper(str(dll_path)).get_version()
+        mf6_version = xmipy.XmiWrapper(str(dll_path)).get_version()
+        info['modflow_version'] = mf6_version
+        mf6_doc_path = Path(pymf6.__file__).parent / 'resources/mf6_var_names'
+        mf6_doc_path = mf6_doc_path / f'{mf6_version}'
+        info['mf6_doc_path'] = mf6_doc_path if mf6_doc_path.exists() else None
 
     if ini_path is None:
         info['_sep'] = os.sep
@@ -76,8 +83,12 @@ def info(info=None):
     print(f'xmipy version: {info["xmipy_version"]}')
     print(f'ini file path: {info["ini_path"]}')
     print(f'dll file path: {info["dll_path"]}')
-    if 'modflow_version' in info:
+    if info["modflow_version"]:
         print(f'MODFLOW version: {info["modflow_version"]}')
+    has_docs = 'is  NOT'
+    if info['mf6_doc_path']:
+        has_docs = 'is'
+    print(f'MODFLOW variable documentation {has_docs} available')
     if info['ini_path'] is None:
         sep = info['_sep']
         ext = info['_ext']
@@ -101,4 +112,3 @@ def info(info=None):
         directory `bin` that contains the shared library, i.e. the file
         `libmf6.{ext}`.
         """))
-
