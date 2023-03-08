@@ -51,6 +51,8 @@ class MF6:
             self.dll_path = Path(dll_path)
         if nam_file:
             self.nam_file = Path(nam_file).resolve()
+            if not self.nam_file.exists():
+                raise FileNotFoundError(self.nam_file)
             self.model_path = self.nam_file.parent
             self.sim_file = self.model_path / sim_file
             with cd(self.model_path):
@@ -151,4 +153,3 @@ class MF6:
             self._mf6.finalize_time_step()
             current_time = self.get_current_time()
         self.finalize()
-
