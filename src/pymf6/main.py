@@ -1,11 +1,11 @@
 """Main"""
 
-from os import sep
+
 from pathlib import Path
 import sys
 
 from .mf6 import MF6
-from .tools.info import info
+from .tools.info import show_info
 
 
 def run_model(nam_file):
@@ -33,9 +33,8 @@ def main():
     if len(args) == 2:
         run_model(args[1])
     else:
-        info()
+        show_info()
 
 
 if __name__ == '__main__':
     main()
-

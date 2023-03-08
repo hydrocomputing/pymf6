@@ -11,7 +11,12 @@ from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
 from . datastructures import Simulation
-from .tools.info import get_info, info, read_ini
+from .tools.info import (
+    get_info_data,
+    show_info,
+    make_info_texts,
+    make_info_html,
+    read_ini)
 
 
 class MF6:
@@ -37,7 +42,8 @@ class MF6:
                 MF6.old_mf6.finalize()
             self._mf6 = XmiWrapper(str(self.dll_path))
             MF6.old_mf6 = self._mf6
-        self._infos = get_info()
+        self._info_data = get_info_data()
+        self._info_texts = make_info_texts(self._info_data)
         self.ini_path, self.ini_data = read_ini()
         if dll_path is None:
             if self.ini_data is None:
@@ -70,20 +76,12 @@ class MF6:
         :param obj: Python object
         :return: HTML string
         """
-        html_text = '<h3>MF6</h3>'
-        html_text += '<h4>pymf6 configuration data</h4>'
-        html_text += '<table><tbody>'
-        for name, value in self._infos.items():
-            if not name.startswith('_'):
-                html_text += f'<tr><td>{name}:</td>'
-                html_text += f'<td>{value}</td></tr>'
-        html_text += '</tbody></table>'
-        return html_text
+        return make_info_html(self._info_texts)
 
     @property
     def info(self):
         """Information about versions and paths."""
-        info(self._infos)
+        show_info(self._info_texts)
 
     def finalize(self):
         """Finalize the model run."""
