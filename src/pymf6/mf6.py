@@ -3,6 +3,7 @@ Wrapper around XmiWrapper.
 """
 
 from contextlib import redirect_stdout
+import json
 from io import StringIO
 from pathlib import Path
 
@@ -44,6 +45,9 @@ class MF6:
             self._mf6 = XmiWrapper(str(self.dll_path))
             MF6.old_mf6 = self._mf6
         self._info_data = get_info_data()
+        self.mf6_docs = None
+        if self._info_data['mf6_doc_path']:
+            self.mf6_docs = MF6Docs(self._info_data['mf6_doc_path'])
         self._info_texts = make_info_texts(self._info_data, demo=self._demo)
         self.ini_path, self.ini_data = read_ini()
         if dll_path is None:
@@ -66,7 +70,10 @@ class MF6:
                 init_mf6()
                 self._mf6.initialize(str(self.nam_file))
                 self.__class__.is_initialized = True
-                self.simulation = Simulation(self._mf6, self.sim_file)
+                self.simulation = Simulation(
+                    self._mf6,
+                    self.sim_file,
+                    self.mf6_docs)
                 self.vars = self._get_vars()
         else:
             init_mf6()
@@ -152,3 +159,17 @@ class MF6:
             self._mf6.finalize_time_step()
             current_time = self.get_current_time()
         self.finalize()
+
+
+class MF6Docs:
+
+    def __init__(self, mf6_doc_path):
+        self.mf6_doc_path = mf6_doc_path
+        self._docs = {}
+
+    def get_doc(self, name):
+        if not self._docs:
+            path = self.mf6_doc_path / 'mem_var_docs.json'
+            with open(path, encoding='utf-8') as fobj:
+                self._docs = json.load(fobj)
+        return self._docs.get(name)

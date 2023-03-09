@@ -26,8 +26,9 @@ class Simulation:
     # pylint: disable=too-few-public-methods,no-member
     # # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, mf6, nam_file):
+    def __init__(self, mf6, nam_file, mf6_docs):
         self._mf6 = mf6
+        self.mf6_docs = mf6_docs
         sol_count, self.models_meta = read_simulation_data(nam_file)
         self.solution_groups = [Solution(number) for number in
                                 (range(1, sol_count + 1))]
@@ -104,7 +105,11 @@ class Simulation:
         """
         # pylint: disable=too-many-arguments
         name = self._clean_name(var_name)
-        setattr(obj, name, Variable(self._mf6, name, full_name))
+        setattr(obj, name, Variable(
+            self._mf6,
+            name,
+            full_name,
+            mf6_docs=self.mf6_docs))
         obj.var_names.append(name)
 
     def _add_package_attr(self, obj, name, var_name, full_name):
@@ -146,11 +151,18 @@ class Simulation:
 
 class MF6Object:
     """MF6 parent object"""
+
+    def _make_docstring(self):
+        mf6_doc_entry = None
+        if hasattr(self, 'mf6_docs') and hasattr(self, 'name'):
+            mf6_doc_entry = self.mf6_docs.get_doc(self.name)
+        return mf6_doc_entry
+
     def __repr__(self):
-        return make_repr(self)
+        return make_repr(self, mf6_docs=self._make_docstring())
 
     def _repr_html_(self):
-        return make_repr_html(self)
+        return make_repr_html(self, mf6_docs=self._make_docstring())
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -207,11 +219,12 @@ class Exchange(MF6Object):
 
 class Variable(MF6Object):
     """A variable of a package"""
-    def __init__(self, mf6, name, full_name):
+    def __init__(self, mf6, name, full_name, mf6_docs):
         # pylint: disable=too-many-arguments
         self.name = name
         self._internal_name = full_name
         self._mf6 = mf6
+        self.mf6_docs = mf6_docs
         self._value = None
 
     @property
