@@ -138,3 +138,8 @@ The output should look similar to this:
     GOOD path/to/my/model/mfsim.nam
     ==================================
     ==================================
+
+## Documentation
+
+Please read the [documentation](https://pymf6.readthedocs.io/en/latest/)
+for more details.
