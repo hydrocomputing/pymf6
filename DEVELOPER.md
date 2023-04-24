@@ -1,3 +1,5 @@
 # Building and Testing
 
-TODO
+Build the package with:
+
+    python -m build
