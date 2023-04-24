@@ -154,6 +154,7 @@ def read_mem_vars(mem_var_path=MF6_MEM_VAR_FILE):
 
 
 def make_mem_var_names(mem_vars=MF6_MEM_VAR_FILE):
+    """Create MF6 varible names."""
     header = list(mem_vars.keys())
     keys = [name for name in header if name != 'variable name']
     mem_var_names = {}
@@ -167,8 +168,10 @@ def make_mem_var_names(mem_vars=MF6_MEM_VAR_FILE):
 
 
 def add_docs(docs, path):
+    """Add docstrings to `docs`."""
 
     def shorten_path(path):
+        """Cut of path elements before `src`."""
         parts = path.parts
         pos = parts.index('src')
         return str(Path(*parts[pos:]))
@@ -190,8 +193,9 @@ def add_docs(docs, path):
 
 
 def read_mem_var_docs(src_path=MF6_SOURCE_DIR):
+    """Read docstrings from Fortran files."""
     docs = {}
-    for root, dirs, files in os.walk(src_path):
+    for root, _, files in os.walk(src_path):
         for file in files:
             path = Path(root) / file
             add_docs(docs, path)
@@ -199,7 +203,8 @@ def read_mem_var_docs(src_path=MF6_SOURCE_DIR):
 
 
 def save_mem_var_docs(tag, out_dir=OUT_DIR_MEM_VARS):
-    with VersionTag(tag) as version_tag:
+    """Save docstrings into a JSON file."""
+    with VersionTag(tag) :
         mem_vars = read_mem_vars()
         mem_var_names = make_mem_var_names(mem_vars)
         docs = read_mem_var_docs()
