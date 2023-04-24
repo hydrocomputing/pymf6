@@ -63,7 +63,7 @@ def format_html_table(data):
     head = """<thead>
                  <tr style="text-align: right;">\n"""
     for name in data[0].keys():
-        head += f'<th>{name}</th>\n'
+        head += f'<th>{name}</th>\n'  # pylint: disable=consider-using-join
     head += """</tr>
   </thead>
 """
