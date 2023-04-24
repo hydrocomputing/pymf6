@@ -1,7 +1,6 @@
 """Main"""
 
 
-from pathlib import Path
 import sys
 
 from .mf6 import MF6
@@ -17,7 +16,7 @@ def run_model(nam_file):
     print(line)
     try:
         mf6 = MF6(nam_file=nam_file)
-        for step in mf6.steps():
+        for _ in mf6.steps():
             pass
         print(f'GOOD {nam_file}')
     except:
