@@ -63,7 +63,7 @@ def format_html_table(data):
     head = """<thead>
                  <tr style="text-align: right;">\n"""
     for name in data[0].keys():
-        head += f'<th>{name}</th>\n'
+        head += f'<th>{name}</th>\n'  # pylint: disable=consider-using-join
     head += """</tr>
   </thead>
 """
@@ -82,7 +82,7 @@ def format_html_table(data):
     return html_repr
 
 
-def make_repr(obj):
+def make_repr(obj, mf6_docs=None):
     """
     Make a representation text
     :param obj: Python object
@@ -99,10 +99,19 @@ def make_repr(obj):
             repr_text += f'\nshape: {obj.value.shape}'
     if hasattr(obj, 'origin'):
         repr_text += f'\nlocation: {obj.origin}'
+    if mf6_docs:
+        for docstring, sources in mf6_docs.items():
+            repr_text += f'\ndocstring: {docstring}'
+            for n, source in enumerate(sources):
+                if n == 0:
+                    repr_text += '\ndocstring source: '
+                else:
+                    repr_text += '\n                  '
+                repr_text += f"{source['source_file']} line {source['line_no']}"
     return repr_text
 
 
-def make_repr_html(obj):
+def make_repr_html(obj, mf6_docs=None):
     """
     Make a nice HTML table
     :param obj: Python object
@@ -125,5 +134,16 @@ def make_repr_html(obj):
     if hasattr(obj, 'origin'):
         html_text += '<tr><td>location: </td>'
         html_text += f'<td>{obj.origin}</td></tr>'
+    if mf6_docs:
+        for docstring, sources in mf6_docs.items():
+            html_text += '<tr><td>docstring: </td>'
+            html_text += f'<td>{docstring}</td></tr>'
+            for n, source in enumerate(sources):
+                if n == 0:
+                    html_text += '<tr><td>docstring source: </td>'
+                else:
+                    html_text += '<tr><td> </td>'
+                html_text += f"""<td>{source['source_file']}
+                                 line {source['line_no']}</td></tr>"""
     html_text += '</tbody></table>'
     return html_text

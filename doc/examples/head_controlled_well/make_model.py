@@ -112,7 +112,7 @@ def run_simulation(model_path, verbosity_level=0):
     sim.run_simulation()
 
 
-def show_heads(model_path, name):
+def show_heads(model_path, name, title='Head-Controlled Well'):
     """Plot calculated heads along with flow vector."""
     sim = get_simulation(model_path, name)
     gwf = sim.get_model(name)
@@ -134,11 +134,12 @@ def show_heads(model_path, name):
         qy,
         normalize=True,
         color="white")
-    plot.axes.set_xlabel('X [m]')
-    plot.axes.set_ylabel('Y [m]')
-    plot.axes.set_title('Head-Controlled Well')
-    cbar = plot.get_figure().colorbar(plot)
-    cbar.set_label('Water level [m]')
+    plot.axes.set_xlabel('x (m)')
+    plot.axes.set_ylabel('y (m)')
+    plot.axes.set_title(title)
+    ticks = np.arange(0, 1.01, 0.1)
+    cbar = plot.get_figure().colorbar(plot, ticks=ticks)
+    cbar.set_label('Water level (m)')
     return plot
 
 
@@ -149,8 +150,8 @@ def show_well_head(model_path, name, wel_coords):
     heads = gwf.output.head().get_ts(wel_coords)
     _, ax = plt.subplots()
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
-    ax.set_xlabel('Time [d]')
-    ax.set_ylabel('Water level [m]')
+    ax.set_xlabel('Time (d)')
+    ax.set_ylabel('Water level (m)')
     y_start = 0.3
     y_end = 1.05
     y_stress = (y_start, y_end)

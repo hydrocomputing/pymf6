@@ -1,11 +1,10 @@
 """Main"""
 
-from os import sep
-from pathlib import Path
+
 import sys
 
 from .mf6 import MF6
-from .tools.info import info
+from .tools.info import show_info
 
 
 def run_model(nam_file):
@@ -17,7 +16,7 @@ def run_model(nam_file):
     print(line)
     try:
         mf6 = MF6(nam_file=nam_file)
-        for step in mf6.steps():
+        for _ in mf6.steps():
             pass
         print(f'GOOD {nam_file}')
     except:
@@ -33,9 +32,8 @@ def main():
     if len(args) == 2:
         run_model(args[1])
     else:
-        info()
+        show_info()
 
 
 if __name__ == '__main__':
     main()
-

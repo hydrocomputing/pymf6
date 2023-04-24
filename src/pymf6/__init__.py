@@ -12,9 +12,9 @@ except ModuleNotFoundError:
     print('    pip install xmipy')
     sys.exit()
 
-from .tools.info import get_info
+from .tools.info import get_info_data
 
-info = get_info()
+info = get_info_data()
 
 __ini_path__ = info['ini_path']
 __dll_path__ = info['dll_path']
