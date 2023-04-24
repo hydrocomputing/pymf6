@@ -4,9 +4,6 @@ Data structures representing MF6 runtime data
 
 from contextlib import redirect_stdout
 from io import StringIO
-from re import sub
-
-import numpy as np
 
 from pymf6.tools.formatters import (
     format_text_table, format_html_table, make_repr, make_repr_html)
@@ -38,7 +35,6 @@ class Simulation:
         self.TDIS = Package('TDIS')  # pylint: disable=invalid-name
         self._name_map_orig_internal = {}
         self._name_map_internal_original = {}
-        self_raw_names = []
         self._make_names()
         self._build_object_hierarchy()
 
@@ -97,7 +93,7 @@ class Simulation:
                 self._add_attr(obj, var_name, full_name)
 
         for model in self.models:
-            model._init_after_build_object_hierarchy()
+            model.init_after_build_object_hierarchy()
 
     def _add_attr(self, obj, var_name, full_name):
         """
@@ -189,7 +185,7 @@ class Model(MF6Object):
         self.length_unit = None
         self.shape_3d = None
 
-    def _init_after_build_object_hierarchy(self):
+    def init_after_build_object_hierarchy(self):
         """
         Set some meta data after Fortran has finished initialization
         """
@@ -242,7 +238,7 @@ class Variable(MF6Object):
         """Set value to Fortran
         """
         if self._value is None:
-            self.value()
+            self.value  # pylint: disable=pointless-statement
         self._value[:] = new_value
 
     def __setitem__(self, key, value):
