@@ -1,3 +1,20 @@
+"""
+Find all version infos and paths.
+
+The versions include:
+
+* MODFLOW 6
+* xmipy
+* pymf6
+
+The paths include:
+
+* ini path
+* dll path
+* MODFLOW 6 doc path
+"""
+
+
 from configparser import ConfigParser
 from pathlib import Path
 import os
@@ -6,8 +23,9 @@ import sys
 
 import xmipy
 
-from .._version import __version__
 import pymf6
+from .._version import __version__
+
 
 
 def read_ini():
@@ -130,6 +148,7 @@ def make_info_texts(info_data=None, demo=False):
 
 
 def make_info_html(info_texts=None):
+    """Create version and path info as HTML."""
     if info_texts is None:
         info_texts = make_info_texts()
     html_text = '<h3>MF6</h3>'
@@ -146,6 +165,7 @@ def make_info_html(info_texts=None):
 
 
 def show_info(info_texts=None):
+    """Show verion and path info as text."""
     if info_texts is None:
         info_texts = make_info_texts()
     header = info_texts['header']
