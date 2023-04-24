@@ -44,6 +44,7 @@ class MF6:
                 MF6.old_mf6.finalize()
             self._mf6 = XmiWrapper(str(self.dll_path))
             MF6.old_mf6 = self._mf6
+        self._mf6 = None
         self._info_data = get_info_data()
         self.mf6_docs = None
         if self._info_data['mf6_doc_path']:
@@ -100,17 +101,20 @@ class MF6:
         self._mf6.do_time_step()
 
     def get_current_time(self):
+        """Return current model time step."""
         return self._mf6.get_current_time()
 
     def get_end_time(self):
+        """Return end model time step."""
         return self._mf6.get_end_time()
 
     def update(self):
+        """Update MF6 variables."""
         return self._mf6.update()
-
 
     @property
     def version(self):
+        """MF6 version."""
         return self._mf6.get_version()
 
     def _get_vars(self):
@@ -152,7 +156,7 @@ class MF6:
         current_time = self.get_current_time()
         end_time = self.get_end_time()
         while current_time < end_time:
-            dt = self._mf6.get_time_step()
+            dt = self._mf6.get_time_step()  # pylint: disable=invalid-name
             self._mf6.prepare_time_step(dt)
             yield current_time
             self._mf6.do_time_step()
@@ -162,12 +166,14 @@ class MF6:
 
 
 class MF6Docs:
+    """Docstring form MF6 Fortran source"""
 
     def __init__(self, mf6_doc_path):
         self.mf6_doc_path = mf6_doc_path
         self._docs = {}
 
     def get_doc(self, name):
+        """Get docs from json file"""
         if not self._docs:
             path = self.mf6_doc_path / 'mem_var_docs.json'
             with open(path, encoding='utf-8') as fobj:
