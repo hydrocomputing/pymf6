@@ -5,10 +5,11 @@ from enum import Enum
 
 from modflowapi import ModflowApi
 from modflowapi.extensions.apisimulation import ApiSimulation
-from modflowapi import Callbacks
 
 
 class States(Enum):
+    """States of MODFLOW API."""
+    #  pylint: disable=invalid-name
     initialize = 0
     stress_period_start = 1
     stress_period_end = 2
@@ -20,16 +21,17 @@ class States(Enum):
 
     @classmethod
     def show_states(cls):
+        """Show avaiable states."""
+        # pylint: disable=no-member
         print(*cls._member_names_, sep='\n')
 
 
 class Simulator:
+    """Generator to run a Modflow simulation using the MODFLOW-API
+        with a loop"""
 
     def __init__(self, dll, sim_path, verbose=False, _develop=False):
         """
-        Generator to run a Modflow simulation using the MODFLOW-API
-        with a loop
-
         Parameters
         ----------
         dll : str
@@ -54,15 +56,10 @@ class Simulator:
         self.api = ApiSimulation.load(self._mf6)
 
     def loop(self):
+        """Generator function to loop over all time steps."""
         mf6 = self._mf6
         verbose = self.verbose
-        _develop = self._develop
         sim = self.api
-
-        if _develop:
-            with open("var_list.txt", "w") as foo:
-                for name in mf6.get_input_var_names():
-                    foo.write(f"{name}\n")
 
         yield sim, States.initialize
 
@@ -72,7 +69,7 @@ class Simulator:
         kperold = [0 for _ in range(sim.subcomponent_count)]
 
         while current_time < end_time:
-            dt = mf6.get_time_step()
+            dt = mf6.get_time_step()  # pylint: disable=invalid-name
             mf6.prepare_time_step(dt)
 
             if verbose:
@@ -90,6 +87,7 @@ class Simulator:
                         models[model.name.lower()] = model
 
                 sim_grp = ApiSimulation(
+                    # pylint: disable=protected-access
                     mf6, models, solution, sim._exchanges, sim.tdis, sim.ats
                 )
                 mf6.prepare_solve(sol_id)
@@ -138,7 +136,7 @@ class Simulator:
         try:
             yield sim, States.finalize
             mf6.finalize()
-        except Exception:
-            raise RuntimeError("MF6 simulation failed, check listing file")
+        except Exception as err:
+            raise RuntimeError("MF6 simulation failed, check listing file") from err
 
         print("NORMAL TERMINATION OF SIMULATION")

@@ -23,8 +23,7 @@ import sys
 
 import xmipy
 
-import pymf6
-from .._version import __version__
+from .. import _version
 
 
 
@@ -67,14 +66,14 @@ def get_info_data():
     info['ini_path'] = ini_path
     info['dll_path'] = dll_path
     info['xmipy_version'] = xmipy.__version__
-    info['pymf6_version'] = __version__
+    info['pymf6_version'] = _version.__version__
     info['modflow_version'] = None
     info['mf6_doc_path'] = None
     if dll_path:
         mf6_version = xmipy.XmiWrapper(str(dll_path)).get_version()
         info['modflow_version'] = mf6_version
         mf6_doc_path = (
-            Path(pymf6.__file__).parent / 'resources/mf6_var_names/mem_vars')
+            Path(_version.__file__).parent / 'resources/mf6_var_names/mem_vars')
         mf6_doc_path = mf6_doc_path / f'{mf6_version}'
         info['mf6_doc_path'] = mf6_doc_path if mf6_doc_path.exists() else None
 

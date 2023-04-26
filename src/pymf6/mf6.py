@@ -7,11 +7,10 @@ import json
 from io import StringIO
 from pathlib import Path
 
-from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
-from . api import Simulator
+from . api import Simulator, States
 from . datastructures import Simulation
 from .tools.info import (
     get_info_data,
@@ -55,13 +54,15 @@ class MF6:
                 sim_path,
                 verbose=verbose,
                 _develop=_develop)
-            self._mf6 = self._simulator._mf6
+            self._mf6 = self._simulator._mf6  # pylint: disable=protected-access
             self.api = self._simulator.api
             MF6.old_mf6 = self._mf6
+
         self._mf6 = None
         self._simulator = None
         self._info_data = get_info_data()
         self.mf6_docs = None
+        self.api = None
         if self._info_data['mf6_doc_path']:
             self.mf6_docs = MF6Docs(self._info_data['mf6_doc_path'])
         self._info_texts = make_info_texts(self._info_data, demo=self._demo)
@@ -91,7 +92,8 @@ class MF6:
                     self.mf6_docs)
                 self.vars = self._get_vars()
         else:
-            init_mf6()
+            init_mf6(str(self.nam_file.parent))
+        self.loop = self._simulator.loop()
 
     def _repr_html_(self):
         """
@@ -150,9 +152,6 @@ class MF6:
                     xmi_error[name] = err
         return values
 
-    def loop(self):
-        return self._simulator.loop()
-
     def steps(self):
         """Generator for iterating over all time steps.
         It allows to modify MODFLOW variables for each time
@@ -179,6 +178,14 @@ class MF6:
             self._mf6.finalize_time_step()
             current_time = self.get_current_time()
         self.finalize()
+
+    def goto_stress_period(self, stress_period=0):
+        """Progress to beginning of stress period"""
+        for sim, state in self.loop:
+            if state == States.timestep_start:
+                model = sim.get_model()
+                if model.kper == stress_period:
+                    break
 
 
 class MF6Docs:
