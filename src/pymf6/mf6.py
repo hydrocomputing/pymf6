@@ -48,7 +48,10 @@ class MF6:
             # from initializing an instance at the same time an instance of
             # the parent class is still initialized.
             if MF6.old_mf6:
-                MF6.old_mf6.finalize()
+                try:
+                    MF6.old_mf6.finalize()
+                except InputError:
+                    pass
             self._simulator = Simulator(
                 str(self.dll_path),
                 sim_path,
