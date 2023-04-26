@@ -21,6 +21,7 @@ import os
 import textwrap
 import sys
 
+import modflowapi
 import xmipy
 
 from .. import _version
@@ -66,6 +67,7 @@ def get_info_data():
     info['ini_path'] = ini_path
     info['dll_path'] = dll_path
     info['xmipy_version'] = xmipy.__version__
+    info['modflowapi_version'] = modflowapi.__version__
     info['pymf6_version'] = _version.__version__
     info['modflow_version'] = None
     info['mf6_doc_path'] = None
@@ -99,6 +101,7 @@ def make_info_texts(info_data=None, demo=False):
     info_texts['entries'] = [
         ('pymf6 version', f'{info_data["pymf6_version"]}'),
         ('xmipy version', f'{info_data["xmipy_version"]}'),
+        ('modflowapi version', f'{info_data["modflowapi_version"]}'),
     ]
     if demo:
         info_texts['entries'].extend([
