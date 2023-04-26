@@ -2,8 +2,6 @@
 """
 
 from enum import Enum
-import pathlib
-import platform
 
 from modflowapi import ModflowApi
 from modflowapi.extensions.apisimulation import ApiSimulation
@@ -23,6 +21,7 @@ class States(Enum):
     @classmethod
     def show_states(cls):
         print(*cls._member_names_, sep='\n')
+
 
 class Simulator:
 
@@ -45,44 +44,20 @@ class Simulator:
             development purposes and bug fixes within the modflowapi python
             package.
         """
-        self.dll = dll
-        self.sim_path = sim_path
         self.verbose = verbose
         self._develop = _develop
-        self._mf6 = None
-
-    def loop(self):
-        dll = self.dll
-        sim_path = self.sim_path
-        verbose = self.verbose
-        _develop = self._develop
-
-        ext = pathlib.Path(dll).suffix
-        dll = str(dll)
-        if not ext:
-            if platform.system().lower() == "windows":
-                dll += ".dll"
-            elif platform.system().lower() == "linux":
-                if not dll.startswith("./"):
-                    if not dll.startswith("/"):
-                        dll = "./" + dll + ".so"
-                    else:
-                        dll = "." + dll + ".so"
-            else:
-                dll += ".dylib"
-
-        mf6 = ModflowApi(
+        self._mf6 = ModflowApi(
             dll,
             working_directory=sim_path,
         )
-        self._mf6 = mf6
-        if verbose:
-            version = mf6.get_version()
-            print(f"MODFLOW-6 API Version {version}")
-            print("Initializing MODFLOW-6 simulation")
+        self._mf6.initialize()
+        self.api = ApiSimulation.load(self._mf6)
 
-        mf6.initialize()
-        sim = ApiSimulation.load(mf6)
+    def loop(self):
+        mf6 = self._mf6
+        verbose = self.verbose
+        _develop = self._develop
+        sim = self.api
 
         if _develop:
             with open("var_list.txt", "w") as foo:

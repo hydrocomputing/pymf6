@@ -11,6 +11,7 @@ from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
+from . api import Simulator
 from . datastructures import Simulation
 from .tools.info import (
     get_info_data,
@@ -32,9 +33,16 @@ class MF6:
     old_mf6 = None
     _demo = False
 
-    def __init__(self, nam_file=None, sim_file='mfsim.nam', dll_path=None):
+    def __init__(
+            self,
+            nam_file=None,
+            sim_file='mfsim.nam',
+            dll_path=None,
+            verbose=False,
+            _develop=False
+            ):
 
-        def init_mf6():
+        def init_mf6(sim_path):
             # Finalize if initialized instance exists.
             # This is helpful for interactive work in Notebooks.
             # Use class `MF6` nit `self.__class__` to prevent child class
@@ -42,9 +50,16 @@ class MF6:
             # the parent class is still initialized.
             if MF6.old_mf6:
                 MF6.old_mf6.finalize()
-            self._mf6 = XmiWrapper(str(self.dll_path))
+            self._simulator = Simulator(
+                str(self.dll_path),
+                sim_path,
+                verbose=verbose,
+                _develop=_develop)
+            self._mf6 = self._simulator._mf6
+            self.api = self._simulator.api
             MF6.old_mf6 = self._mf6
         self._mf6 = None
+        self._simulator = None
         self._info_data = get_info_data()
         self.mf6_docs = None
         if self._info_data['mf6_doc_path']:
@@ -68,8 +83,7 @@ class MF6:
             self.model_path = self.nam_file.parent
             self.sim_file = self.model_path / sim_file
             with cd(self.model_path):
-                init_mf6()
-                self._mf6.initialize(str(self.nam_file))
+                init_mf6(str(self.nam_file.parent))
                 self.__class__.is_initialized = True
                 self.simulation = Simulation(
                     self._mf6,
@@ -136,6 +150,8 @@ class MF6:
                     xmi_error[name] = err
         return values
 
+    def loop(self):
+        return self._simulator.loop()
 
     def steps(self):
         """Generator for iterating over all time steps.
