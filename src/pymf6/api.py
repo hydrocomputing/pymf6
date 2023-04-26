@@ -54,6 +54,7 @@ class Simulator:
         )
         self._mf6.initialize()
         self.api = ApiSimulation.load(self._mf6)
+        self._sim_grp = None
 
     def loop(self):
         """Generator function to loop over all time steps."""
@@ -63,7 +64,6 @@ class Simulator:
 
         yield sim, States.initialize
 
-        has_converged = False
         current_time = mf6.get_current_time()
         end_time = mf6.get_end_time()
         kperold = [0 for _ in range(sim.subcomponent_count)]
@@ -77,62 +77,16 @@ class Simulator:
                     f"Solving: Stress Period {sim.kper + 1}; "
                     f"Timestep {sim.kstp + 1}"
                 )
-
-            for sol_id, slnobj in sorted(sim.solutions.items()):
-                models = {}
-                maxiter = slnobj.mxiter
-                solution = {sol_id: slnobj}
-                for model in sim.models:
-                    if sol_id == model.solution_id:
-                        models[model.name.lower()] = model
-
-                sim_grp = ApiSimulation(
-                    # pylint: disable=protected-access
-                    mf6, models, solution, sim._exchanges, sim.tdis, sim.ats
-                )
-                mf6.prepare_solve(sol_id)
-                if sim.kper != kperold[sol_id - 1]:
-                    yield sim_grp, States.stress_period_start
-                    kperold[sol_id - 1] += 1
-                elif current_time == 0:
-                    yield sim_grp, States.stress_period_start
-
-                kiter = 0
-                yield sim_grp, States.timestep_start
-
-                if sim_grp.ats_period[0]:
-                    mindt = sim_grp.ats_period[-1]
-                    while sim_grp.delt > mindt:
-                        sim_grp.iteration = kiter
-                        yield sim_grp, States.iteration_start
-                        has_converged = mf6.solve(sol_id)
-                        yield sim_grp, States.iteration_end
-                        kiter += 1
-                        if has_converged and sim_grp.allow_convergence:
-                            break
-
-                else:
-                    while kiter < maxiter:
-                        sim_grp.iteration = kiter
-                        yield sim_grp, States.iteration_start
-                        has_converged = mf6.solve(sol_id)
-                        yield sim_grp, States.iteration_end
-                        kiter += 1
-                        if has_converged and sim_grp.allow_convergence:
-                            break
-
-                yield sim_grp, States.timestep_end
-                mf6.finalize_solve(sol_id)
-
+            yield from self._solutions_loop(
+                sim=sim,
+                mf6=mf6,
+                current_time=current_time,
+                kperold=kperold)
             mf6.finalize_time_step()
             current_time = mf6.get_current_time()
-
-            if not has_converged:
-                print(f"Simulation group: {sim_grp} DID NOT CONVERGE")
-
+            sim_grp = self._sim_grp
             if sim_grp.nstp == sim_grp.kstp + 1:
                 yield sim_grp, States.stress_period_end
-
         try:
             yield sim, States.finalize
             mf6.finalize()
@@ -140,3 +94,54 @@ class Simulator:
             raise RuntimeError("MF6 simulation failed, check listing file") from err
 
         print("NORMAL TERMINATION OF SIMULATION")
+
+
+    def _solutions_loop(self, sim, mf6, current_time, kperold):
+        """Sub loop over solutions."""
+        has_converged = False
+        for sol_id, slnobj in sorted(sim.solutions.items()):
+            models = {}
+            maxiter = slnobj.mxiter
+            solution = {sol_id: slnobj}
+            for model in sim.models:
+                if sol_id == model.solution_id:
+                    models[model.name.lower()] = model
+
+            sim_grp = ApiSimulation(
+                # pylint: disable=protected-access
+                mf6, models, solution, sim._exchanges, sim.tdis, sim.ats
+            )
+            mf6.prepare_solve(sol_id)
+            if sim.kper != kperold[sol_id - 1]:
+                yield sim_grp, States.stress_period_start
+                kperold[sol_id - 1] += 1
+            elif current_time == 0:
+                yield sim_grp, States.stress_period_start
+
+            kiter = 0
+            yield sim_grp, States.timestep_start
+
+            if sim_grp.ats_period[0]:
+                mindt = sim_grp.ats_period[-1]
+                while sim_grp.delt > mindt:
+                    sim_grp.iteration = kiter
+                    yield sim_grp, States.iteration_start
+                    has_converged = mf6.solve(sol_id)
+                    yield sim_grp, States.iteration_end
+                    kiter += 1
+                    if has_converged and sim_grp.allow_convergence:
+                        break
+            else:
+                while kiter < maxiter:
+                    sim_grp.iteration = kiter
+                    yield sim_grp, States.iteration_start
+                    has_converged = mf6.solve(sol_id)
+                    yield sim_grp, States.iteration_end
+                    kiter += 1
+                    if has_converged and sim_grp.allow_convergence:
+                        break
+            yield sim_grp, States.timestep_end
+            mf6.finalize_solve(sol_id)
+        if not has_converged:
+            print(f"Simulation group: {sim_grp} DID NOT CONVERGE")
+        self._sim_grp = sim_grp
