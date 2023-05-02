@@ -42,12 +42,6 @@ or:
 
     mamba install -c hydrocomputing pymf6
 
-You need to install `xmipy` with pip afterwards:
-
-    pip install xmipy
-
-because currently `xmipy`  is not available as conda package.
-
 You can also add the channel hydrocomputing permanently with:
 
     conda config --add channels hydrocomputing
