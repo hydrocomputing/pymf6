@@ -57,7 +57,7 @@ def make_input(
     k33 = 0.1
 
     # constants for the initial concentration scenario
-    sconc= 0
+    sconc= 10
 
     # constants for dispersion package
     al = 100.00  # longitudinal dispersivity
@@ -105,7 +105,7 @@ def make_input(
     # MF6 pumping information
     #          (k,  i,  j),  flow,  conc
     spd_mf6 = {
-        1: [[wel_coords, wel_q, 0.0]],
+        1: [[wel_coords, wel_q, wel_c]],
         2: [[wel_coords, wel_q, wel_c]],
         3: [[wel_coords, wel_q, wel_c]],
         4: [[wel_coords, wel_q, 0.0]]
@@ -439,12 +439,14 @@ def show_well_head(model_path, name, wel_coords):
     return ax
 
 def show_concentration(model_path, name, wel_coords):
-    """Plot head at well over time."""
+    """Plot concentrations at well over time."""
     sim = get_simulation(model_path, name)
     gwt = sim.get_model(name)
-    conc = gwt.output.concentration().get_ts(wel_coords)
+    fname = os.path.join(model_path + ".obs.csv")
+    mf6cobs = flopy.utils.Mf6Obs(fname).data
+    #conc = gwt.output.concentration().get_ts(wel_coords)
     _, ax = plt.subplots()
-    ax.plot(conc[:, 0], conc[:, 1], label='Concentration')
+    ax.plot(mf6cobs[:, 0], mf6cobs[:, 1], label='Concentration')
     ax.set_xlabel('Time [d]')
     ax.set_ylabel('Concentration [mg/l]')
     y_start = 0.3
@@ -453,15 +455,11 @@ def show_concentration(model_path, name, wel_coords):
     x_stress_1 = (1, 1)
     x_stress_2 = (11, 11)
     x_stress_3 = (21, 21)
-    tolerance = 0.01
-    head_limit = 0.5
     x = [0, 32]
     ax.set_xlim(*x)
     ax.set_ylim(y_start, y_end)
-    y1 = [head_limit - tolerance, head_limit - tolerance]
-    y2 = [head_limit + tolerance, head_limit + tolerance]
-    ax.plot(x, y1, color='red', linestyle=':', label='Concentration range')
-    ax.plot(x, y2, color='red', linestyle=':')
+    ax.plot(x, color='red', linestyle=':', label='Concentration range')
+    ax.plot(x, color='red', linestyle=':')
     ax.plot(
         x_stress_1, y_stress,
         color='lightblue', linestyle=':', label='Stress periods')
