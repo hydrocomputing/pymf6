@@ -12,7 +12,7 @@ def run_model(nam_file):
     been_below = False
     for step in mf6.steps():
         if step < 21:
-            if head[wel_index] <= upper_limit:
+            if head[wel_index] <= lower_limit:
                 wel[:] = wel[:] * 0.9
                 been_below = True
             elif been_below and head[wel_index] >= upper_limit:
