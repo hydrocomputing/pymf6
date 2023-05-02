@@ -20,7 +20,7 @@ requirements:
     - numpy >=1.19
 
   run:
-    - numpy
+    - modflowapi
 
 about:
   home: hydrocomputing
