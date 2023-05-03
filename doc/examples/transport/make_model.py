@@ -354,6 +354,7 @@ def make_input(
     )
 
     sim.write_simulation()
+    return gwfname, gwtname
 
 
 def get_simulation(model_path, exe_name='mf6', verbosity_level=0):
@@ -376,8 +377,9 @@ def run_simulation(model_path, verbosity_level=0):
 
 def show_heads(model_path, name):
     """Plot calculated heads along with flow vector."""
-    sim = get_simulation(model_path, name)
-    gwf = sim.get_model(name)
+    gwfname = "gwf_" + name
+    sim = get_simulation(model_path, gwfname)
+    gwf = sim.get_model(gwfname)
 
     head = gwf.output.head().get_data()
     bud = gwf.output.budget()
@@ -406,8 +408,9 @@ def show_heads(model_path, name):
 
 def show_well_head(model_path, name, wel_coords):
     """Plot head at well over time."""
-    sim = get_simulation(model_path, name)
-    gwf = sim.get_model(name)
+    gwfname = "gwf_" + name
+    sim = get_simulation(model_path, gwfname)
+    gwf = sim.get_model(gwfname)
     heads = gwf.output.head().get_ts(wel_coords)
     _, ax = plt.subplots()
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
@@ -440,13 +443,12 @@ def show_well_head(model_path, name, wel_coords):
 
 def show_concentration(model_path, name, wel_coords):
     """Plot concentrations at well over time."""
-    sim = get_simulation(model_path, name)
-    gwt = sim.get_model(name)
-    fname = os.path.join(model_path + ".obs.csv")
-    mf6cobs = flopy.utils.Mf6Obs(fname).data
-    #conc = gwt.output.concentration().get_ts(wel_coords)
+    gwtname = "gwt_" + name
+    sim = get_simulation(model_path, gwtname)
+    gwt = sim.get_model(gwtname)
+    conc = gwt.output.concentration().get_ts(wel_coords)
     _, ax = plt.subplots()
-    ax.plot(mf6cobs[:, 0], mf6cobs[:, 1], label='Concentration')
+    ax.plot(conc[:, 0], conc[:, 1], label='Concentration')
     ax.set_xlabel('Time [d]')
     ax.set_ylabel('Concentration [mg/l]')
     y_start = 0.3
@@ -469,8 +471,6 @@ def show_concentration(model_path, name, wel_coords):
         color='lightblue', linestyle=':')
     ax.legend(loc=(1.1, 0))
     return ax
-
-
 
 
 #function to run all values with zero parameters to test pymf6
