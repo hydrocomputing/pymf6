@@ -18,6 +18,7 @@ The paths include:
 from configparser import ConfigParser
 from pathlib import Path
 import os
+import platform
 import textwrap
 import sys
 
@@ -27,7 +28,6 @@ import xmipy
 from .. import _version
 
 
-
 def read_ini():
     """Read ini file.
 
@@ -35,35 +35,43 @@ def read_ini():
     first. If not found there, it looks in the user's home directory.
     If no file is found `ini_data` will be `None`.
     """
+    ini_data = {}
+    dll_path = None
     ini_path = Path('pymf6.ini')
     if not ini_path.exists():
         ini_path = ini_path.home() / ini_path
     if not ini_path.exists():
         ini_path = None
     if ini_path:
-        ini_path = ini_path.resolve()
         parser = ConfigParser()
-        parser.read(ini_path)
-        ini_data = parser
-    else:
-        ini_data = None
-    return ini_path, ini_data
-
-
-def get_info_data():
-    """Find all versions."""
-    info = {}
-    path, ini = read_ini()
-    ini_path = Path(path) if path else path
-    if ini:
-        dll_path = Path(ini['paths']['dll_path'])
+        try:
+            ini_path = ini_path.resolve()
+            parser.read(ini_path)
+        except AttributeError:
+            parser.read_string(ini_path)
+        arch = platform.uname().machine
+        path_name = f'paths_{arch}'
+        if path_name in parser:
+            paths = parser[path_name]
+        else:
+            paths = parser['paths']
+        dll_path = Path(paths['dll_path'])
         if not dll_path.exists():
             raise ValueError(
                 f'dll path `{dll_path}` does not exist\n'
                 'Please specify correct path.'
                 )
-    else:
-        dll_path = None
+    ini_data['ini_path'] = ini_path
+    ini_data['dll_path'] = dll_path
+    return ini_data
+
+
+def get_info_data():
+    """Find all versions."""
+    info = {}
+    ini_data = read_ini()
+    ini_path = ini_data['ini_path']
+    dll_path = ini_data['dll_path']
     info['ini_path'] = ini_path
     info['dll_path'] = dll_path
     info['xmipy_version'] = xmipy.__version__
