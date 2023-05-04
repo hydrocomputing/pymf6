@@ -9,6 +9,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 import os
 
+import pymf6
+
+MF6EXE = pymf6.__mf6_exe__
+
+
 # Build stress package for one wel only - flow model
 def _make_wel_stress_period(gwf, wel_q, wel_coords):
     """Create stress period data for the wel package."""
@@ -27,7 +32,7 @@ def make_input(
     model_path,
     name,
     mixelm, # advection scheme 0 = upstream , -1 = TVD
-    exe_name='mf6',
+    exe_name=MF6EXE,
     verbosity_level=0):
     """Create MODFLOW 6 input"""
 
@@ -357,7 +362,7 @@ def make_input(
     return gwfname, gwtname
 
 
-def get_simulation(model_path, exe_name='mf6', verbosity_level=0):
+def get_simulation(model_path, exe_name=MF6EXE, verbosity_level=0):
     """Get simulation for a model."""
     sim = flopy.mf6.MFSimulation.load(
         sim_ws=model_path,

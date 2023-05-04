@@ -56,6 +56,9 @@ def read_ini():
         else:
             paths = parser['paths']
         dll_path = Path(paths['dll_path'])
+        exe_path = paths.get('exe_path', 'mf6')
+        if exe_path:
+            exe_path = Path(exe_path)
         if not dll_path.exists():
             raise ValueError(
                 f'dll path `{dll_path}` does not exist\n'
@@ -63,6 +66,7 @@ def read_ini():
                 )
     ini_data['ini_path'] = ini_path
     ini_data['dll_path'] = dll_path
+    ini_data['exe_path'] = exe_path
     return ini_data
 
 
@@ -74,6 +78,7 @@ def get_info_data():
     dll_path = ini_data['dll_path']
     info['ini_path'] = ini_path
     info['dll_path'] = dll_path
+    info['exe_path'] = ini_data['exe_path']
     info['xmipy_version'] = xmipy.__version__
     info['modflowapi_version'] = modflowapi.__version__
     info['pymf6_version'] = _version.__version__

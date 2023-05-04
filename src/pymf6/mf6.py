@@ -69,15 +69,11 @@ class MF6:
         if self._info_data['mf6_doc_path']:
             self.mf6_docs = MF6Docs(self._info_data['mf6_doc_path'])
         self._info_texts = make_info_texts(self._info_data, demo=self._demo)
-        self.ini_path, self.ini_data = read_ini()
+        ini_data = read_ini()
+        self.ini_path = ini_data['ini_path']
+
         if dll_path is None:
-            if self.ini_data is None:
-                raise ValueError(
-                    'No DLL path and no ini file found.\n'
-                    'Please provide the DLL path as argument or '
-                    'create an ini file with the path to MODFLOW 6 DLL.'
-                    )
-            self.dll_path = Path(self.ini_data['paths']['dll_path'])
+            self.dll_path = ini_data['dll_path']
         else:
             self.dll_path = Path(dll_path)
         if nam_file:

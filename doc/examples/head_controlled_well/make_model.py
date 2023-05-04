@@ -6,6 +6,9 @@ from flopy.utils.postprocessing import get_specific_discharge
 from matplotlib import pyplot as plt
 import numpy as np
 
+import pymf6
+
+MF6EXE = pymf6.__mf6_exe__
 
 def _make_wel_stress_period(gwf, wel_q, wel_coords):
     """Create stress period data for the wel package."""
@@ -22,7 +25,7 @@ def make_input(
     wel_coords,
     model_path,
     name,
-    exe_name='mf6',
+    exe_name=MF6EXE,
     verbosity_level=0):
     """Create MODFLOW 6 input"""
     sim = flopy.mf6.MFSimulation(
@@ -94,7 +97,7 @@ def make_input(
     sim.write_simulation()
 
 
-def get_simulation(model_path, exe_name='mf6', verbosity_level=0):
+def get_simulation(model_path, exe_name=MF6EXE, verbosity_level=0):
     """Get simulation for a model."""
     sim = flopy.mf6.MFSimulation.load(
         sim_ws=model_path,
