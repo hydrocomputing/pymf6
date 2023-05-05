@@ -6,7 +6,7 @@ import numpy as np
 import flopy
 from flopy.utils.postprocessing import get_specific_discharge
 
-from make_model import get_simulation
+from tools.make_model import get_simulation
 
 
 def show_heads(model_path, name, title='Head-Controlled Well'):
