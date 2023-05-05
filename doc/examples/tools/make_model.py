@@ -2,13 +2,11 @@
 """
 
 import flopy
-import numpy as np
 
 import pymf6
 
-
-
 MF6EXE = pymf6.__mf6_exe__
+
 
 def _make_wel_stress_period(gwf, wel_q, wel_coords):
     """Create stress period data for the wel package."""
@@ -21,45 +19,49 @@ def _make_wel_stress_period(gwf, wel_q, wel_coords):
 
 
 def make_input(
-    wel_q,
-    wel_coords,
-    model_path,
-    name,
-    exe_name=MF6EXE,
-    verbosity_level=0):
+        model_data,
+        exe_name=MF6EXE,
+        verbosity_level=0):
     """Create MODFLOW 6 input"""
     sim = flopy.mf6.MFSimulation(
-        sim_name=name,
-        sim_ws=model_path,
+        sim_name=model_data['name'],
+        sim_ws=model_data['model_path'],
         exe_name=exe_name,
         verbosity_level=verbosity_level,
     )
-    times = (10.0, 120, 1.0)
-    tdis_rc = [(1.0, 1, 1.0), times, times, times]
+    times = model_data['times']
+    repeat_times = model_data['repeat_times']
+    tdis_rc = [(1.0, 1, 1.0)] + [times] * repeat_times
     flopy.mf6.ModflowTdis(
         sim, pname="tdis",
-        time_units="DAYS",
-        nper=4,
+        time_units=model_data['time_units'],
+        nper=repeat_times + 1,
         perioddata=tdis_rc,
     )
     flopy.mf6.ModflowIms(sim)
-    gwf = flopy.mf6.ModflowGwf(sim, modelname=name, save_flows=True)
-    flopy.mf6.ModflowGwfdis(gwf, nrow=10, ncol=10)
+    gwf = flopy.mf6.ModflowGwf(
+        sim,
+        modelname=model_data['name'],
+        save_flows=True)
+    kwargs = {name: model_data[name] for name in
+              ['nrow', 'ncol', 'nlay', 'delr', 'delc', 'top', 'botm']
+              }
+    flopy.mf6.ModflowGwfdis(gwf, **kwargs)
     flopy.mf6.ModflowGwfic(gwf)
     flopy.mf6.ModflowGwfnpf(
         gwf,
         save_flows=True,
         save_specific_discharge=True,
         icelltype=[0],
-        k=[0.5],
-        k33=[0.1],
+        k=model_data['k'],
+        k33=model_data['k33'],
     )
     sy = flopy.mf6.ModflowGwfsto.sy.empty(
         gwf,
-        default_value=0.2
+        default_value=model_data['sy']
     )
     ss = flopy.mf6.ModflowGwfsto.ss.empty(
-        gwf, default_value=0.000001
+        gwf, default_value=model_data['ss']
     )
     flopy.mf6.ModflowGwfsto(
         gwf,
@@ -73,9 +75,8 @@ def make_input(
         )
 
     stress_period_data = {
-        1: _make_wel_stress_period(gwf, wel_q / 10, wel_coords)[0],
-        2: _make_wel_stress_period(gwf, wel_q, wel_coords)[0],
-        3: _make_wel_stress_period(gwf, wel_q / 10, wel_coords)[0]
+        index: _make_wel_stress_period(gwf, wel_q, model_data['wel_coords'])[0]
+        for index, wel_q in enumerate(model_data['wel_qs'], 1)
     }
     flopy.mf6.ModflowGwfwel(
         gwf,
@@ -83,12 +84,10 @@ def make_input(
     )
     flopy.mf6.ModflowGwfchd(
         gwf,
-        stress_period_data=[
-            [(0, 0, 0), 1.],
-            [(0, 9, 9), 1.]],
+        stress_period_data=model_data['chd']
     )
-    budget_file = name + '.bud'
-    head_file = name + '.hds'
+    budget_file = model_data['name'] + '.bud'
+    head_file = model_data['name'] + '.hds'
     flopy.mf6.ModflowGwfoc(
         gwf,
         budget_filerecord=budget_file,
