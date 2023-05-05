@@ -19,9 +19,9 @@ def run_model(nam_file):
         for _ in mf6.steps():
             pass
         print(f'GOOD {nam_file}')
-    except:
+    except Exception as err:
         print(f'BAD {nam_file}')
-        raise
+        raise err
     print(line)
     print(line)
 

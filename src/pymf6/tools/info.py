@@ -88,7 +88,8 @@ def get_info_data():
         mf6_version = xmipy.XmiWrapper(str(dll_path)).get_version()
         info['modflow_version'] = mf6_version
         mf6_doc_path = (
-            Path(_version.__file__).parent / 'resources/mf6_var_names/mem_vars')
+            Path(_version.__file__).parent /
+            'resources' / 'mf6_var_names' / 'mem_vars')
         mf6_doc_path = mf6_doc_path / f'{mf6_version}'
         info['mf6_doc_path'] = mf6_doc_path if mf6_doc_path.exists() else None
 
@@ -108,7 +109,7 @@ def get_info_data():
 def make_info_texts(info_data=None, demo=False):
     """Show version and paths information"""
     if info_data is None:
-        info_data= get_info_data()
+        info_data = get_info_data()
     info_texts = {}
     info_texts['header'] = 'pymf6 configuration data'
     info_texts['entries'] = [

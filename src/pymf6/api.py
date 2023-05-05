@@ -91,10 +91,10 @@ class Simulator:
             yield sim, States.finalize
             mf6.finalize()
         except Exception as err:
-            raise RuntimeError("MF6 simulation failed, check listing file") from err
+            msg = 'MF6 simulation failed, check listing file'
+            raise RuntimeError(msg) from err
 
         print("NORMAL TERMINATION OF SIMULATION")
-
 
     def _solutions_loop(self, sim, mf6, current_time, kperold):
         """Sub loop over solutions."""

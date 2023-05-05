@@ -107,7 +107,9 @@ def make_repr(obj, mf6_docs=None):
                     repr_text += '\ndocstring source: '
                 else:
                     repr_text += '\n                  '
-                repr_text += f"{source['source_file']} line {source['line_no']}"
+                repr_text += (
+                    f"{source['source_file']} line {source['line_no']}"
+                    )
     return repr_text
 
 

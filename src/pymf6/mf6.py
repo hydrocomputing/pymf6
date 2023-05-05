@@ -57,7 +57,8 @@ class MF6:
                 sim_path,
                 verbose=verbose,
                 _develop=_develop)
-            self._mf6 = self._simulator._mf6  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            self._mf6 = self._simulator._mf6
             self.api = self._simulator.api
             MF6.old_mf6 = self._mf6
 

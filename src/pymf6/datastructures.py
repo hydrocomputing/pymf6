@@ -77,7 +77,8 @@ class Simulation:
             # * `GWF_1/DIS/INUNIT`
             # * `SLN_1/IMSLinear/IOUT`
             component_name, *subcomponent_name, var_name = full_name.split('/')
-            subcomponent_name = subcomponent_name[0] if subcomponent_name else None
+            subcomponent_name = (subcomponent_name[0] if subcomponent_name
+                                 else None)
             if component_name == 'TDIS':
                 obj = self.TDIS
             elif component_name.startswith('SLN_'):
@@ -85,7 +86,8 @@ class Simulation:
             elif component_name in self.model_names:
                 obj = self._get_model(component_name)
             else:
-                obj = self.exchanges.setdefault(component_name, Exchange(component_name))
+                obj = self.exchanges.setdefault(
+                    component_name, Exchange(component_name))
             if subcomponent_name:
                 self._add_package_attr(
                     obj, subcomponent_name, var_name, full_name)
@@ -204,6 +206,7 @@ class Package(MF6Object):
         self.name = name
         self.var_names = []
 
+
 class Exchange(MF6Object):
     """
     A MF6 exchange
@@ -212,6 +215,7 @@ class Exchange(MF6Object):
         self.name = name
         self.var_names = []
         self.package_names = []
+
 
 class Variable(MF6Object):
     """A variable of a package"""

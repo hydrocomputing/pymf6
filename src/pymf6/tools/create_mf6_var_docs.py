@@ -35,7 +35,6 @@ OUT_DIR_INPUT = OUT_DIR / 'input_vars'
 OUT_DIR_MEM_VARS = OUT_DIR / 'mem_vars'
 
 
-
 class VersionTag:
     """Context manager for a version tag.
 
@@ -127,8 +126,6 @@ def save_input_var_docs(tag):
                 out_dir=version_tag.out_dir_tag)
 
 
-
-
 def read_mem_vars(mem_var_path=MF6_MEM_VAR_FILE):
     """Read names of memory manager Varibles"""
 
@@ -186,9 +183,8 @@ def add_docs(docs, path):
                 else:
                     name_data = {}
                 name_data.setdefault(doc, []).append(
-                    {'source_file': shorten_path(path),
-                      'line_no': line_no}
-                      )
+                    {'source_file': shorten_path(path), 'line_no': line_no}
+                    )
                 docs[name] = name_data
 
 
@@ -204,7 +200,7 @@ def read_mem_var_docs(src_path=MF6_SOURCE_DIR):
 
 def save_mem_var_docs(tag, out_dir=OUT_DIR_MEM_VARS):
     """Save docstrings into a JSON file."""
-    with VersionTag(tag) :
+    with VersionTag(tag):
         mem_vars = read_mem_vars()
         mem_var_names = make_mem_var_names(mem_vars)
         docs = read_mem_var_docs()
@@ -212,13 +208,14 @@ def save_mem_var_docs(tag, out_dir=OUT_DIR_MEM_VARS):
     extra_docs = docs.keys() - mem_var_names.keys()
     out_sub_dir = out_dir / tag
     out_sub_dir.mkdir(exist_ok=True)
-    with open(out_sub_dir / 'mem_var_docs.json', 'w', encoding='utf-8') as fobj:
+    out_file = out_sub_dir / 'mem_var_docs.json'
+    with open(out_file, 'w', encoding='utf-8') as fobj:
         json.dump(docs, fobj)
     Path(out_sub_dir / 'no_docs.txt').write_text(
-        '\n'.join(sorted(no_docs)) +  '\n',
+        '\n'.join(sorted(no_docs)) + '\n',
         encoding='utf-8')
     Path(out_sub_dir / 'extra_docs.txt').write_text(
-        '\n'.join(sorted(extra_docs)) +  '\n',
+        '\n'.join(sorted(extra_docs)) + '\n',
         encoding='utf-8')
 
 
