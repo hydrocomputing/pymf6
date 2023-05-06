@@ -14,17 +14,17 @@ def show_heads(model_path, name, title='Head-Controlled Well'):
     sim = get_simulation(model_path, name)
     gwf = sim.get_model(name)
 
-    head = gwf.output.head().get_data()
+    head = gwf.output.head().get_data(kstpkper=(119, 2))
     bud = gwf.output.budget()
-
-    spdis = bud.get_data(text='DATA-SPDIS')[-1]
+    spdis = bud.get_data(text='DATA-SPDIS')[240]
     qx, qy, _ = get_specific_discharge(spdis, gwf)
     pmv = flopy.plot.PlotMapView(gwf)
-    pmv.plot_array(head)
+    levels=np.arange(0.2, 1.4, 0.02)
+    arr = pmv.plot_array(head)
     pmv.plot_grid(colors='white')
     pmv.contour_array(
         head,
-        levels=np.arange(0.2, 1.0, 0.02),
+        levels=levels,
     )
     plot = pmv.plot_vector(
         qx,
@@ -34,13 +34,14 @@ def show_heads(model_path, name, title='Head-Controlled Well'):
     plot.axes.set_xlabel('x (m)')
     plot.axes.set_ylabel('y (m)')
     plot.axes.set_title(title)
-    ticks = np.arange(0, 1.01, 0.1)
-    cbar = plot.get_figure().colorbar(plot, ticks=ticks)
+    #ticks = np.arange(0, 1.41, 0.1)
+    cbar = plot.get_figure().colorbar(arr) # ticks=ticks)
     cbar.set_label('Water level (m)')
     return plot
 
 
 def show_well_head(
+        wel_coords,
         model_data,
         y_start=0.3,
         y_end=1.05,
@@ -50,7 +51,7 @@ def show_well_head(
     """Plot head at well over time."""
     sim = get_simulation(model_data['model_path'], model_data['name'])
     gwf = sim.get_model(model_data['name'])
-    heads = gwf.output.head().get_ts(model_data['wel_coords'])
+    heads = gwf.output.head().get_ts(wel_coords)
     _, ax = plt.subplots()
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
     ax.set_xlabel('Time (d)')
