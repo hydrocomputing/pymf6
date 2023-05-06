@@ -49,8 +49,20 @@ BASE_MODEL_DATA = {
     ],
 }
 
+BASE_TRANSPORT_MODEL_DATA = {
+    'initial_concentration': 10,
+    'scheme': 'TVD',  # or 'UPSTREAM'
+    'longitudinal_dispersivity': 1.0,
+    # Ratio of transverse to longitudinal dispersitivity
+    'dispersivity_ratio': 1.0,
+    'porosity': 0.35,
+    'obs': None,
+}
 
-def make_model_data(specific_model_data, base_model_data=BASE_MODEL_DATA):
+def make_model_data(
+        specific_model_data,
+        base_model_data=BASE_MODEL_DATA,
+        base_transport_model_data=BASE_TRANSPORT_MODEL_DATA):
     """Make model data.
 
     specific_model_data - dictionary with data specific for the current model
@@ -59,6 +71,8 @@ def make_model_data(specific_model_data, base_model_data=BASE_MODEL_DATA):
     base_model_data - dictionary with basic model data defaults to
                       `BASE_MODEL_DATA`
     """
+    if specific_model_data.get('transport'):
+        base_model_data.update(base_transport_model_data)
     # old way up to Python 3.8
     if sys.version_info[:2] < (3, 9):
         return {**base_model_data, **specific_model_data}

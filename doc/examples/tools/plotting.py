@@ -41,6 +41,32 @@ def show_heads(model_path, name, title='Head-Controlled Well', show_grid=True):
     return plot
 
 
+
+def show_concentration(model_path, name, title='', show_grid=True):
+    """Plot calculated heads along with flow vector."""
+    gwtname = 'gwt_' + name
+    sim = get_simulation(model_path, name)
+    gwt = sim.get_model(gwtname)
+
+    conc = gwt.output.concentration().get_data()
+    pmv = flopy.plot.PlotMapView(gwt)
+    levels=np.arange(0.2, 1.4, 0.02)
+    arr = pmv.plot_array(conc)
+    if show_grid:
+        pmv.plot_grid(colors='white')
+    plot = pmv.contour_array(
+        conc,
+        levels=levels,
+    )
+    plot.axes.set_xlabel('x (m)')
+    plot.axes.set_ylabel('y (m)')
+    plot.axes.set_title(title)
+    #ticks = np.arange(0, 1.41, 0.1)
+    cbar = arr.get_figure().colorbar(arr) # ticks=ticks)
+    cbar.set_label('Concentration')
+    return plot
+
+
 def show_well_head(
         wel_coords,
         model_data,
