@@ -43,10 +43,11 @@ def show_heads(model_path, name, title='Head-Controlled Well'):
 def show_well_head(
         wel_coords,
         model_data,
+        title='',
         y_start=0.3,
         y_end=1.05,
-        tolerance=0.01,
-        head_limit=0.5,
+        upper_head_limit=None,
+        lower_head_limit=None,
         x=(0, 32)):
     """Plot head at well over time."""
     sim = get_simulation(model_data['model_path'], model_data['name'])
@@ -69,11 +70,26 @@ def show_well_head(
         x_stresses.append(y_stress)
     ax.set_xlim(*x)
     ax.set_ylim(y_start, y_end)
-    y1 = [head_limit - tolerance, head_limit - tolerance]
-    y2 = [head_limit + tolerance, head_limit + tolerance]
-    ax.plot(x, y1, color='red', linestyle=':',
-            label='Target water level range')
-    ax.plot(x, y2, color='red', linestyle=':')
+    ax.set_title(title)
+    limit_range = False
+    one_limit = False
+    text = 'Target water level'
+    if (lower_head_limit is not None) and (upper_head_limit is not None):
+        limit_range = True
+        text += ' range'
+        y1 = [lower_head_limit] * 2
+        y2 =[upper_head_limit] * 2
+    elif lower_head_limit is not None:
+        one_limit = True
+        y1 = [lower_head_limit] * 2
+    elif upper_head_limit is not None:
+        one_limit = True
+        y1 = [upper_head_limit] * 2
+    if one_limit or limit_range:
+        ax.plot(x, y1, color='red', linestyle=':',
+                label=text)
+    if limit_range:
+        ax.plot(x, y2, color='red', linestyle=':')
     ax.plot(
          x_stress_1, y_stress,
          color='lightblue', linestyle=':', label='Stress periods')
