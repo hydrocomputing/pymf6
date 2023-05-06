@@ -12,12 +12,13 @@ Assumptions:
 """
 
 
-import copy
+import sys
 
 
 BASE_MODEL_DATA = {
-    'wel_coords': (0, 4, 4),
-    'wel_qs': [-0.05, -0.5, -0.05],
+    'wells': {
+        'wel_out': {'q': (-0.05, -0.5, -0.05), 'coords': (0, 4, 4)},
+              },
     #  flopy.mf6.ModflowTdis
     'times': (
         10.0,  # perlen (double) is the length of a stress period.
@@ -36,8 +37,8 @@ BASE_MODEL_DATA = {
     'top': 1.0,
     'botm': 0.0,
     #  flopy.mf6.ModflowGwfnpf
-    'k': [0.5],
-    'k33': [0.1],
+    'k': [0.5],  # initial value of k
+    'k33': [0.1],  # vertical anisotropy
     #  flopy.mf6.ModflowGwfsto
     'sy': 0.2,
     'ss': 0.000001,
@@ -58,6 +59,8 @@ def make_model_data(specific_model_data, base_model_data=BASE_MODEL_DATA):
     base_model_data - dictionary with basic model data defaults to
                       `BASE_MODEL_DATA`
     """
-    model_data = copy.deepcopy(base_model_data)
-    model_data.update(specific_model_data)
-    return model_data
+    # old way up to Python 3.8
+    if sys.version_info[:2] < (3, 9):
+        return {**base_model_data, **specific_model_data}
+    # new way starting from Python 3.9
+    return base_model_data | specific_model_data
