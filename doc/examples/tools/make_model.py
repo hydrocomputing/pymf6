@@ -8,16 +8,6 @@ import pymf6
 MF6EXE = pymf6.__mf6_exe__
 
 
-def _make_wel_stress_period(gwf, wel_q, wel_coords):
-    """Create stress period data for the wel package."""
-    period = flopy.mf6.ModflowGwfwel.stress_period_data.empty(
-        gwf,
-        maxbound=1,
-    )
-    period[0][0] = (wel_coords, wel_q)
-    return period
-
-
 def make_input(
         model_data,
         exe_name=MF6EXE,
@@ -71,13 +61,17 @@ def make_input(
         iconvert=1,
         ss=ss,
         sy=sy,
-        transient={0: True},
+        steady_state={0: True},
+        transient={index: True for index in range(1, len(times))},
         )
 
-    stress_period_data = {
-        index: _make_wel_stress_period(gwf, wel_q, model_data['wel_coords'])[0]
-        for index, wel_q in enumerate(model_data['wel_qs'], 1)
-    }
+    stress_period_data = {}
+    for index in range(len(times)):
+        entry = []
+        for well in model_data['wells'].values():
+            entry.append((well['coords'], well['q'][index]))
+        stress_period_data[index + 1] = entry
+
     flopy.mf6.ModflowGwfwel(
         gwf,
         stress_period_data=stress_period_data,
