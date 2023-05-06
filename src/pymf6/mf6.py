@@ -152,10 +152,17 @@ class MF6:
                     xmi_error[name] = err
         return values
 
-    def steps(self):
+    def steps(self, new_step_only=False):
         """Generator for iterating over all time steps.
         It allows to modify MODFLOW variables for each time
         step.
+        new_step_only -yield only at new time step
+
+        If `new_step_only` is set to `True` each step has new value.
+        Otherwise the control is gain for each outer iteration,
+        resulting in getting the same time step multiple times (<= `MXITER`).
+        Do **NOT** set  `new_step_only` to `True` if modifying time
+        series data. Modifications of values will be ignore by MODFLOW.
 
         Example:
 
@@ -170,12 +177,28 @@ class MF6:
         """
         current_time = self.get_current_time()
         end_time = self.get_end_time()
+        nsol = self._mf6.get_subcomponent_count()
+        sol_numbers = list(range(1, nsol + 1))
+        max_iters = []
+        for sol_number in sol_numbers:
+            max_iters.append(self.vars[f'SLN_{sol_number}/MXITER'][0])
         while current_time < end_time:
             dt = self._mf6.get_time_step()  # pylint: disable=invalid-name
             self._mf6.prepare_time_step(dt)
-            yield current_time
-            self._mf6.do_time_step()
+            for sol_number in sol_numbers:
+                self._mf6.prepare_solve(sol_number)
+            for sol_number, max_iter in zip(sol_numbers, max_iters):
+                for _ in range(max_iter):
+                    has_converged = self._mf6.solve(sol_number)
+                    if not new_step_only:
+                        yield current_time
+                    if has_converged:
+                        break
+            for sol_number in sol_numbers:
+                self._mf6.finalize_solve(sol_number)
             self._mf6.finalize_time_step()
+            if new_step_only:
+                yield current_time
             current_time = self.get_current_time()
         self.finalize()
 
