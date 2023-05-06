@@ -9,7 +9,7 @@ from flopy.utils.postprocessing import get_specific_discharge
 from tools.make_model import get_simulation
 
 
-def show_heads(model_path, name, title='Head-Controlled Well'):
+def show_heads(model_path, name, title='Head-Controlled Well', show_grid=True):
     """Plot calculated heads along with flow vector."""
     sim = get_simulation(model_path, name)
     gwf = sim.get_model(name)
@@ -21,7 +21,8 @@ def show_heads(model_path, name, title='Head-Controlled Well'):
     pmv = flopy.plot.PlotMapView(gwf)
     levels=np.arange(0.2, 1.4, 0.02)
     arr = pmv.plot_array(head)
-    pmv.plot_grid(colors='white')
+    if show_grid:
+        pmv.plot_grid(colors='white')
     pmv.contour_array(
         head,
         levels=levels,
@@ -57,8 +58,6 @@ def show_well_head(
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
     ax.set_xlabel('Time (d)')
     ax.set_ylabel('Water level (m)')
-    y_start = y_start
-    y_end = y_end
     y_stress = (y_start, y_end)
     x_stress_1 = (1, 1)
     times = model_data['times']
