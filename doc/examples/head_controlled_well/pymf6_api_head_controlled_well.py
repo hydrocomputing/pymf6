@@ -24,3 +24,4 @@ def run_model(nam_file):
 
 if __name__ == '__main__':
     run_model(r'models/pymf6/mfsim.nam')
+    print('done')
