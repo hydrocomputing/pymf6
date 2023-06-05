@@ -2,6 +2,7 @@
 """
 
 from matplotlib import pyplot as plt
+from matplotlib.patches import Patch
 import numpy as np
 import flopy
 from flopy.utils.postprocessing import get_specific_discharge
@@ -9,7 +10,12 @@ from flopy.utils.postprocessing import get_specific_discharge
 from .make_model import get_simulation
 
 
-def show_heads(model_path, name, title='Head-Controlled Well', show_grid=True):
+def show_heads(
+        model_path,
+        name,
+        title='',
+        show_grid=True,
+        show_wells=True):
     """Plot calculated heads along with flow vector."""
     sim = get_simulation(model_path, name)
     gwf = sim.get_model(name)
@@ -27,6 +33,8 @@ def show_heads(model_path, name, title='Head-Controlled Well', show_grid=True):
         head,
         levels=levels,
     )
+    if show_wells:
+        pmv.plot_bc(name='wel', plotAll=True, kper=1)
     plot = pmv.plot_vector(
         qx,
         qy,
@@ -41,12 +49,40 @@ def show_heads(model_path, name, title='Head-Controlled Well', show_grid=True):
     return plot
 
 
+def show_bcs(
+        model_path,
+        name,
+        title='Boundary Conditions',
+        bc_names = ('chd', 'wel'),
+        show_grid=True):
+    """Show location of boundary conditions."""
+    handles = []
+    sim = get_simulation(model_path, name)
+    gwf = sim.get_model(name)
+    pmv = flopy.plot.PlotMapView(gwf)
+
+    def add_bc(name, handles=handles, pmv=pmv):
+        """Add a BC including legend entry"""
+        name = name.upper()
+        bc = pmv.plot_bc(name=name, plotAll=True, kper=1)
+        color = bc.cmap.colors[-1]
+        handles.append(Patch(facecolor=color, edgecolor='k', label=name))
+        return bc
+    for bc_name in bc_names:
+        plot = add_bc(bc_name)
+    if show_grid:
+        pmv.plot_grid()
+    plot.axes.set_title(title)
+    plot.axes.legend(handles=handles, loc=(1.2, 0))
+    return plot
+
 def show_concentration(
         model_path, name,
         title='',
         show_grid=True,
         levels=None,
-        kstpkper=None):
+        kstpkper=None,
+        show_wells=True):
     """Plot calculated heads along with flow vector."""
     gwtname = 'gwt_' + name
     sim = get_simulation(model_path, name)
@@ -60,6 +96,10 @@ def show_concentration(
     arr = pmv.plot_array(conc)
     if show_grid:
         pmv.plot_grid(colors='white')
+    if show_wells:
+        flow_sim = get_simulation(model_path, name)
+        gwf = flow_sim.get_model(name)
+        pmv.plot_bc(package=gwf.get_package('wel'), plotAll=True, kper=1)
     plot = pmv.contour_array(
         conc,
         levels=levels,
