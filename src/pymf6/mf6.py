@@ -6,7 +6,9 @@ from contextlib import redirect_stdout
 import json
 from io import StringIO
 from pathlib import Path
+import time
 
+from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
@@ -37,6 +39,7 @@ class MF6:
             nam_file=None,
             sim_file='mfsim.nam',
             dll_path=None,
+            use_modflow_api=True,
             verbose=False,
             _develop=False
             ):
@@ -52,16 +55,21 @@ class MF6:
                     MF6.old_mf6.finalize()
                 except InputError:
                     pass
-            self._simulator = Simulator(
-                str(self.dll_path),
-                sim_path,
-                verbose=verbose,
-                _develop=_develop)
-            # pylint: disable=protected-access
-            self._mf6 = self._simulator._mf6
-            self.api = self._simulator.api
+            if use_modflow_api:
+                self._simulator = Simulator(
+                    str(self.dll_path),
+                    sim_path,
+                    verbose=verbose,
+                    _develop=_develop)
+                # pylint: disable=protected-access
+                self._mf6 = self._simulator._mf6
+                self.api = self._simulator.api
+            else:
+                self._mf6 = XmiWrapper(str(self.dll_path))
+                self._mf6.initialize(str(self.nam_file))
             MF6.old_mf6 = self._mf6
 
+        self.verbose = verbose
         self._mf6 = None
         self._simulator = None
         self._info_data = get_info_data()
@@ -93,7 +101,10 @@ class MF6:
                 self.vars = self._get_vars()
         else:
             init_mf6(str(self.nam_file.parent))
-        self.loop = self._simulator.loop()
+        if use_modflow_api:
+            self.loop = self._simulator.loop()
+        else:
+            self.loop = None
 
     def _repr_html_(self):
         """
@@ -185,16 +196,17 @@ class MF6:
         while current_time < end_time:
             dt = self._mf6.get_time_step()  # pylint: disable=invalid-name
             self._mf6.prepare_time_step(dt)
-            for sol_number in sol_numbers:
-                self._mf6.prepare_solve(sol_number)
             for sol_number, max_iter in zip(sol_numbers, max_iters):
-                for _ in range(max_iter):
+                self._mf6.prepare_solve(sol_number)
+                for iter in range(max_iter):
                     has_converged = self._mf6.solve(sol_number)
                     if not new_step_only:
                         yield current_time
                     if has_converged:
+                        if self.verbose:
+                            print(f'solution {sol_number} has converged with'
+                                  f' {iter} iterations')
                         break
-            for sol_number in sol_numbers:
                 self._mf6.finalize_solve(sol_number)
             self._mf6.finalize_time_step()
             if new_step_only:
