@@ -48,3 +48,4 @@ src/pymf6/_version.py
 src/pymf6/.vs/**
 doc/examples/**/models/**
 **/scratch/**
+**/Scratch.ipynb
