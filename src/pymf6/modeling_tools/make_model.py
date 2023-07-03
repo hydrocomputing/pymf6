@@ -58,7 +58,7 @@ def make_input(
         gwf,
         pname="sto",
         save_flows=True,
-        save_specific_discharge=True,
+        # save_specific_discharge=True,
         iconvert=1,
         ss=ss,
         sy=sy,
