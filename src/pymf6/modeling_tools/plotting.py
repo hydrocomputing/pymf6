@@ -82,18 +82,17 @@ def show_concentration(
         show_grid=True,
         levels=None,
         kstpkper=None,
-        show_wells=True):
+        show_wells=True,
+        vmin=None,
+        vmax=None):
     """Plot calculated heads along with flow vector."""
     gwtname = 'gwt_' + name
     sim = get_simulation(model_path, name)
     gwt = sim.get_model(gwtname)
 
     conc = gwt.output.concentration().get_data(kstpkper)
-   #conc[0, :, 0] = 10
     pmv = flopy.plot.PlotMapView(gwt)
-    # hack to level start azero
-    conc[0, -1, -1] = 0
-    arr = pmv.plot_array(conc)
+    arr = pmv.plot_array(conc, vmin=vmin, vmax=vmax)
     if show_grid:
         pmv.plot_grid(colors='white')
     if show_wells:
