@@ -85,7 +85,8 @@ def show_concentration(
         show_wells=True,
         vmin=None,
         vmax=None,
-        show_contours=True,):
+        show_contours=True,
+        show_arrows=False,):
     """Plot calculated heads along with flow vector."""
     gwtname = 'gwt_' + name
     sim = get_simulation(model_path, name)
@@ -110,6 +111,16 @@ def show_concentration(
     plot.axes.set_title(title)
     cbar = arr.get_figure().colorbar(arr, ticks=levels)
     cbar.set_label('Concentration')
+    if show_arrows:
+        gwf = sim.get_model(name)
+        bud = gwf.output.budget()
+        spdis = bud.get_data(text='DATA-SPDIS')[240]
+        qx, qy, _ = get_specific_discharge(spdis, gwf)
+        plot = pmv.plot_vector(
+            qx,
+            qy,
+            normalize=True,
+            color="white")
     return plot
 
 
