@@ -45,7 +45,7 @@ def show_heads(
     plot.axes.set_title(title)
     #ticks = np.arange(0, 1.41, 0.1)
     cbar = plot.get_figure().colorbar(arr) # ticks=ticks)
-    cbar.set_label('Water level (m)')
+    cbar.set_label('Groundwater level (m)')
     return plot
 
 
@@ -128,7 +128,7 @@ def show_well_head(
     _, ax = plt.subplots()
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
     ax.set_xlabel('Time (d)')
-    ax.set_ylabel('Water level (m)')
+    ax.set_ylabel('Groundwater level (m)')
     y_stress = (y_start, y_end)
     x_stress_1 = (1, 1)
     times = model_data['times']
