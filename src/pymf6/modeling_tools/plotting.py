@@ -84,7 +84,8 @@ def show_concentration(
         kstpkper=None,
         show_wells=True,
         vmin=None,
-        vmax=None):
+        vmax=None,
+        show_contours=True,):
     """Plot calculated heads along with flow vector."""
     gwtname = 'gwt_' + name
     sim = get_simulation(model_path, name)
@@ -98,15 +99,15 @@ def show_concentration(
     if show_wells:
         flow_sim = get_simulation(model_path, name)
         gwf = flow_sim.get_model(name)
-        pmv.plot_bc(package=gwf.get_package('wel'), plotAll=True, kper=1)
-    plot = pmv.contour_array(
-        conc,
-        levels=levels,
-    )
+        plot = pmv.plot_bc(package=gwf.get_package('wel'), plotAll=True, kper=1)
+    if show_contours:
+        pmv.contour_array(
+            conc,
+            levels=levels,
+        )
     plot.axes.set_xlabel('x (m)')
     plot.axes.set_ylabel('y (m)')
     plot.axes.set_title(title)
-    #ticks = np.arange(0, 1.41, 0.1)
     cbar = arr.get_figure().colorbar(arr, ticks=levels)
     cbar.set_label('Concentration')
     return plot
