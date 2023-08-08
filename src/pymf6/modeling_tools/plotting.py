@@ -7,7 +7,7 @@ import numpy as np
 import flopy
 from flopy.utils.postprocessing import get_specific_discharge
 
-from .make_model import get_simulation
+from pymf6.modeling_tools. make_model import get_simulation
 
 
 def show_heads(
@@ -136,6 +136,7 @@ def show_well_head(
     """Plot head at well over time."""
     sim = get_simulation(model_data['model_path'], model_data['name'])
     gwf = sim.get_model(model_data['name'])
+    print(gwf.output)
     heads = gwf.output.head().get_ts(wel_coords)
     _, ax = plt.subplots()
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
@@ -158,7 +159,7 @@ def show_well_head(
     text = 'Target water level'
     if (lower_head_limit is not None) and (upper_head_limit is not None):
         limit_range = True
-        text += 'range'
+        text += ' range'
         y1 = [lower_head_limit] * 2
         y2 =[upper_head_limit] * 2
     elif lower_head_limit is not None:
