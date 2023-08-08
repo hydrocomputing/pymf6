@@ -49,3 +49,4 @@ src/pymf6/.vs/**
 doc/examples/**/models/**
 **/scratch/**
 **/Scratch.ipynb
+doc/examples/simple_transport/Export.ipynb
