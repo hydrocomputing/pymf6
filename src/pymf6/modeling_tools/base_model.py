@@ -50,6 +50,7 @@ BASE_MODEL_DATA = {
     'cnc': [
         [(0, 5, 1), 0.],
     ],
+    'transport': False,
 }
 
 BASE_TRANSPORT_MODEL_DATA = {
