@@ -7,7 +7,12 @@ name = "pymf6"
 description = "High-level Python Wrapper for MODFLOW 6"
 readme = "README.md"
 requires-python = ">=3.8"
-keywords = ["packaging", "example"]
+keywords = [
+    "MODFLOW6",
+    "groundwater",
+    "modeling",
+    "dynamic boundary condition"
+    ]
 license = {text = "MIT License"}
 classifiers = [
   "Development Status :: 3 - Alpha",
