@@ -1,15 +1,15 @@
-# Developing PyMF6
+# Developing pymf6
 
-This document describes how to contribute to PyMF6.
+This document describes how to contribute to pymf6.
 
 ## Branches
 
 All development happens in branches.
-This repository contains branches of ongoing PyMF6 development.
+This repository contains branches of ongoing pymf6 development.
 The two main branches in this repository are:
 
-* `main`: the state of the PyMF6 repository corresponding to the last release
-* `develop`: the current development version of PyMF6
+* `main`: the state of the pymf6 repository corresponding to the last release
+* `develop`: the current development version of pymf6
 
 The `develop` branch is under active development.
 The `main` branch is only updated immediately prior to each new release.
@@ -35,6 +35,13 @@ Connect multiple words with underscores.
 Examples are typically a combination of Python source code files and
 one or more Jupyter Notebooks.
 You can include a Python file into a Notebook with `%load`.
+
+## Versioning
+
+Version numbers are handled by setuptools.
+Use git tags such as `1.0.0` for versions.
+This version will be used in all relevant places such as the program and the
+documentation.
 
 ## Building and Testing
 
