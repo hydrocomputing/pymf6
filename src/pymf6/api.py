@@ -75,8 +75,6 @@ class Simulator:
         verbose = self.verbose
         sim = self.api
 
-        yield sim, States.initialize
-
         current_time = mf6.get_current_time()
         end_time = mf6.get_end_time()
         kperold = [0 for _ in range(sim.subcomponent_count)]
@@ -97,11 +95,7 @@ class Simulator:
                 kperold=kperold)
             mf6.finalize_time_step()
             current_time = mf6.get_current_time()
-            sim_grp = self._sim_grp
-            if sim_grp.nstp == sim_grp.kstp + 1:
-                yield sim_grp, States.stress_period_end
         try:
-            yield sim, States.finalize
             mf6.finalize()
         except Exception as err:
             msg = 'MF6 simulation failed, check listing file'
@@ -155,6 +149,8 @@ class Simulator:
                         break
             yield sim_grp, States.timestep_end
             mf6.finalize_solve(sol_id)
+            if sim_grp.nstp == sim_grp.kstp + 1:
+                yield sim_grp, States.stress_period_end
         if not has_converged:
             print(f"Simulation group: {sim_grp} DID NOT CONVERGE")
         self._sim_grp = sim_grp
