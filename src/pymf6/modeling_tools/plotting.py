@@ -72,6 +72,8 @@ def show_bcs(
         plot = add_bc(bc_name)
     if show_grid:
         pmv.plot_grid()
+    plot.axes.set_xlabel('x (m)')
+    plot.axes.set_ylabel('y (m)')
     plot.axes.set_title(title)
     plot.axes.legend(handles=handles, loc=(1.2, 0))
     return plot
