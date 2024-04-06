@@ -23,9 +23,8 @@ from .tools.info import (
 
 
 class MF6:
-    """
-    Wrapper around XmiWrapper.
-    """
+    """Wrapper around XmiWrapper."""
+
     # pylint: disable=too-many-instance-attributes
 
     # Only one instance can be initialized but not finalized.
@@ -108,7 +107,8 @@ class MF6:
 
     def _repr_html_(self):
         """
-        Make a nice HTML table
+        Make a nice HTML table.
+
         :param obj: Python object
         :return: HTML string
         """
@@ -145,7 +145,8 @@ class MF6:
         return self._mf6.get_version()
 
     def _get_vars(self):
-        """Get all variables in dictionary.
+        """
+        Get all variables in dictionary.
 
         TODO: Currently the Fortran types LOGICAL and STRING are not
         yet supported. Ignore them for now.
@@ -164,9 +165,10 @@ class MF6:
         return values
 
     def steps(self, new_step_only=False):
-        """Generator for iterating over all time steps.
-        It allows to modify MODFLOW variables for each time
-        step.
+        """
+        Provide a generator for iterating over all time steps.
+
+        It allows to modify MODFLOW variables for each time step.
         new_step_only -yield only at new time step
 
         If `new_step_only` is set to `True` each step has new value.
@@ -176,7 +178,7 @@ class MF6:
         series data. Modifications of values will be ignore by MODFLOW.
 
         Example:
-
+        -------
             mf6 = MF6(nam_file=nam_file)
             wel = mf6.vars['<model_name>/WEL/BOUND']
             for step in mf6.steps():
@@ -185,6 +187,7 @@ class MF6:
                     wel[:] = -10
                 else:
                     wel[:] = 0
+
         """
         current_time = self.get_current_time()
         end_time = self.get_end_time()
@@ -215,7 +218,7 @@ class MF6:
         self.finalize()
 
     def goto_stress_period(self, stress_period=0):
-        """Progress to beginning of stress period"""
+        """Progress to beginning of stress period."""
         for sim, state in self.loop:
             if state == States.timestep_start:
                 model = sim.get_model()
@@ -224,14 +227,14 @@ class MF6:
 
 
 class MF6Docs:
-    """Docstring form MF6 Fortran source"""
+    """Docstring form MF6 Fortran source."""
 
     def __init__(self, mf6_doc_path):
         self.mf6_doc_path = mf6_doc_path
         self._docs = {}
 
     def get_doc(self, name):
-        """Get docs from json file"""
+        """Get docs from json file."""
         if not self._docs:
             path = self.mf6_doc_path / 'mem_var_docs.json'
             with open(path, encoding='utf-8') as fobj:
