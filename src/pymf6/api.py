@@ -1,5 +1,4 @@
-"""modflowapi interface
-"""
+"""modflowapi interface."""
 
 from enum import Enum
 
@@ -9,6 +8,7 @@ from modflowapi.extensions.apisimulation import ApiSimulation
 
 class States(Enum):
     """States of MODFLOW API."""
+
     #  pylint: disable=invalid-name
     initialize = 0
     stress_period_start = 1
@@ -27,11 +27,16 @@ class States(Enum):
 
 
 class Simulator:
-    """Generator to run a Modflow simulation using the MODFLOW-API
-        with a loop"""
+    """
+    Generator to run a Modflow simulation using the MODFLOW-API.
+
+    with a loop
+    """
 
     def __init__(self, dll, sim_path, verbose=False, _develop=False):
         """
+        Set initial values.
+
         Parameters
         ----------
         dll : str
@@ -45,6 +50,7 @@ class Simulator:
             file named "var_list.txt". This is primarily used for extensions
             development purposes and bug fixes within the modflowapi python
             package.
+
         """
         self.verbose = verbose
         self._develop = _develop
@@ -57,7 +63,11 @@ class Simulator:
         self._sim_grp = None
 
     def loop(self):
-        """Generator function to loop over all time steps."""
+        """
+        Loop over all time steps.
+
+        Provides simulation group and state for each times step.
+        """
         mf6 = self._mf6
         verbose = self.verbose
         sim = self.api
