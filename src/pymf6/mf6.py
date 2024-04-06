@@ -1,12 +1,9 @@
-"""
-Wrapper around XmiWrapper.
-"""
+"""Wrapper around XmiWrapper."""
 
 from contextlib import redirect_stdout
 import json
 from io import StringIO
 from pathlib import Path
-import time
 
 from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
@@ -63,6 +60,24 @@ class MF6:
                 # pylint: disable=protected-access
                 self._mf6 = self._simulator._mf6
                 self.api = self._simulator.api
+                models = {}
+                self._reverse_names = {}
+                for index, name in enumerate(self.api.model_names, start=1):
+                    name = name.lower()
+                    prefix_parts = name.split('_', 1)
+                    if len(prefix_parts) == 1:
+                        prefix = 'gwf'
+                    else:
+                        prefix = prefix_parts[0]
+                    if prefix in models:
+                        msg = 'Multiple models in one solution no supported yet.'
+                        raise NotImplementedError(msg)
+                    model = self.api.get_model(index)
+                    models[prefix] = model
+                    self._reverse_names[name] = prefix
+                self.models = models
+
+
             else:
                 self._mf6 = XmiWrapper(str(self.dll_path))
                 self._mf6.initialize(str(self.nam_file))
@@ -101,9 +116,16 @@ class MF6:
         else:
             init_mf6(str(self.nam_file.parent))
         if use_modflow_api:
-            self.loop = self._simulator.loop()
+            self.sol_loop = self._simulator.loop()
         else:
-            self.loop = None
+            self.sol_loop = None
+
+    def model_loop(self):
+        """Timestep loop over all models."""
+        for sol_group, state in self.sol_loop:
+            mf6_model = sol_group.get_model()
+            model_type = self._reverse_names[mf6_model.name.lower()]
+            yield Model(mf6_model=mf6_model, state=state, type=model_type)
 
     def _repr_html_(self):
         """
@@ -240,3 +262,22 @@ class MF6Docs:
             with open(path, encoding='utf-8') as fobj:
                 self._docs = json.load(fobj)
         return self._docs.get(name)
+
+
+class Model:
+    """One MF6 model."""
+
+    _solution_value_mapping = {
+        'gwf': 'head',
+        'gwt': 'conc',
+        'gwe': 'temperature',
+    }
+
+    def __init__(self, mf6_model, state, type):
+        self._model = mf6_model
+        self.state = state
+        self.type = type
+        setattr(self, self._solution_value_mapping[type], mf6_model.X)
+
+    def __getattr__(self, name):
+        return getattr(self._model, name)
