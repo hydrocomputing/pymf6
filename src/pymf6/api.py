@@ -25,6 +25,9 @@ class States(Enum):
         # pylint: disable=no-member
         print(*cls._member_names_, sep='\n')
 
+    def __eq__(self, other):
+        return self.value == other.value
+
 
 class Simulator:
     """
