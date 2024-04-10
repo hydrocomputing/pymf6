@@ -112,7 +112,7 @@ class MF6:
             for entry in self.simulation.models_meta}
         for index, name in enumerate(self.api.model_names, start=1):
             name = name.lower()
-            prefix = type_mapping[name][:-1]
+            prefix = type_mapping[name]
             if prefix in models:
                 msg = 'Multiple models in one solution no supported yet.'
                 raise NotImplementedError(msg)
@@ -269,9 +269,9 @@ class Model:
     """One MF6 model."""
 
     _solution_value_mapping = {
-        'gwf': 'head',
-        'gwt': 'conc',
-        'gwe': 'temperature',
+        'gwf6': 'head',
+        'gwt6': 'conc',
+        'gwe6': 'temperature',
     }
 
     def __init__(self, mf6_model, state, type):
