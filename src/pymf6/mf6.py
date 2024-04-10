@@ -10,7 +10,7 @@ from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
 from . api import Simulator, States
-from . datastructures import read_simulation_data, Simulation
+from . datastructures import Simulation
 from .tools.info import (
     get_info_data,
     show_info,
@@ -60,21 +60,7 @@ class MF6:
                 # pylint: disable=protected-access
                 self._mf6 = self._simulator._mf6
                 self.api = self._simulator.api
-                models = {}
-                self._reverse_names = {}
-                sim = read_simulation_data(self.nam_file)
-                type_mapping = {entry['modelname'].lower():
-                                entry['modeltype'] for entry in sim[-1]}
-                for index, name in enumerate(self.api.model_names, start=1):
-                    name = name.lower()
-                    prefix = type_mapping[name][:-1]
-                    if prefix in models:
-                        msg = 'Multiple models in one solution no supported yet.'
-                        raise NotImplementedError(msg)
-                    model = self.api.get_model(index)
-                    models[prefix] = model
-                    self._reverse_names[name] = prefix
-                self.models = models
+
 
 
             else:
@@ -118,6 +104,22 @@ class MF6:
             self.sol_loop = self._simulator.loop()
         else:
             self.sol_loop = None
+
+        models = {}
+        self._reverse_names = {}
+        type_mapping = {
+            entry['modelname'].lower(): entry['modeltype']
+            for entry in self.simulation.models_meta}
+        for index, name in enumerate(self.api.model_names, start=1):
+            name = name.lower()
+            prefix = type_mapping[name][:-1]
+            if prefix in models:
+                msg = 'Multiple models in one solution no supported yet.'
+                raise NotImplementedError(msg)
+            model = self.api.get_model(index)
+            models[prefix] = model
+            self._reverse_names[name] = prefix
+        self.models = models
 
     def model_loop(self):
         """Timestep loop over all models."""
