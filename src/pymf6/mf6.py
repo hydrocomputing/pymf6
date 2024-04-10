@@ -10,7 +10,7 @@ from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
 from . api import Simulator, States
-from . datastructures import Simulation
+from . datastructures import read_simulation_data, Simulation
 from .tools.info import (
     get_info_data,
     show_info,
@@ -62,13 +62,12 @@ class MF6:
                 self.api = self._simulator.api
                 models = {}
                 self._reverse_names = {}
+                sim = read_simulation_data(self.nam_file)
+                type_mapping = {entry['modelname'].lower():
+                                entry['modeltype'] for entry in sim[-1]}
                 for index, name in enumerate(self.api.model_names, start=1):
                     name = name.lower()
-                    prefix_parts = name.split('_', 1)
-                    if len(prefix_parts) == 1:
-                        prefix = 'gwf'
-                    else:
-                        prefix = prefix_parts[0]
+                    prefix = type_mapping[name][:-1]
                     if prefix in models:
                         msg = 'Multiple models in one solution no supported yet.'
                         raise NotImplementedError(msg)
