@@ -122,11 +122,12 @@ class MF6:
         self.models = models
 
     def model_loop(self):
-        """Timestep loop over all models."""
+        """Time step loop over all models."""
         for sol_group, state in self.sol_loop:
             mf6_model = sol_group.get_model()
             model_type = self._reverse_names[mf6_model.name.lower()]
             yield Model(mf6_model=mf6_model, state=state, type=model_type)
+
 
     def _repr_html_(self):
         """
@@ -279,6 +280,11 @@ class Model:
         self.state = state
         self.type = type
         setattr(self, self._solution_value_mapping[type], mf6_model.X)
+
+    def get_available_attribute_names(self):
+        """Get all public attribute names of the model."""
+        return [attr for attr in dir(self._model) if not attr.startswith('_')]
+
 
     def __getattr__(self, name):
         return getattr(self._model, name)
