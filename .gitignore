@@ -51,3 +51,7 @@ doc/examples/**/models/**
 **/Scratch.ipynb
 doc/examples/simple_transport/Export.ipynb
 **/*.svg
+# pixi environments
+.pixi
+*.egg-info
+

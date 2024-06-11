@@ -1,1 +1,4 @@
 fsrc/mf6sub.f90 linguist-vendored
+# GitHub syntax highlighting
+pixi.lock linguist-language=YAML
+
