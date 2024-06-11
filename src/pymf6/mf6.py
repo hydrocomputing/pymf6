@@ -110,15 +110,16 @@ class MF6:
         type_mapping = {
             entry['modelname'].lower(): entry['modeltype']
             for entry in self.simulation.models_meta}
-        for index, name in enumerate(self.api.model_names, start=1):
-            name = name.lower()
-            prefix = type_mapping[name]
-            if prefix in models:
-                msg = 'Multiple models in one solution no supported yet.'
-                raise NotImplementedError(msg)
-            model = self.api.get_model(index)
-            models[prefix] = model
-            self._reverse_names[name] = prefix
+        if use_modflow_api:
+            for index, name in enumerate(self.api.model_names, start=1):
+                name = name.lower()
+                prefix = type_mapping[name]
+                if prefix in models:
+                    msg = 'Multiple models in one solution no supported yet.'
+                    raise NotImplementedError(msg)
+                model = self.api.get_model(index)
+                models[prefix] = model
+                self._reverse_names[name] = prefix
         self.models = models
 
     def model_loop(self):
