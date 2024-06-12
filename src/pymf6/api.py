@@ -21,7 +21,7 @@ class States(Enum):
 
     @classmethod
     def show_states(cls):
-        """Show avaiable states."""
+        """Show available states."""
         # pylint: disable=no-member
         print(*cls._member_names_, sep='\n')
 
@@ -85,14 +85,12 @@ class Simulator:
 
             if verbose:
                 print(
-                    f"Solving: Stress Period {sim.kper + 1}; "
-                    f"Timestep {sim.kstp + 1}"
+                    f'Solving: Stress Period {sim.kper + 1}; '
+                    f'Timestep {sim.kstp + 1}'
                 )
             yield from self._solutions_loop(
-                sim=sim,
-                mf6=mf6,
-                current_time=current_time,
-                kperold=kperold)
+                sim=sim, mf6=mf6, current_time=current_time, kperold=kperold
+            )
             mf6.finalize_time_step()
             current_time = mf6.get_current_time()
         try:
@@ -101,7 +99,7 @@ class Simulator:
             msg = 'MF6 simulation failed, check listing file'
             raise RuntimeError(msg) from err
 
-        print("NORMAL TERMINATION OF SIMULATION")
+        print('NORMAL TERMINATION OF SIMULATION')
 
     def _solutions_loop(self, sim, mf6, current_time, kperold):
         """Sub loop over solutions."""
@@ -116,7 +114,12 @@ class Simulator:
 
             sim_grp = ApiSimulation(
                 # pylint: disable=protected-access
-                mf6, models, solution, sim._exchanges, sim.tdis, sim.ats
+                mf6,
+                models,
+                solution,
+                sim._exchanges,
+                sim.tdis,
+                sim.ats,
             )
             mf6.prepare_solve(sol_id)
             if sim.kper != kperold[sol_id - 1]:
@@ -152,5 +155,83 @@ class Simulator:
             if sim_grp.nstp == sim_grp.kstp + 1:
                 yield sim_grp, States.stress_period_end
         if not has_converged:
-            print(f"Simulation group: {sim_grp} DID NOT CONVERGE")
+            print(f'Simulation group: {sim_grp} DID NOT CONVERGE')
         self._sim_grp = sim_grp
+
+
+def create_mutable_bc(package):
+    """
+    Create a mutable boundary condition.
+
+    Create mutable object for boundary condition with stress period data.
+    Assigned values will be written back to a running model.
+
+    `package` is a MODFLOW 6 package object such as WEL or CHD.
+
+    Usage example:
+
+    Assess a flow model:
+    >>> from pymf6.mf6 import MF6
+    >>> mf6 = MF6('path/to/mfsim.nam', use_modflow_api=True)
+    >>> gwf = mf6.models['gwf6']
+
+    Create a mutable bc:
+    >>> wel = create_mutable_bc(gwf.wel)
+
+    Show current values:
+    >>> wel.q
+
+    Set new values:
+    >>> wel.q = -0.2
+    """
+    try:
+        package.stress_period_data
+    except AttributeError:
+        raise AttributeError(
+            f'Package {package.pkg_name} does NOT have stress period data'
+        )
+
+    class MutableStressPeriodData:
+        def __init__(self, package):
+            col_names = package.stress_period_data.dataframe.columns
+            attrs = '\n'.join(f'* {name}' for name in col_names)
+            class_docstring = f"""
+            Boundary condition with mutable stress period data for {package}.
+
+            This object allows to assign new values to these attributes:
+
+            {attrs}
+            """
+            setattr(self.__class__, '__doc__', class_docstring)
+            self.package = package
+            for col_name in col_names:
+                # need name binding in function definition
+                # otherwise only the last name in the loop will be stored in
+                # the closure and use for all values
+                def fget(self, col_name=col_name):
+                    return self.package.stress_period_data.dataframe[col_name]
+
+                def fset(self, new_values, col_name=col_name):
+                    values = self.package.stress_period_data.values
+                    if values is None:
+                        return
+                    values[col_name] = new_values
+                    self.package.stress_period_data.values = values
+
+                setattr(
+                    self.__class__,
+                    col_name,
+                    property(
+                        fget=fget,
+                        fset=fset,
+                        doc=f'stress period data for {col_name}',
+                    ),
+                )
+
+        def __repr__(self):
+            return repr(self.package.stress_period_data.dataframe)
+
+        def _repr_html_(self):
+            return self.package.stress_period_data.dataframe._repr_html_()
+
+    return MutableStressPeriodData(package)
