@@ -3,6 +3,7 @@
 from pathlib import Path
 import os
 from subprocess import CalledProcessError, run
+import sys
 from turtle import st
 
 
@@ -47,6 +48,8 @@ def test_run_all(
         py_prog = 'run_model.py'
     else:
         raise ValueError(f'mode {mode} not supported')
+    good = 0
+    bad = 0
     with open(error_file, 'w', encoding='utf-8') as errors:
         root = example_dir.resolve()
         for root, _, files in os.walk(example_dir):
@@ -65,12 +68,20 @@ def test_run_all(
                                     break
                     if normal_termination:
                         print('.', end='', flush=True)
+                        good += 1
                     else:
                         print('f', end='', flush=True)
                         errors.write(f'Error with: {nam_file}\n')
+                        errors.flush()
+                        bad +=1
+    print()
+    print(f'{good = } {bad = }')
     print()
 
 
 if __name__ == '__main__':
-    test_run_all(mode='xmipy')
-    test_run_all(mode='pymf6')
+    from timeit import default_timer
+    start = default_timer()
+    # test_run_all(mode='xmipy', error_file='xmipy_error.txt')
+    test_run_all(mode='pymf6', error_file='pymf6_error.txt')
+    print(f'run time: {default_timer() - start:.2f}')
