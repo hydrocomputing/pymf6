@@ -54,4 +54,4 @@ doc/examples/simple_transport/Export.ipynb
 # pixi environments
 .pixi
 *.egg-info
-
+tests/*error*.txt
