@@ -30,7 +30,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Hydrology"
 ]
 
-dependencies = ["modflowapi"]
+dependencies = ["pandas", "modflowapi", "matplotlib"]
 dynamic = ["version"]
 
 [project.scripts]
@@ -60,5 +60,17 @@ platforms = ["osx-arm64"]
 
 [tool.pixi.pypi-dependencies]
 pymf6 = { path = ".", editable = true }
+pymf6tools = { path = "../pymf6tools", editable = true }
+
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
 
 [tool.pixi.tasks]
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=8.2.2,<8.3"
+jupyterlab = "*"
+pip = ">=24.0,<25"
+
