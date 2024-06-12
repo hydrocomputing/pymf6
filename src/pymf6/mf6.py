@@ -20,7 +20,12 @@ from .tools.info import (
 
 
 class MF6:
-    """Wrapper around XmiWrapper."""
+    """
+    Wrapper around XmiWrapper and modflowapi.
+
+    `advance_first_step = True` progresses to the first model step with
+    model time > 0. This is needed to access any internal values of BCs.
+    """
 
     # pylint: disable=too-many-instance-attributes
 
@@ -36,8 +41,9 @@ class MF6:
             sim_file='mfsim.nam',
             dll_path=None,
             use_modflow_api=True,
+            advance_first_step=True,
             verbose=False,
-            _develop=False
+            _develop=False,
             ):
 
         def init_mf6(sim_path):
@@ -60,14 +66,12 @@ class MF6:
                 # pylint: disable=protected-access
                 self._mf6 = self._simulator._mf6
                 self.api = self._simulator.api
-
-
-
             else:
                 self._mf6 = XmiWrapper(str(self.dll_path))
                 self._mf6.initialize(str(self.nam_file))
             MF6.old_mf6 = self._mf6
 
+        self.advance_first_step = advance_first_step
         self.verbose = verbose
         self._mf6 = None
         self._simulator = None
@@ -121,6 +125,11 @@ class MF6:
                 models[prefix] = model
                 self._reverse_names[name] = prefix
         self.models = models
+        self.steps = self._steps()
+        if advance_first_step:
+            for step in self.steps:
+                if step > 0:
+                    break
 
     def model_loop(self):
         """Time step loop over all models."""
@@ -189,7 +198,7 @@ class MF6:
                     xmi_error[name] = err
         return values
 
-    def steps(self, new_step_only=False):
+    def _steps(self, new_step_only=False):
         """
         Provide a generator for iterating over all time steps.
 
@@ -199,7 +208,7 @@ class MF6:
         If `new_step_only` is set to `True` each step has new value.
         Otherwise the control is gain for each outer iteration,
         resulting in getting the same time step multiple times (<= `MXITER`).
-        Do **NOT** set  `new_step_only` to `True` if modifying time
+        Do **NOT** set `new_step_only` to `True` if modifying time
         series data. Modifications of values will be ignore by MODFLOW.
 
         Example:
