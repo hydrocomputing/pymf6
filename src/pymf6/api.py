@@ -235,3 +235,10 @@ def create_mutable_bc(package):
             return self.package.stress_period_data.dataframe._repr_html_()
 
     return MutableStressPeriodData(package)
+
+
+def find_packages_with_stress_period_data(model):
+    """Find all packages of a model that have stress period data."""
+    return [
+        package_name for package_name in model.package_dict
+        if getattr(getattr(model, package_name), 'stress_period_data', None)]
