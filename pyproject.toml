@@ -66,6 +66,7 @@ pymf6tools = { path = "../pymf6tools", editable = true }
 [tool.pixi.environments]
 default = { solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
+analytic = { features = ["test", "analytic"], solve-group = "default" }
 
 [tool.pixi.tasks]
 
@@ -74,3 +75,14 @@ pytest = ">=8.2.2,<8.3"
 jupyterlab = "*"
 pip = ">=24.0,<25"
 
+[tool.pixi.feature.analytic.dependencies]
+ttim = "*"
+numpy = "*"
+scipy = "*"
+numba = "*"
+matplotlib = "*"
+lmfit = "*"
+pandas = "*"
+
+[tool.pixi.feature.analytic.pypi-dependencies]
+timml = "*"
