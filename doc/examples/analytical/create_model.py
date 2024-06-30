@@ -10,16 +10,7 @@ from pymf6tools.base_model import make_model_data
 from pymf6tools.make_model import get_simulation, make_input, run_simulation
 
 
-BASE_MODEL_DATA = {
-    'cell_width': 100,
-    'cell_height': 100,
-    'cell_thickness': 10,
-    'model_width': 1_000,
-    'model_height': 1_000,
-    'q': -500,
-    'chd_left': 12,
-    'chd_right': 12,
-}
+from base_data import BASE_MODEL_DATA
 
 
 def create_model(
