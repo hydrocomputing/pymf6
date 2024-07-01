@@ -152,7 +152,7 @@ class MF6Object:
 
     def _make_docstring(self):
         mf6_doc_entry = None
-        if hasattr(self, 'mf6_docs') and hasattr(self, 'name'):
+        if hasattr(self, 'mf6_docs') and self.mf6_docs and hasattr(self, 'name'):
             mf6_doc_entry = self.mf6_docs.get_doc(self.name)
         return mf6_doc_entry
 
