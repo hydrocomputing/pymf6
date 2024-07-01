@@ -80,6 +80,7 @@ def create_model(
         'transport': False,
         'river_active': False,
         'wells_active': True,
+        'initial_head': model_data['initial_head'],
     }
 
     model_data = make_model_data(specific_model_data)

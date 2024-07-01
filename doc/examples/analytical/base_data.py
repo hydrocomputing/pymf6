@@ -4,6 +4,7 @@ BASE_MODEL_DATA = {
     'cell_thickness': 10,
     'model_width': 1_000,
     'model_height': 1_000,
+    'initial_head': 12.0,
     'q': -500,
     'chd_left': 12,
     'chd_right': 12,
