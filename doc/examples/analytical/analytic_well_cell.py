@@ -3,6 +3,8 @@
 from math import sqrt
 
 import numpy as np
+import timml as tml
+import ttim
 
 from pymf6.api import create_mutable_bc
 
@@ -19,6 +21,11 @@ class AnalyticWell:
         )
         self.xys = self._get_xy_values(self.gwf, self.cell_coords)
         self.distances = self._get_distances(self.xys)
+        self.corner_coords = {
+            name.split('_', 1)[-1]: value
+            for name, value in self.xys.items()
+            if name.startswith('corner')
+        }
 
     @staticmethod
     def _get_cell_coords(gwf):
@@ -102,7 +109,6 @@ class AnalyticWell:
         top = center_y + half_height
         bot = center_y - half_height
         corner_xys = {}
-        corner_xys['corner_left'] = (left, center_y)
         corner_xys['corner_top_left'] = (left, top)
         corner_xys['corner_top'] = (center_x, top)
         corner_xys['corner_top_right'] = (right, top)
@@ -110,6 +116,7 @@ class AnalyticWell:
         corner_xys['corner_bot_right'] = (right, bot)
         corner_xys['corner_bot'] = (center_x, bot)
         corner_xys['corner_bot_left'] = (left, bot)
+        corner_xys['corner_left'] = (left, center_y)
         xys.update(corner_xys)
         return xys
 
@@ -135,7 +142,7 @@ class AnalyticWell:
         bot_x, bot_y = xys['cell_bot']
         corner_bot_left_x, corner_bot_left_y = xys['corner_bot_left']
         bot_left_x, bot_left_y = xys['cell_bot_left']
-        distances['left'] = (center_x - corner_left_x, corner_left_x - left_x)
+
         distances['top_left'] = (
             sqrt(
                 (center_x - corner_top_left_x) ** 2
@@ -182,6 +189,7 @@ class AnalyticWell:
                 + (corner_bot_left_y - bot_left_y) ** 2
             ),
         )
+        distances['left'] = (center_x - corner_left_x, corner_left_x - left_x)
         return distances
 
     @property
@@ -204,3 +212,67 @@ class AnalyticWell:
                 center_head * distance[0] + outer_head * distance[1]
             ) / sum(distance)
         return heads
+
+    def calc_well_head(self):
+        """Calculate well head analytically."""
+        steady_state_model = SteadyStateModel(
+            aquifer_properties=self.aquifer_properties,
+            border_heads=self.border_heads,
+            coords=self.corner_coords,
+            center_head=self.neighbor_heads['center'],
+            center_coords=self.xys['cell_center']
+        )
+        transient_model = TransientModel(steady_state_model)
+        # transient_model.xyz
+        return steady_state_model
+
+
+class SteadyStateModel:
+    """TTim model for initial conditions."""
+
+    def __init__(self, aquifer_properties, border_heads, coords, center_head, center_coords):
+        self.aquifer_properties = aquifer_properties
+        self.border_heads = border_heads
+        self.coords = coords
+        self.center_head = center_head
+        self.center_coords = center_coords
+        self.model = self._make_model()
+
+    def _make_model(self, delta=0.1):
+        """Create a TimML model."""
+        model = tml.ModelMaq(
+            kaq=self.aquifer_properties['kaq'],
+            z=self.aquifer_properties['z'],
+            npor=self.aquifer_properties['ss'],
+        )
+        border_names = list(self.border_heads)
+        border_names.append(border_names[0])
+        xy = []
+        hls = []
+        for name in border_names:
+            x, y = self.coords[name][0], self.coords[name][1]
+            xy.append((x, y))
+            hls.append(self.border_heads[name])
+
+        tml.HeadLineSinkString(
+                model,
+                xy=xy,
+                hls=hls,
+                order=5,
+            )
+
+        tml.HeadLineSink(
+            model,
+            x1=self.center_coords[0] - delta,
+            y1=self.center_coords[1],
+            x2=self.center_coords[0] + delta,
+            y2=self.center_coords[1],
+            hls=self.center_head,
+        )
+        model.solve(silent=True)
+        return model
+
+
+class TransientModel:
+    def __init__(self, steady_state_model):
+        pass
