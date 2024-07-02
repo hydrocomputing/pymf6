@@ -215,59 +215,56 @@ class AnalyticWell:
 
     def calc_well_head(self):
         """Calculate well head analytically."""
-        steady_state_model = SteadyStateModel(
+        steady_state_model = self._make_steady_state_model(
             aquifer_properties=self.aquifer_properties,
             border_heads=self.border_heads,
             coords=self.corner_coords,
             center_head=self.neighbor_heads['center'],
-            center_coords=self.xys['cell_center']
+            center_coords=self.xys['cell_center'],
         )
         transient_model = TransientModel(steady_state_model)
         # transient_model.xyz
         return steady_state_model
 
-
-class SteadyStateModel:
-    """TTim model for initial conditions."""
-
-    def __init__(self, aquifer_properties, border_heads, coords, center_head, center_coords):
-        self.aquifer_properties = aquifer_properties
-        self.border_heads = border_heads
-        self.coords = coords
-        self.center_head = center_head
-        self.center_coords = center_coords
-        self.model = self._make_model()
-
-    def _make_model(self, delta=0.1):
-        """Create a TimML model."""
+    @staticmethod
+    def _make_steady_state_model(
+        self,
+        aquifer_properties,
+        border_heads,
+        coords,
+        center_head,
+        center_coords,
+        delta=0.1,
+    ):
+        """Create a TimML model for initial conditions."""
         model = tml.ModelMaq(
-            kaq=self.aquifer_properties['kaq'],
-            z=self.aquifer_properties['z'],
-            npor=self.aquifer_properties['ss'],
+            kaq=aquifer_properties['kaq'],
+            z=aquifer_properties['z'],
+            npor=aquifer_properties['ss'],
         )
-        border_names = list(self.border_heads)
+        border_names = list(border_heads)
         border_names.append(border_names[0])
         xy = []
         hls = []
         for name in border_names:
-            x, y = self.coords[name][0], self.coords[name][1]
+            x, y = coords[name][0], coords[name][1]
             xy.append((x, y))
-            hls.append(self.border_heads[name])
+            hls.append(border_heads[name])
 
         tml.HeadLineSinkString(
-                model,
-                xy=xy,
-                hls=hls,
-                order=5,
-            )
+            model,
+            xy=xy,
+            hls=hls,
+            order=5,
+        )
 
         tml.HeadLineSink(
             model,
-            x1=self.center_coords[0] - delta,
-            y1=self.center_coords[1],
-            x2=self.center_coords[0] + delta,
-            y2=self.center_coords[1],
-            hls=self.center_head,
+            x1=center_coords[0] - delta,
+            y1=center_coords[1],
+            x2=center_coords[0] + delta,
+            y2=center_coords[1],
+            hls=center_head,
         )
         model.solve(silent=True)
         return model
