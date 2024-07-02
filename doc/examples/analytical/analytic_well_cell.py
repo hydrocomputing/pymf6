@@ -213,25 +213,47 @@ class AnalyticWell:
             ) / sum(distance)
         return heads
 
-    def calc_well_head(self):
+    def calc_well_head(self, well_q):
         """Calculate well head analytically."""
+        xy, hls = self._make_xy_hls(border_heads=self.border_heads,
+                                    coords=self.corner_coords)
         steady_state_model = self._make_steady_state_model(
             aquifer_properties=self.aquifer_properties,
-            border_heads=self.border_heads,
-            coords=self.corner_coords,
             center_head=self.neighbor_heads['center'],
             center_coords=self.xys['cell_center'],
+            xy=xy,
+            hls=hls
         )
-        transient_model = TransientModel(steady_state_model)
-        # transient_model.xyz
-        return steady_state_model
+        tsandh = [(0, 0)] * len(hls)
+        end_time = 1
+        transient_model, well =  self._make_transient_model(
+            aquifer_properties=self.aquifer_properties,
+            well_coords=self.xys['cell_center'],
+            end_time=end_time,
+            xy=xy,
+            tsandh=tsandh,
+            well_q=well_q,
+            steady_state_model=steady_state_model,
+        )
+        return transient_model, well.headinside(end_time)[0, 0]
+
+    @staticmethod
+    def _make_xy_hls(border_heads, coords):
+        border_names = list(border_heads)
+        border_names.append(border_names[0])
+        xy = []
+        hls = []
+        for name in border_names:
+            x, y = coords[name][0], coords[name][1]
+            xy.append((x, y))
+            hls.append(border_heads[name])
+        return xy, hls
 
     @staticmethod
     def _make_steady_state_model(
-        self,
         aquifer_properties,
-        border_heads,
-        coords,
+        xy,
+        hls,
         center_head,
         center_coords,
         delta=0.1,
@@ -242,22 +264,12 @@ class AnalyticWell:
             z=aquifer_properties['z'],
             npor=aquifer_properties['ss'],
         )
-        border_names = list(border_heads)
-        border_names.append(border_names[0])
-        xy = []
-        hls = []
-        for name in border_names:
-            x, y = coords[name][0], coords[name][1]
-            xy.append((x, y))
-            hls.append(border_heads[name])
-
         tml.HeadLineSinkString(
             model,
             xy=xy,
             hls=hls,
             order=5,
         )
-
         tml.HeadLineSink(
             model,
             x1=center_coords[0] - delta,
@@ -269,7 +281,42 @@ class AnalyticWell:
         model.solve(silent=True)
         return model
 
+    @staticmethod
+    def _make_transient_model(
+            aquifer_properties,
+            well_coords,
+            end_time,
+            xy,
+            tsandh,
+            well_q,
+            steady_state_model,
+        ):
+        """Create a TTim model."""
+        model = ttim.ModelMaq(
+            aquifer_properties['kaq'],
+            z=aquifer_properties['z'],
+            Saq=aquifer_properties['ss'],
+            phreatictop=True,
+            tmin=1e-3,
+            tmax=end_time,
+            porll=aquifer_properties['ss'],
+            timmlmodel=steady_state_model,
+        )
+        ttim.HeadLineSinkString(
+            model,
+            xy=xy,
+            tsandh=tsandh,
+        )
+        well = ttim.Well(
+            model,
+            xw=well_coords[0],
+            yw=well_coords[1],
+            rw=0.3,
+            res=0,
+            rc=0,
+            tsandQ=[(0, well_q)],
+            label='well',
+        )
+        model.solve(silent=True)
 
-class TransientModel:
-    def __init__(self, steady_state_model):
-        pass
+        return model, well
