@@ -16,7 +16,7 @@ print = partial(print, file=sys.stderr)
 class AnalyticWell:
     """Analytic model of a well inside one MF6 cells."""
 
-    def __init__(self, gwf, well_coords=None):
+    def __init__(self, gwf, well_data=None):
         self.gwf = gwf
         self.cell_coords = self._get_cell_coords(self.gwf)
         self.center_coord = self.cell_coords['center']
@@ -24,11 +24,15 @@ class AnalyticWell:
             self.gwf, self.center_coord
         )
         self.xys = self._get_xy_values(self.gwf, self.cell_coords)
-        if well_coords is None:
-            self.well_coords = self.xys['cell_center']
+        if well_data is None:
+            self.well_data = [
+                {'name': 'pump1',
+                 'coords': self.xys['cell_center'],
+                 'rate_fraction': 1}
+                 ]
         else:
-            self._check_well_coords(well_coords=well_coords)
-            self.well_coords = well_coords
+            self._check_well_data(well_data=well_data)
+            self.well_data = well_data
         self.distances = self._get_distances(self.xys)
         self.corner_coords = {
             name.split('_', 1)[-1]: value
@@ -36,18 +40,23 @@ class AnalyticWell:
             if name.startswith('corner')
         }
 
-    def _check_well_coords(self, well_coords):
-        well_x, well_y = well_coords
-        x_left, x_right = self.xys['cell_left'][0], self.xys['cell_right'][0]
-        if not x_left < well_x < x_right:
-            raise ValueError(
-                f'well x coordinate {well_x} must be in range between {x_left} and {x_right}'
-            )
-        y_bot, y_top = self.xys['cell_bot'][1], self.xys['cell_top'][1]
-        if not y_bot < well_y < y_top:
-            raise ValueError(
-                f'well y coordinate {well_x} must be in range between {y_bot} and {y_top}'
-            )
+    def _check_well_data(self, well_data):
+        fraction_sum = 0
+        for well in well_data:
+            well_x, well_y = well['coords']
+            x_left, x_right = self.xys['corner_left'][0], self.xys['corner_right'][0]
+            if not x_left < well_x < x_right:
+                raise ValueError(
+                    f'well x coordinate {well_x} for well {well["name"]} must be in range between {x_left} and {x_right}'
+                )
+            y_bot, y_top = self.xys['corner_bot'][1], self.xys['corner_top'][1]
+            if not y_bot < well_y < y_top:
+                raise ValueError(
+                    f'well y coordinate {well_x} for well {well["name"]} must be in range between {y_bot} and {y_top}'
+                )
+            fraction_sum += well['rate_fraction']
+        if abs(1 - fraction_sum) > 1e-12:
+            raise ValueError(f'sum of rate fractions is {fraction_sum} but must be 1')
 
     @staticmethod
     def _get_cell_coords(gwf):
@@ -235,7 +244,7 @@ class AnalyticWell:
             ) / sum(distance)
         return heads
 
-    def calc_well_head(self, well_q):
+    def calc_well_head(self, well_q, end_time):
         """Calculate well head analytically."""
         xy, hls = self._make_xy_hls(
             border_heads=self.border_heads, coords=self.corner_coords
@@ -248,17 +257,16 @@ class AnalyticWell:
             hls=hls,
         )
         tsandh = [(0, 0)] * len(hls)
-        end_time = 1
-        transient_model, well = self._make_transient_model(
+        transient_model, wells = self._make_transient_model(
             aquifer_properties=self.aquifer_properties,
-            well_coords=self.well_coords,
+            well_data=self.well_data,
             end_time=end_time,
             xy=xy,
             tsandh=tsandh,
             well_q=well_q,
             steady_state_model=steady_state_model,
         )
-        return transient_model, well.headinside(end_time)[0, 0]
+        return transient_model, {well.label: well.headinside(end_time)[0, 0] for well in wells}
 
     @staticmethod
     def _make_xy_hls(border_heads, coords):
@@ -307,7 +315,7 @@ class AnalyticWell:
     @staticmethod
     def _make_transient_model(
         aquifer_properties,
-        well_coords,
+        well_data,
         end_time,
         xy,
         tsandh,
@@ -330,16 +338,19 @@ class AnalyticWell:
             xy=xy,
             tsandh=tsandh,
         )
-        well = ttim.Well(
-            model,
-            xw=well_coords[0],
-            yw=well_coords[1],
-            rw=0.3,
-            res=0,
-            rc=0,
-            tsandQ=[(0, well_q)],
-            label='well',
-        )
-        model.solve(silent=True)
+        wells = []
+        for well in well_data:
+            well = ttim.Well(
+                model,
+                xw=well['coords'][0],
+                yw=well['coords'][1],
+                rw=0.3,
+                res=0,
+                rc=0,
+                tsandQ=[(0, well['rate_fraction'] * well_q)],
+                label=well['name'],
+            )
+            wells.append(well)
+            model.solve(silent=True)
 
-        return model, well
+        return model, wells
