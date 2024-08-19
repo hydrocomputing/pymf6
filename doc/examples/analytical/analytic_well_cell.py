@@ -1,6 +1,8 @@
 """Analytic well in one cell."""
 
+from functools import partial
 from math import sqrt
+import sys
 
 import numpy as np
 import timml as tml
@@ -8,11 +10,13 @@ import ttim
 
 from pymf6.api import create_mutable_bc
 
+print = partial(print, file=sys.stderr)
+
 
 class AnalyticWell:
     """Analytic model of a well inside one MF6 cells."""
 
-    def __init__(self, gwf):
+    def __init__(self, gwf, well_coords=None):
         self.gwf = gwf
         self.cell_coords = self._get_cell_coords(self.gwf)
         self.center_coord = self.cell_coords['center']
@@ -20,12 +24,30 @@ class AnalyticWell:
             self.gwf, self.center_coord
         )
         self.xys = self._get_xy_values(self.gwf, self.cell_coords)
+        if well_coords is None:
+            self.well_coords = self.xys['cell_center']
+        else:
+            self._check_well_coords(well_coords=well_coords)
+            self.well_coords = well_coords
         self.distances = self._get_distances(self.xys)
         self.corner_coords = {
             name.split('_', 1)[-1]: value
             for name, value in self.xys.items()
             if name.startswith('corner')
         }
+
+    def _check_well_coords(self, well_coords):
+        well_x, well_y = well_coords
+        x_left, x_right = self.xys['cell_left'][0], self.xys['cell_right'][0]
+        if not x_left < well_x < x_right:
+            raise ValueError(
+                f'well x coordinate {well_x} must be in range between {x_left} and {x_right}'
+            )
+        y_bot, y_top = self.xys['cell_bot'][1], self.xys['cell_top'][1]
+        if not y_bot < well_y < y_top:
+            raise ValueError(
+                f'well y coordinate {well_x} must be in range between {y_bot} and {y_top}'
+            )
 
     @staticmethod
     def _get_cell_coords(gwf):
@@ -215,20 +237,21 @@ class AnalyticWell:
 
     def calc_well_head(self, well_q):
         """Calculate well head analytically."""
-        xy, hls = self._make_xy_hls(border_heads=self.border_heads,
-                                    coords=self.corner_coords)
+        xy, hls = self._make_xy_hls(
+            border_heads=self.border_heads, coords=self.corner_coords
+        )
         steady_state_model = self._make_steady_state_model(
             aquifer_properties=self.aquifer_properties,
             center_head=self.neighbor_heads['center'],
             center_coords=self.xys['cell_center'],
             xy=xy,
-            hls=hls
+            hls=hls,
         )
         tsandh = [(0, 0)] * len(hls)
         end_time = 1
-        transient_model, well =  self._make_transient_model(
+        transient_model, well = self._make_transient_model(
             aquifer_properties=self.aquifer_properties,
-            well_coords=self.xys['cell_center'],
+            well_coords=self.well_coords,
             end_time=end_time,
             xy=xy,
             tsandh=tsandh,
@@ -283,14 +306,14 @@ class AnalyticWell:
 
     @staticmethod
     def _make_transient_model(
-            aquifer_properties,
-            well_coords,
-            end_time,
-            xy,
-            tsandh,
-            well_q,
-            steady_state_model,
-        ):
+        aquifer_properties,
+        well_coords,
+        end_time,
+        xy,
+        tsandh,
+        well_q,
+        steady_state_model,
+    ):
         """Create a TTim model."""
         model = ttim.ModelMaq(
             aquifer_properties['kaq'],
