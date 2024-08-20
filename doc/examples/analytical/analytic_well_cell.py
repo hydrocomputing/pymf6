@@ -16,9 +16,10 @@ print = partial(print, file=sys.stderr)
 class AnalyticWell:
     """Analytic model of a well inside one MF6 cells."""
 
-    def __init__(self, gwf, well_data=None):
+    def __init__(self, gwf, node_list_index=0, well_data=None):
         self.gwf = gwf
-        self.cell_coords = self._get_cell_coords(self.gwf)
+        self.node_list_index = node_list_index
+        self.cell_coords = self._get_cell_coords(self.gwf, self.node_list_index)
         self.center_coord = self.cell_coords['center']
         self.aquifer_properties = self._get_cell_properties(
             self.gwf, self.center_coord
@@ -59,11 +60,11 @@ class AnalyticWell:
             raise ValueError(f'sum of rate fractions is {fraction_sum} but must be 1')
 
     @staticmethod
-    def _get_cell_coords(gwf):
+    def _get_cell_coords(gwf, node_list_index):
         """Get coordinate of neighboring cells."""
         # layer, row, col
         wel = create_mutable_bc(gwf.wel)
-        center_coord = wel.nodelist[0]
+        center_coord = wel.nodelist[node_list_index]
         cell_coords = {'center': center_coord}
         cell_coords['left'] = (
             center_coord[0],
