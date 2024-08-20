@@ -13,6 +13,11 @@ from pymf6.api import create_mutable_bc
 print = partial(print, file=sys.stderr)
 
 
+class WellDataError(Exception):
+    """Ill defined well data."""
+
+
+
 class AnalyticWell:
     """Analytic model of a well inside one MF6 cells."""
 
@@ -25,6 +30,7 @@ class AnalyticWell:
             self.gwf, self.center_coord
         )
         self.xys = self._get_xy_values(self.gwf, self.cell_coords)
+        self.win = self._make_win()
         if well_data is None:
             self.well_data = [
                 {'name': 'pump1',
@@ -41,23 +47,28 @@ class AnalyticWell:
             if name.startswith('corner')
         }
 
+    def _make_win(self):
+        x_left, x_right = self.xys['corner_left'][0], self.xys['corner_right'][0]
+        y_bot, y_top = self.xys['corner_bot'][1], self.xys['corner_top'][1]
+        return [x_left, x_right, y_bot, y_top]
+
     def _check_well_data(self, well_data):
         fraction_sum = 0
         for well in well_data:
             well_x, well_y = well['coords']
             x_left, x_right = self.xys['corner_left'][0], self.xys['corner_right'][0]
             if not x_left < well_x < x_right:
-                raise ValueError(
+                raise WellDataError(
                     f'well x coordinate {well_x} for well {well["name"]} must be in range between {x_left} and {x_right}'
                 )
             y_bot, y_top = self.xys['corner_bot'][1], self.xys['corner_top'][1]
             if not y_bot < well_y < y_top:
-                raise ValueError(
-                    f'well y coordinate {well_x} for well {well["name"]} must be in range between {y_bot} and {y_top}'
+                raise WellDataError(
+                    f'well y coordinate {well_y} for well {well["name"]} must be in range between {y_bot} and {y_top}'
                 )
             fraction_sum += well['rate_fraction']
         if abs(1 - fraction_sum) > 1e-12:
-            raise ValueError(f'sum of rate fractions is {fraction_sum} but must be 1')
+            raise WellDataError(f'sum of rate fractions is {fraction_sum} but must be 1')
 
     @staticmethod
     def _get_cell_coords(gwf, node_list_index):
