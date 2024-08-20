@@ -19,16 +19,21 @@ def make_analytic_well_cells(wel, analytic_col_name='PYMF6_ANALYTIC'):
     """Create data for anayltic wells."""
     df = wel.stress_period_data.dataframe
     if wel.get_advanced_var('inamedbound')[0]:
-        df['wel_names'] = [name.lower() for name in wel.get_advanced_var('boundname_idm')]
-        if not df['wel_names'].is_unique:
-            multiples = df[df.duplicated('wel_names')]['wel_names'].values
+        df['wel_name'] = [name.lower() for name in wel.get_advanced_var('boundname_idm')]
+        if not df['wel_name'].is_unique:
+            multiples = df[df.duplicated('wel_name')]['wel_name'].values
             indent = '\n' + ' ' * 12
             raise ValueError(f'found multiple entries for BOUNDNAMES: {indent}{indent.join(multiples)}')
+    else:
+        df['wel_name'] = [f'mf_wel_{n}' for n in range(len(df))]
     analytic_col = df.get(analytic_col_name.upper())
     if analytic_col is not None:
         df = df[analytic_col > 0]
         df = df.drop(analytic_col_name, axis=1)
-    return {name: {'index': index, 'q': q} for name, q, index in zip(df['wel_names'], df['q'], df.index)}
+    else:
+        # no analytic wells
+        return {}
+    return {name: {'index': index, 'q': q} for name, q, index in zip(df['wel_name'], df['q'], df.index)}
 
 
 def run_model(model_path_controlled='models/c_100_100_multi_well', analytic_well_data=None):
