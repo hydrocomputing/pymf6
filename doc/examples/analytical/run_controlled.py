@@ -10,7 +10,7 @@ import sys
 from pymf6.mf6 import MF6
 from pymf6.api import create_mutable_bc
 
-from analytic_well_cell import AnalyticWell
+from analytic_well_cell import AnalyticWell, WellDataError
 
 print = partial(print, file=sys.stderr)
 
@@ -49,8 +49,11 @@ def make_analytic_wells(gwf, analytic_well_data, kper):
     awells = {}
     for name, well_cell_data in analytic_well_cells.items():
         well_data = analytic_well_data.get(name)
-        awells[name] = AnalyticWell(
-            gwf, node_list_index=well_cell_data['index'], well_data=well_data)
+        try:
+            awells[name] = AnalyticWell(
+                gwf, node_list_index=well_cell_data['index'], well_data=well_data)
+        except WellDataError as err:
+            raise WellDataError(str(err) + f' at kper {kper + 1} for well cell {name}')
     return analytic_well_cells, well_levels, awells
 
 
@@ -66,7 +69,7 @@ def run_model(model_path_controlled='models/c_100_100_multi_well', analytic_well
         with redirect_stdout(fobj):
             for model in mf6.model_loop():
                 if gwf.kper > kper:
-                    res[kper] = well_levels
+                    res[kper] = {'well_levels': well_levels, 'awells': awells}
                     kper = gwf.kper
                     analytic_well_cells, well_levels, awells = make_analytic_wells(gwf,
                                                                                    analytic_well_data.get(kper), kper)
@@ -78,5 +81,5 @@ def run_model(model_path_controlled='models/c_100_100_multi_well', analytic_well
                         awells[name].calc_well_head(-well_cell_data['q'], end_time=time_diff)
                         )
                     old_totim = new_totim
-            res[kper] = well_levels
+            res[kper] = {'well_levels': well_levels, 'awells': awells}
     return res
