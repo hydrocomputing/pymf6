@@ -31,7 +31,7 @@ def make_analytic_well_cells(wel, analytic_col_name='PYMF6_ANALYTIC'):
     return {name: {'index': index, 'q': q} for name, q, index in zip(df['wel_names'], df['q'], df.index)}
 
 
-def run_model(model_path_controlled='models/c_100_100_multi_well', well_data=None):
+def run_model(model_path_controlled='models/c_100_100_multi_well', analytic_well_data=None):
     """Run a test model."""
     with warnings.catch_warnings(action='ignore'), open(devnull, 'w') as fobj:
         mf6 = MF6(model_path_controlled + '/mfsim.nam', use_modflow_api=True)
@@ -43,6 +43,10 @@ def run_model(model_path_controlled='models/c_100_100_multi_well', well_data=Non
         with redirect_stdout(fobj):
             awells = {}
             for name, well_cell_data in analytic_well_cells.items():
+                if analytic_well_data:
+                    well_data = analytic_well_data.get(name)
+                else:
+                    well_data = None
                 awells[name] = AnalyticWell(
                     gwf, node_list_index=well_cell_data['index'], well_data=well_data)
             for model in mf6.model_loop():
