@@ -1,0 +1,31 @@
+{
+    "1":
+        {
+            "mf_pump1":
+                [
+                    {"name": "pump1", "coords": [220, 120], "rate_fraction": 0.3},
+                    {"name": "pump2", "coords": [270, 170], "rate_fraction": 0.7}
+                ]
+                },
+     "2":
+        {
+            "mf_pump1":
+                [
+                    {"name": "pump1", "coords": [220, 120], "rate_fraction": 0.5},
+                    {"name": "pump2", "coords": [270, 170], "rate_fraction": 0.5}
+                ],
+            "mf_pump6":
+                [
+                    {"name": "pump1", "coords": [620, 520], "rate_fraction": 0.1},
+                    {"name": "pump2", "coords": [670, 570], "rate_fraction": 0.9}
+                ]
+                },
+     "3":
+        {
+            "mf_pump1":
+                [
+                    {"name": "pump1", "coords": [220, 120], "rate_fraction": 0.2},
+                    {"name": "pump2", "coords": [270, 170], "rate_fraction": 0.8}
+                ]
+                }
+}
