@@ -18,6 +18,13 @@ from .tools.info import (
     make_info_html,
     read_ini)
 
+class SimValues:
+
+    def __init__(self, mf6):
+        self.mf6 = mf6
+
+    def __getattr__(self, name):
+        return self.mf6._get_sim_val(name)
 
 class MF6:
     """
@@ -83,6 +90,7 @@ class MF6:
         self._info_texts = make_info_texts(self._info_data, demo=self._demo)
         ini_data = read_ini()
         self.ini_path = ini_data['ini_path']
+        self.sim_values = SimValues(self)
 
         if dll_path is None:
             self.dll_path = ini_data['dll_path']
@@ -93,6 +101,7 @@ class MF6:
             if not self.nam_file.exists():
                 raise FileNotFoundError(self.nam_file)
             self.model_path = self.nam_file.parent
+            self.name = self.model_path.name
             self.sim_file = self.model_path / sim_file
             with cd(self.model_path):
                 init_mf6(str(self.nam_file.parent))
@@ -137,7 +146,6 @@ class MF6:
             mf6_model = sol_group.get_model()
             model_type = self._reverse_names[mf6_model.name.lower()]
             yield Model(mf6_model=mf6_model, state=state, type=model_type)
-
 
     def _repr_html_(self):
         """
@@ -250,6 +258,10 @@ class MF6:
                 yield current_time
             current_time = self.get_current_time()
         self.finalize()
+
+    def _get_sim_val(self, val_name):
+        tag = self._mf6.get_var_address('SIMVALS', self.name, val_name.upper())
+        return self._mf6.get_value_ptr(tag)
 
     def goto_stress_period(self, stress_period=0):
         """Progress to beginning of stress period."""
