@@ -74,6 +74,7 @@ analytic = { features = ["test", "analytic"], solve-group = "default" }
 pytest = ">=8.2.2,<8.3"
 jupyterlab = "*"
 pip = ">=24.0,<25"
+ipywidgets = "*"
 
 [tool.pixi.feature.analytic.dependencies]
 ttim = "*"
