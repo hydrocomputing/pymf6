@@ -1,7 +1,7 @@
 from pymf6.mf6 import MF6
 
-def run_model(nam_file):
-    mf6 = MF6(nam_file=nam_file)
+def run_model(sim_path):
+    mf6 = MF6(sim_path)
     head = mf6.vars['SLN_1/X']
     wel_index = 44
     tolerance = 0.01
@@ -10,7 +10,7 @@ def run_model(nam_file):
     lower_limit = head_limit - tolerance
     wel = mf6.vars['HEADCONWELL/WEL_0/BOUND']
     been_below = False
-    for step in mf6.steps():
+    for step in mf6.steps:
         if step < 21:
             if head[wel_index] <= lower_limit:
                 wel[:] = wel[:] * 0.9
@@ -20,5 +20,5 @@ def run_model(nam_file):
 
 
 if __name__ == '__main__':
-    run_model('models/pymf6/mfsim.nam')
+    run_model('models/pymf6')
     print('done')
