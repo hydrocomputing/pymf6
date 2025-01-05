@@ -4,6 +4,7 @@ from contextlib import redirect_stdout
 import json
 from io import StringIO
 from pathlib import Path
+from warnings import warn
 
 from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
@@ -41,11 +42,11 @@ class MF6:
     # experience in Notebooks.
     old_mf6 = None
     _demo = False
+    mfsim_nam ='mfsim.nam'
 
     def __init__(
             self,
-            nam_file=None,
-            sim_file='mfsim.nam',
+            sim_path,
             dll_path=None,
             use_modflow_api=True,
             advance_first_step=True,
@@ -78,6 +79,14 @@ class MF6:
                 self._mf6.initialize(str(self.nam_file))
             MF6.old_mf6 = self._mf6
 
+        self.sim_path = Path(sim_path).resolve()
+        if self.sim_path.is_file():
+            warn(
+                '\nPlease provide the simulation path as first argument to MF6.'
+                f'\nThe file name {self.mfsim_nam} will be added automatically.',
+                DeprecationWarning)
+            self.sim_path = self.sim_path.parent
+        self.nam_file = self.sim_path / self.mfsim_nam
         self.advance_first_step = advance_first_step
         self.verbose = verbose
         self._mf6 = None
@@ -96,23 +105,18 @@ class MF6:
             self.dll_path = ini_data['dll_path']
         else:
             self.dll_path = Path(dll_path)
-        if nam_file:
-            self.nam_file = Path(nam_file).resolve()
-            if not self.nam_file.exists():
-                raise FileNotFoundError(self.nam_file)
-            self.model_path = self.nam_file.parent
-            self.name = self.model_path.name
-            self.sim_file = self.model_path / sim_file
-            with cd(self.model_path):
-                init_mf6(str(self.nam_file.parent))
-                self.__class__.is_initialized = True
-                self.simulation = Simulation(
-                    self._mf6,
-                    self.sim_file,
-                    self.mf6_docs)
-                self.vars = self._get_vars()
-        else:
+
+        if not self.nam_file.exists():
+            raise FileNotFoundError(self.nam_file)
+        self.name = self.sim_path.name
+        with cd(self.sim_path):
             init_mf6(str(self.nam_file.parent))
+            self.__class__.is_initialized = True
+            self.simulation = Simulation(
+                self._mf6,
+                self.nam_file,
+                self.mf6_docs)
+            self.vars = self._get_vars()
         if use_modflow_api:
             self.sol_loop = self._simulator.loop()
         else:
