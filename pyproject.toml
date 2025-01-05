@@ -61,6 +61,7 @@ platforms = ["osx-arm64"]
 [tool.pixi.pypi-dependencies]
 pymf6 = { path = ".", editable = true }
 pymf6tools = { path = "../pymf6tools", editable = true }
+jbmagics = { path = "../jbmagics", editable = true }
 
 
 [tool.pixi.environments]
@@ -75,6 +76,8 @@ pytest = ">=8.2.2,<8.3"
 jupyterlab = "*"
 pip = ">=24.0,<25"
 ipywidgets = "*"
+matplotlib-inline = ">=0.1.7,<0.2"
+ipympl = ">=0.9.5,<0.10"
 
 [tool.pixi.feature.analytic.dependencies]
 ttim = "*"
