@@ -138,11 +138,15 @@ class MF6:
                 models[prefix] = model
                 self._reverse_names[name] = prefix
         self.models = models
-        self.steps = self._steps()
+        if not use_modflow_api:
+            self.steps = self._steps(new_step_only)
         if advance_first_step:
-            for step in self.steps:
-                if step > 0:
-                    break
+            if use_modflow_api:
+                next(self.sol_loop)
+            else:
+                for step in self.steps:
+                    if step > 0:
+                        break
 
     def model_loop(self):
         """Time step loop over all models."""
@@ -244,22 +248,26 @@ class MF6:
             max_iters.append(self.vars[f'SLN_{sol_number}/MXITER'][0])
         while current_time < end_time:
             dt = self._mf6.get_time_step()  # pylint: disable=invalid-name
-            self._mf6.prepare_time_step(dt)
-            for sol_number, max_iter in zip(sol_numbers, max_iters):
-                self._mf6.prepare_solve(sol_number)
-                for iter in range(max_iter):
-                    has_converged = self._mf6.solve(sol_number)
-                    if not new_step_only:
-                        yield current_time
-                    if has_converged:
-                        if self.verbose:
-                            print(f'solution {sol_number} has converged with'
-                                  f' {iter} iterations')
-                        break
-                self._mf6.finalize_solve(sol_number)
-            self._mf6.finalize_time_step()
             if new_step_only:
+                self._mf6.prepare_time_step(dt)
+                self._mf6.do_time_step()
+                self._mf6.finalize_time_step()
                 yield current_time
+            else:
+                self._mf6.prepare_time_step(dt)
+                for sol_number, max_iter in zip(sol_numbers, max_iters):
+                    self._mf6.prepare_solve(sol_number)
+                    for iter in range(max_iter):
+                        has_converged = self._mf6.solve(sol_number)
+                        if not new_step_only:
+                            yield current_time
+                        if has_converged:
+                            if self.verbose:
+                                print(f'solution {sol_number} has converged with'
+                                    f' {iter} iterations')
+                            break
+                    self._mf6.finalize_solve(sol_number)
+                self._mf6.finalize_time_step()
             current_time = self.get_current_time()
         self.finalize()
 
