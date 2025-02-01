@@ -36,7 +36,7 @@ class Simulator:
     with a loop
     """
 
-    def __init__(self, dll, sim_path, verbose=False, _develop=False):
+    def __init__(self, dll, sim_path, verbose=False, do_solution_loop=True, _develop=False):
         """
         Set initial values.
 
@@ -56,6 +56,7 @@ class Simulator:
 
         """
         self.verbose = verbose
+        self.do_solution_loop = do_solution_loop
         self._develop = _develop
         self._mf6 = ModflowApi(
             dll,
@@ -88,9 +89,14 @@ class Simulator:
                     f'Solving: Stress Period {sim.kper + 1}; '
                     f'Timestep {sim.kstp + 1}'
                 )
-            yield from self._solutions_loop(
-                sim=sim, mf6=mf6, current_time=current_time, kperold=kperold
-            )
+            if self.do_solution_loop:
+                yield from self._solutions_loop(
+                    sim=sim, mf6=mf6, current_time=current_time, kperold=kperold
+                )
+            else:
+                yield sim, States.timestep_start
+                mf6.do_time_step()
+                yield sim, States.timestep_start
             mf6.finalize_time_step()
             current_time = mf6.get_current_time()
         try:

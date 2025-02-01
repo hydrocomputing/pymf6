@@ -51,6 +51,8 @@ class MF6:
             use_modflow_api=True,
             advance_first_step=True,
             verbose=False,
+            new_step_only=False,
+            do_solution_loop=True,
             _develop=False,
             ):
 
@@ -70,6 +72,7 @@ class MF6:
                     str(self.dll_path),
                     sim_path,
                     verbose=verbose,
+                    do_solution_loop=do_solution_loop,
                     _develop=_develop)
                 # pylint: disable=protected-access
                 self._mf6 = self._simulator._mf6
@@ -128,13 +131,13 @@ class MF6:
             entry['modelname'].lower(): entry['modeltype']
             for entry in self.simulation.models_meta}
         if use_modflow_api:
-            for index, name in enumerate(self.api.model_names, start=1):
+            for name in self.api.model_names:
                 name = name.lower()
                 prefix = type_mapping[name]
                 if prefix in models:
                     msg = 'Multiple models in one solution no supported yet.'
                     raise NotImplementedError(msg)
-                model = self.api.get_model(index)
+                model = self.api.get_model(name)
                 models[prefix] = model
                 self._reverse_names[name] = prefix
         self.models = models
