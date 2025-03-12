@@ -1,0 +1,7 @@
+<h4 id="model-packages">Model packages</h4>
+<p>Packages can be accessed via
+<code>model.packages.package_name</code>. If <code>package_name</code>
+is not a valid Python identifier, access with pandas logic
+<code>model.packages.loc['package_name']</code>. Packages that are
+mutable (<code>is_mutable</code> is True) can be converted in a mutable
+boundary condition with <code>.as_mutable_bc()</code>.</p>

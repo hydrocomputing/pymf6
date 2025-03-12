@@ -356,7 +356,7 @@ class Packages:
                 setattr(self, name, obj)
             _packages.append(meta)
         self._packages = pd.DataFrame(_packages).set_index('name')
-        info_path = Path(__file__).parent / 'resources' / 'infos'
+        info_path = Path(__file__).parent / 'resources' / 'infos' / 'out'
         self._html_description = (info_path / 'packages.html').read_text(encoding='utf-8')
         self._description = (info_path / 'packages.txt').read_text(encoding='utf-8')
 
