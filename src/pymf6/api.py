@@ -190,6 +190,11 @@ def create_mutable_bc(package):
     Set new values:
     >>> wel.q = -0.2
     """
+    if package.stress_period_data.values is None:
+        msg = 'No values yet.\n'
+        msg += f'Boundary condition {package.pkg_name} does not have any values for current stress periods.\n'
+        msg += 'Advance to a stress period with values and call this function again.'
+        raise ValueError(msg)
     try:
         package.stress_period_data
     except AttributeError:
