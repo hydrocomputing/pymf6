@@ -30,7 +30,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Hydrology"
 ]
 
-dependencies = ["pandas", "modflowapi", "matplotlib"]
+# dependencies = ["pandas", "modflowapi", "matplotlib"]
 dynamic = ["version"]
 
 [project.scripts]
@@ -68,16 +68,21 @@ jbmagics = { path = "../jbmagics", editable = true }
 default = { solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 analytic = { features = ["test", "analytic"], solve-group = "default" }
+develop = { features = ["develop"], solve-group = "develop" }
 
 [tool.pixi.tasks]
 
 [tool.pixi.feature.test.dependencies]
+python = ">=3.13,<3.14"
+matplotlib = "*"
 pytest = ">=8.2.2,<8.3"
 jupyterlab = "*"
 pip = ">=24.0,<25"
 ipywidgets = "*"
 matplotlib-inline = ">=0.1.7,<0.2"
 ipympl = ">=0.9.5,<0.10"
+
+# [tool.pixi.feature.test.pypi-dependencies]
 
 [tool.pixi.feature.analytic.dependencies]
 ttim = "*"
@@ -90,3 +95,18 @@ pandas = "*"
 
 [tool.pixi.feature.analytic.pypi-dependencies]
 timml = "*"
+
+[tool.pixi.feature.develop.dependencies]
+python = ">=3.13,<3.14"
+matplotlib = "*"
+pytest = ">=8.2.2,<8.3"
+jupyterlab = "*"
+pip = ">=24.0,<25"
+xmipy = "*"
+pandas = "*"
+
+[tool.pixi.feature.develop.tasks]
+uninstall = "pip uninstall modflowapi"
+postinstall = "pip install -e ../modflowapi --no-deps"
+pixiinstall = "pixi install"
+install = { depends-on = ["pixiinstall", "postinstall"] }
