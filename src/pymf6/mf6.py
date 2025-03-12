@@ -4,13 +4,16 @@ from contextlib import redirect_stdout
 import json
 from io import StringIO
 from pathlib import Path
+from textwrap import dedent
+from types import MethodType
 from warnings import warn
 
+import pandas as pd
 from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
-from . api import Simulator, States
+from . api import create_mutable_bc, Simulator, States
 from . datastructures import Simulation
 from .tools.info import (
     get_info_data,
@@ -138,6 +141,7 @@ class MF6:
                     msg = 'Multiple models in one solution no supported yet.'
                     raise NotImplementedError(msg)
                 model = self.api.get_model(name)
+                model.packages = Packages(model.package_dict)
                 models[prefix] = model
                 self._reverse_names[name] = prefix
         self.models = models
@@ -325,3 +329,46 @@ class Model:
 
     def __getattr__(self, name):
         return getattr(self._model, name)
+
+
+class Packages:
+    """Available packages for one model."""
+
+    def __init__(self, package_dict):
+
+        def as_mutable_bc(self):
+            """Turn package in a mutable boundary condition."""
+            return create_mutable_bc(self)
+
+        _packages = []
+        for name, obj in package_dict.items():
+            meta = {
+                'name': name,
+                'description': str(obj).splitlines()[0].strip(),
+                'is_mutable': False,
+                'package': obj
+            }
+            if hasattr(obj, 'stress_period_data'):
+                meth = MethodType(as_mutable_bc, obj)
+                setattr(obj, 'as_mutable_bc', meth)
+                meta['is_mutable'] = True
+            if name.isidentifier:
+                setattr(self, name, obj)
+            _packages.append(meta)
+        self._packages = pd.DataFrame(_packages).set_index('name')
+        info_path = Path(__file__).parent / 'resources' / 'infos'
+        self._html_description = (info_path / 'packages.html').read_text(encoding='utf-8')
+        self._description = (info_path / 'packages.txt').read_text(encoding='utf-8')
+
+    def __repr__(self):
+        text = repr(self._packages[['description', 'is_mutable']])
+        text += '\n\n' + self._description
+        return text
+
+    def _repr_html_(self):
+        text = self._packages[['description', 'is_mutable']]._repr_html_()
+        text += self._html_description
+        return text
+
+    def __getattr__(self, name):
+        return getattr(self._packages, name, None)
