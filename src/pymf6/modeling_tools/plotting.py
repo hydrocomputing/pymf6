@@ -138,7 +138,6 @@ def show_well_head(
     """Plot head at well over time."""
     sim = get_simulation(model_data['model_path'], model_data['name'])
     gwf = sim.get_model(model_data['name'])
-    print(gwf.output)
     heads = gwf.output.head().get_ts(wel_coords)
     _, ax = plt.subplots()
     ax.plot(heads[:, 0], heads[:, 1], label='Well water level')
