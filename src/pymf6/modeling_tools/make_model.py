@@ -74,7 +74,7 @@ def make_input(
                 value.append(0)
             entry.append(tuple(value))
         stress_period_data[index + 1] = entry
-    wel_kwargs= {}
+    wel_kwargs= {'pname': 'mywell'}
     if model_data['transport']:
         wel_kwargs.update({
             'auxiliary': 'CONCENTRATION',
