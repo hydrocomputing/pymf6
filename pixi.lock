@@ -219,7 +219,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/c6/fc/d68d8f83714b221a85ce7866832cba36d7c04a68fa6a960b908c2c84f325/yarl-1.18.3-cp313-cp313-macosx_11_0_arm64.whl
       - pypi: .
       - pypi: ../jbmagics
-      - pypi: ../pymf6tools
+      - pypi: ../pymf6-tools
   default:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -346,7 +346,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/c6/fc/d68d8f83714b221a85ce7866832cba36d7c04a68fa6a960b908c2c84f325/yarl-1.18.3-cp313-cp313-macosx_11_0_arm64.whl
       - pypi: .
       - pypi: ../jbmagics
-      - pypi: ../pymf6tools
+      - pypi: ../pymf6-tools
   develop:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -557,7 +557,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/c6/fc/d68d8f83714b221a85ce7866832cba36d7c04a68fa6a960b908c2c84f325/yarl-1.18.3-cp313-cp313-macosx_11_0_arm64.whl
       - pypi: .
       - pypi: ../jbmagics
-      - pypi: ../pymf6tools
+      - pypi: ../pymf6-tools
   test:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -764,7 +764,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/c6/fc/d68d8f83714b221a85ce7866832cba36d7c04a68fa6a960b908c2c84f325/yarl-1.18.3-cp313-cp313-macosx_11_0_arm64.whl
       - pypi: .
       - pypi: ../jbmagics
-      - pypi: ../pymf6tools
+      - pypi: ../pymf6-tools
 packages:
 - pypi: https://files.pythonhosted.org/packages/b9/74/fbb6559de3607b3300b9be3cc64e97548d55678e44623db17820dbd20002/aiohappyeyeballs-2.4.4-py3-none-any.whl
   name: aiohappyeyeballs
@@ -4196,14 +4196,14 @@ packages:
   timestamp: 1736243563082
 - pypi: .
   name: pymf6
-  version: 1.4.1.dev48+g25ffccbd.d20250310
-  sha256: b8d2ab59a7c128f6320f195d0a7827a3785dbcefc07daa0d0766b02a66e4dacc
+  version: 1.4.1.dev53+gd536aa4e.d20250312
+  sha256: c985c1781c051db3f94e36525ef3ee38617fb7ad91bd782096a4cae93131022d
   requires_python: '>=3.8'
   editable: true
-- pypi: ../pymf6tools
-  name: pymf6tools
-  version: 0.1.1.dev73+gec7332b3.d20250310
-  sha256: 324a4b2cbf735b1ef6a063f143f56cbb5afb6972ef6e34b1026acb5f306c8044
+- pypi: ../pymf6-tools
+  name: pymf6-tools
+  version: 0.1.1.dev77+g39e482e3.d20250312
+  sha256: f14461acf16e7a0a55431a2bff5e4235e7b9671ebbf6fc3684e634c55fb04eb1
   requires_dist:
   - flopy
   requires_python: '>=3.9'

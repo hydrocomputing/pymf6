@@ -60,7 +60,7 @@ platforms = ["osx-arm64"]
 
 [tool.pixi.pypi-dependencies]
 pymf6 = { path = ".", editable = true }
-pymf6tools = { path = "../pymf6tools", editable = true }
+pymf6-tools = { path = "../pymf6-tools", editable = true }
 jbmagics = { path = "../jbmagics", editable = true }
 
 
