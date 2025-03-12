@@ -36,7 +36,14 @@ class Simulator:
     with a loop
     """
 
-    def __init__(self, dll, sim_path, verbose=False, do_solution_loop=True, _develop=False):
+    def __init__(
+        self,
+        dll,
+        sim_path,
+        verbose=False,
+        do_solution_loop=True,
+        _develop=False,
+    ):
         """
         Set initial values.
 
@@ -91,7 +98,10 @@ class Simulator:
                 )
             if self.do_solution_loop:
                 yield from self._solutions_loop(
-                    sim=sim, mf6=mf6, current_time=current_time, kperold=kperold
+                    sim=sim,
+                    mf6=mf6,
+                    current_time=current_time,
+                    kperold=kperold,
                 )
             else:
                 yield sim, States.timestep_start
@@ -251,5 +261,7 @@ def create_mutable_bc(package):
 def find_packages_with_stress_period_data(model):
     """Find all packages of a model that have stress period data."""
     return [
-        package_name for package_name in model.package_dict
-        if getattr(getattr(model, package_name), 'stress_period_data', None)]
+        package_name
+        for package_name in model.package_dict
+        if getattr(getattr(model, package_name), 'stress_period_data', None)
+    ]
