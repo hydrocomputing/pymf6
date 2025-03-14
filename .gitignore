@@ -8,7 +8,6 @@ obj/*
 *.mod
 .idea
 doc/_build/*
-tools/**
 **/.ipynb_checkpoints/**
 **/Untitled*.ipynb
 **.cbc
@@ -51,7 +50,7 @@ doc/examples/**/models/**
 **/Scratch.ipynb
 doc/examples/simple_transport/Export.ipynb
 **/*.svg
+tests/*error*.txt
 # pixi environments
 .pixi
 *.egg-info
-tests/*error*.txt
