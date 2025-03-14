@@ -428,6 +428,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter_server-2.15.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter_server_terminals-0.5.3-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/jupyterlab-4.3.5-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/jupyterlab-spellchecker-0.8.4-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/jupyterlab_pygments-0.3.0-pyhd8ed1ab_2.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/jupyterlab_server-2.27.3-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/jupytext-1.16.7-pyhbbac1ac_0.conda
@@ -2822,6 +2823,18 @@ packages:
   - pkg:pypi/jupyterlab?source=hash-mapping
   size: 7614652
   timestamp: 1738184813883
+- conda: https://conda.anaconda.org/conda-forge/noarch/jupyterlab-spellchecker-0.8.4-pyhd8ed1ab_0.conda
+  sha256: 36f315e80e8038c93471a4eb01bdc0f6af88a06c2f6bd998e40a45577f2fcec3
+  md5: aee68a8ea335e07fab06e8d8f544c146
+  depends:
+  - jupyterlab ~=4.0
+  - python >=3.8
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/jupyterlab-spellchecker?source=hash-mapping
+  size: 2148024
+  timestamp: 1690583606416
 - conda: https://conda.anaconda.org/conda-forge/noarch/jupyterlab_pygments-0.3.0-pyhd8ed1ab_1.conda
   sha256: 4aa622bbcf97e44cd1adf0100b7ff71b7e20268f043bdf6feae4d16152f1f242
   md5: afcd1b53bcac8844540358e33f33d28f
@@ -4587,8 +4600,8 @@ packages:
   timestamp: 1736243563082
 - pypi: .
   name: pymf6
-  version: 1.4.1.dev56+g6135a25c.d20250314
-  sha256: 186e7ef93cd82f0e4602b731eb8b291a1577a7ad937e5882f655eaff91e1408e
+  version: 1.4.1.dev62+gffa7102c.d20250314
+  sha256: e066cfe1430171f918284ce158a1159bccbde514e03cd8c79aa15dc999dfb5a9
   requires_python: '>=3.8'
   editable: true
 - pypi: ../pymf6-tools

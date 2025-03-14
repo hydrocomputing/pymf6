@@ -111,6 +111,7 @@ setuptools_scm = "*"
 recommonmark = "*"
 lxml = "*"
 git = "*"
+jupyterlab-spellchecker = "*"
 
 [tool.pixi.feature.develop.pypi-dependencies]
 lxml_html_clean = "*"
