@@ -2,7 +2,7 @@
 
 # Input Variables
 
-MODFLOW provides meta infomation of input variables in a structured format.
+MODFLOW provides meta information of input variables in a structured format.
 The directory `modflow6/doc/mf6io/mf6ivar/dfn` contains multiple files with
 these entries. See `modflow6/doc/mf6io/mf6ivar/readme.md` for details.
 
@@ -65,6 +65,8 @@ class VersionTag:
         self.mf6ivar = mf6ivar
         del sys.path[-1]
         run([self.git, 'switch', '--detach', self.tag], check=True)
+        run([sys.executable, 'mf6ivar.py'], check=True)
+        run([sys.executable, 'mem_allocate.py'], check=True)
         return self
 
     def __exit__(self, *args):
@@ -221,4 +223,4 @@ def save_mem_var_docs(tag, out_dir=OUT_DIR_MEM_VARS):
 
 if __name__ == '__main__':
     # save_input_var_docs('6.4.1')
-    save_mem_var_docs('6.4.1')
+    save_mem_var_docs('6.6.1')
