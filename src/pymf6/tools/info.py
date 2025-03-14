@@ -131,11 +131,11 @@ def make_info_texts(info_data=None, demo=False):
         info_texts['entries'].append(
             ('MODFLOW version', f'{info_data["modflow_version"]}')
         )
-    has_docs = 'is  NOT'
+    has_docs = 'is NOT'
     if info_data['mf6_doc_path']:
         has_docs = 'is'
     info_texts['mf_docs_info'] = (
-        f'MODFLOW variable documentation {has_docs} available')
+        f'MODFLOW Fortan variable documentation {has_docs} available.')
     info_texts['config_hint'] = None
     if info_data['ini_path'] is None:
         sep = info_data['_sep']
