@@ -104,6 +104,16 @@ jupyterlab = "*"
 pip = ">=24.0,<25"
 xmipy = "*"
 pandas = "*"
+nbsphinx = "*"
+myst-nb = "*"
+jupytext = "*"
+setuptools_scm = "*"
+recommonmark = "*"
+lxml = "*"
+git = "*"
+
+[tool.pixi.feature.develop.pypi-dependencies]
+lxml_html_clean = "*"
 
 [tool.pixi.feature.develop.tasks]
 uninstall = "pip uninstall modflowapi"
