@@ -483,11 +483,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/myst-nb-1.2.0-pyh29332c3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/myst-parser-4.0.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/nbclient-0.10.2-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/nbconvert-6.5.3-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/nbconvert-core-6.5.3-pyhd8ed1ab_0.tar.bz2
-      - conda: https://conda.anaconda.org/conda-forge/noarch/nbconvert-pandoc-6.5.3-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/nbformat-5.10.4-pyhd8ed1ab_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/noarch/nbsphinx-0.9.7-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.5-h5e97a16_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/nest-asyncio-1.6.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/notebook-shim-0.2.4-pyhd8ed1ab_1.conda
@@ -497,7 +494,6 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/overrides-7.7.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-24.2-pyhd8ed1ab_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pandas-2.2.3-py313h47b39a6_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pandoc-2.19.2-hce30654_2.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pandocfilters-1.5.0-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/parso-0.8.4-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pathspec-0.12.1-pyhd8ed1ab_1.conda
@@ -3808,18 +3804,6 @@ packages:
   - pkg:pypi/nbclient?source=hash-mapping
   size: 28045
   timestamp: 1734628936013
-- conda: https://conda.anaconda.org/conda-forge/noarch/nbconvert-6.5.3-pyhd8ed1ab_0.tar.bz2
-  sha256: e57e75f2b474e02997613a47bef8dc71d7efb963382b90d9128e70348e0d48b4
-  md5: 65405814acdd53789db27aaf3cb6c0c6
-  depends:
-  - nbconvert-core 6.5.3 pyhd8ed1ab_0
-  - nbconvert-pandoc 6.5.3 pyhd8ed1ab_0
-  - python >=3.7
-  license: BSD-3-Clause
-  license_family: BSD
-  purls: []
-  size: 6364
-  timestamp: 1660222723964
 - conda: https://conda.anaconda.org/conda-forge/noarch/nbconvert-core-6.5.3-pyhd8ed1ab_0.tar.bz2
   sha256: 0900963430a634feb09b5a9d77745485da0e7f6d03dc7db1098aad719aec47f0
   md5: 9dfdb5f2271cb67d81b152194a6254db
@@ -3882,16 +3866,6 @@ packages:
   - pkg:pypi/nbconvert
   size: 189004
   timestamp: 1714477286178
-- conda: https://conda.anaconda.org/conda-forge/noarch/nbconvert-pandoc-6.5.3-pyhd8ed1ab_0.tar.bz2
-  sha256: ec74a8142de0ce999b9bf04480ffd7b1716d995a33bdee15cdea4b82d5110918
-  md5: 8ecb7e0ac01613b3e186b1778f6049fb
-  depends:
-  - nbconvert-core 6.5.3 pyhd8ed1ab_0
-  - pandoc
-  - python >=3.7
-  purls: []
-  size: 5381
-  timestamp: 1660222699213
 - conda: https://conda.anaconda.org/conda-forge/noarch/nbformat-5.10.4-pyhd8ed1ab_0.conda
   sha256: 36fe73da4d37bc7ac2d1540526ecd294fbd09acda04e096181ab8f1ccd2b464c
   md5: 0b57b5368ab7fc7cdc9e3511fa867214
@@ -3922,23 +3896,6 @@ packages:
   - pkg:pypi/nbformat?source=hash-mapping
   size: 100945
   timestamp: 1733402844974
-- conda: https://conda.anaconda.org/conda-forge/noarch/nbsphinx-0.9.7-pyhd8ed1ab_0.conda
-  sha256: eb99d3f00e6d1fd2b07bb20a721a64deab97bccf38d9abc1d4a93e389daa9fb3
-  md5: 9a3844478c73b5fe288426d001453261
-  depends:
-  - docutils
-  - jinja2
-  - nbconvert
-  - nbformat
-  - python >=3.6
-  - sphinx
-  - traitlets
-  license: MIT
-  license_family: MIT
-  purls:
-  - pkg:pypi/nbsphinx?source=hash-mapping
-  size: 34324
-  timestamp: 1741075538022
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.5-h5e97a16_3.conda
   sha256: 2827ada40e8d9ca69a153a45f7fd14f32b2ead7045d3bbb5d10964898fe65733
   md5: 068d497125e4bf8a66bf707254fff5ae
@@ -4159,14 +4116,6 @@ packages:
   - pkg:pypi/pandas?source=hash-mapping
   size: 14464446
   timestamp: 1726878986761
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/pandoc-2.19.2-hce30654_2.conda
-  sha256: 43c0560c691de194d23d08c4edcc1c45a639c0d540043dc99386337944f10d10
-  md5: e79494b8d990189fe4701f498f99cd8b
-  license: GPL-2.0-or-later
-  license_family: GPL
-  purls: []
-  size: 14592423
-  timestamp: 1678226936520
 - conda: https://conda.anaconda.org/conda-forge/noarch/pandocfilters-1.5.0-pyhd8ed1ab_0.tar.bz2
   sha256: 2bb9ba9857f4774b85900c2562f7e711d08dd48e2add9bee4e1612fbee27e16f
   md5: 457c2c8c08e54905d6954e79cb5b5db9
@@ -4600,8 +4549,8 @@ packages:
   timestamp: 1736243563082
 - pypi: .
   name: pymf6
-  version: 1.4.1.dev62+gffa7102c.d20250314
-  sha256: e066cfe1430171f918284ce158a1159bccbde514e03cd8c79aa15dc999dfb5a9
+  version: 1.4.1.dev64+ge5380600.d20250314
+  sha256: 6d260bad027a439ce919fdac8d1c55ef4a78f4ee1c5aa00b0639deb730ee44a5
   requires_python: '>=3.8'
   editable: true
 - pypi: ../pymf6-tools
