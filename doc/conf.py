@@ -22,7 +22,7 @@ from setuptools_scm import get_version
 # -- Project information -----------------------------------------------------
 
 project = 'pymf6'
-copyright = '2023, Mike Müller'
+copyright = '2023 - 2025, Mike Müller'
 author = 'Mike Müller'
 
 # The full version, including alpha/beta/rc tags
@@ -35,17 +35,23 @@ version = get_version(root='..', relative_to=__file__)
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'm2r',
-    'nbsphinx',
-    'myst_nb',
+   # 'nbsphinx',
+     'myst_nb',
 ]
 
 nb_execution_mode = "off"
 
+# nbsphinx_custom_formats = {
+#     ".md": ["jupytext.reads", {"fmt": "mystnb"}],
+# }
+
+nb_custom_formats = {
+    ".md": ["jupytext.reads", {"fmt": "mystnb"}],
+}
 source_suffix = {
     '.rst': 'restructuredtext',
-    '.txt': 'markdown',
-    '.md': 'markdown',
+    # '.txt': 'markdown',
+    #'.md': 'markdown',
 
 }
 

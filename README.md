@@ -102,15 +102,18 @@ On the command line run:
 
 The output should look similar to this on Windows:
 
+    ========================
     pymf6 configuration data
     ========================
-    pymf6 version: 1.0.0
-    xmipy version: 1.2.0
-    ini file path: <Home>\pymf6.ini
-    dll file path: <Home>\mf6.4.1\bin\libmf6.dll
-    MODFLOW version: 6.4.1
+    pymf6 version: 1.4.1.dev62+gffa7102c.d20250314
+    xmipy version: 1.3.1
+    modflowapi version: 0.3.0.dev0
+    ini file path: HOME/pymf6.ini
+    dll file path: path/to/dll/libmf6.dll
+    MODFLOW version: 6.6.1
+    MODFLOW Fortan variable documentation is available.
 
-Where `<Home>\` is the your absolute home path.
+Where `<Home>` is the your absolute home path.
 The output on Linux and MacOSX looks slightly different due to different path
 separators and file extensions (see chapter "Configuration" above).
 
@@ -118,20 +121,21 @@ separators and file extensions (see chapter "Configuration" above).
 
 To test the install run a model with command:
 
-    pymf6 path/to/my/model/mfsim.nam
+    pymf6 path/to/my/model/input
 
-where `path/to/my/model/` is an absolute path to a MODFLOW nam file
-that is in a directory of a working MODFLOW model.
+where `path/to/my/model/` is an absolute or relative path to the directory with
+the MODFLOW input files, i.e. the directory that contains the file `mfsim.nam`.
 For example any model in the directory `examples` that comes with MODFLOW 6
 will do.
+
 The output should look similar to this:
 
-    ==================================
-    running path/to/my/model/mfsim.nam
-    ==================================
-    GOOD path/to/my/model/mfsim.nam
-    ==================================
-    ==================================
+    ==============================
+    running path/to/my/model/input
+    ==============================
+    NORMAL TERMINATION OF SIMULATION
+    GOOD path/to/my/model/input
+    ==============================
 
 ## Documentation
 
