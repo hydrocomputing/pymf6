@@ -134,13 +134,20 @@ class MF6:
             entry['modelname'].lower(): entry['modeltype']
             for entry in self.simulation.models_meta}
         if use_modflow_api:
+            not_found_names = set()
             for name in self.api.model_names:
                 name = name.lower()
+                if name not in type_mapping:
+                    # TODO: Find put where these names come form.
+                    not_found_names.add(name)
+                    continue
                 prefix = type_mapping[name]
                 model = self.api.get_model(name)
                 model.packages = Packages(model.package_dict)
                 models.setdefault(prefix, {}).setdefault(name, model)
                 self._reverse_names[name] = prefix
+        if not_found_names:
+            print(f'{not_found_names=}')
         self.models = models
         if not use_modflow_api:
             self.steps = self._steps(new_step_only)
