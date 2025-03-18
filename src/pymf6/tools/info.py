@@ -107,7 +107,7 @@ def get_info_data():
 
 
 def make_info_texts(info_data=None, demo=False):
-    """Show version and paths information"""
+    """Show version and paths information."""
     if info_data is None:
         info_data = get_info_data()
     info_texts = {}
