@@ -137,12 +137,9 @@ class MF6:
             for name in self.api.model_names:
                 name = name.lower()
                 prefix = type_mapping[name]
-                if prefix in models:
-                    msg = 'Multiple models in one solution no supported yet.'
-                    raise NotImplementedError(msg)
                 model = self.api.get_model(name)
                 model.packages = Packages(model.package_dict)
-                models[prefix] = model
+                models.setdefault(prefix, {}).setdefault(name, model)
                 self._reverse_names[name] = prefix
         self.models = models
         if not use_modflow_api:
