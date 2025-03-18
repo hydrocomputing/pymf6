@@ -110,6 +110,7 @@ setuptools_scm = "*"
 recommonmark = "*"
 git = "*"
 jupyterlab-spellchecker = "*"
+pytables = ">=3.10.2,<4"
 
 [tool.pixi.feature.develop.pypi-dependencies]
 lxml_html_clean = "*"
