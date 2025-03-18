@@ -311,6 +311,7 @@ class Model:
         'gwf6': 'head',
         'gwt6': 'conc',
         'gwe6': 'temperature',
+        'prt6': 'particles',
     }
 
     def __init__(self, mf6_model, state, type):
