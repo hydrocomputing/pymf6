@@ -106,7 +106,7 @@ class Simulator:
             else:
                 yield sim, States.timestep_start
                 mf6.do_time_step()
-                yield sim, States.timestep_start
+                yield sim, States.timestep_end
             mf6.finalize_time_step()
             current_time = mf6.get_current_time()
         try:
@@ -114,8 +114,8 @@ class Simulator:
         except Exception as err:
             msg = 'MF6 simulation failed, check listing file'
             raise RuntimeError(msg) from err
-
-        print('NORMAL TERMINATION OF SIMULATION')
+        if self.verbose:
+            print('NORMAL TERMINATION OF SIMULATION')
 
     def _solutions_loop(self, sim, mf6, current_time, kperold):
         """Sub loop over solutions."""
