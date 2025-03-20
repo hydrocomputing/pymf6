@@ -55,7 +55,7 @@ class MF6:
             advance_first_step=True,
             verbose=False,
             new_step_only=False,
-            do_solution_loop=True,
+            do_solution_loop=False,
             _develop=False,
             ):
 
