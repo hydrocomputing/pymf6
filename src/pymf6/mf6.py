@@ -357,13 +357,14 @@ class Packages:
                 meth = MethodType(as_mutable_bc, obj)
                 setattr(obj, 'as_mutable_bc', meth)
                 meta['is_mutable'] = True
-            if name.isidentifier:
+            if name.isidentifier():
                 setattr(self, name, obj)
             _packages.append(meta)
         self._packages = pd.DataFrame(_packages).set_index('name')
         info_path = Path(__file__).parent / 'resources' / 'infos' / 'out'
         self._html_description = (info_path / 'packages.html').read_text(encoding='utf-8')
         self._description = (info_path / 'packages.txt').read_text(encoding='utf-8')
+        self._package_dict = package_dict
 
     def __repr__(self):
         text = repr(self._packages[['description', 'is_mutable']])
@@ -377,3 +378,6 @@ class Packages:
 
     def __getattr__(self, name):
         return getattr(self._packages, name, None)
+
+    def get_package(self, name):
+        return self._package_dict[name]
