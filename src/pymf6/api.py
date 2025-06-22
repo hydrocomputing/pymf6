@@ -72,6 +72,7 @@ class Simulator:
         self._mf6.initialize()
         self.api = ApiSimulation.load(self._mf6)
         self._sim_grp = None
+        self.sol_old_kper = {}
 
     def loop(self):
         """
@@ -168,10 +169,14 @@ class Simulator:
                         break
             yield sim_grp, States.timestep_end
             mf6.finalize_solve(sol_id)
-            if sim_grp.nstp == sim_grp.kstp + 1:
+            old_kper = self.sol_old_kper.get(sol_id, 0)
+            if old_kper < sim_grp.kper:
+                self.sol_old_kper[sol_id] = sim_grp.kper
                 yield sim_grp, States.stress_period_end
+
         if not has_converged:
             print(f'Simulation group: {sim_grp} DID NOT CONVERGE')
+
         self._sim_grp = sim_grp
 
 
