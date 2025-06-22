@@ -51,6 +51,7 @@ doc/examples/**/models/**
 doc/examples/simple_transport/Export.ipynb
 **/*.svg
 tests/*error*.txt
+tests/mf6_examples/models
 # pixi environments
 .pixi
 *.egg-info
