@@ -13,22 +13,24 @@ from xmipy import XmiWrapper
 from xmipy.errors import InputError, XMIError
 from xmipy.utils import cd
 
-from . api import create_mutable_bc, Simulator, States
-from . datastructures import Simulation
+from .api import create_mutable_bc, Simulator, States
+from .datastructures import Simulation
 from .tools.info import (
     get_info_data,
     show_info,
     make_info_texts,
     make_info_html,
-    read_ini)
+    read_ini,
+)
+
 
 class SimValues:
-
     def __init__(self, mf6):
         self.mf6 = mf6
 
     def __getattr__(self, name):
         return self.mf6._get_sim_val(name)
+
 
 class MF6:
     """
@@ -45,20 +47,19 @@ class MF6:
     # experience in Notebooks.
     old_mf6 = None
     _demo = False
-    mfsim_nam ='mfsim.nam'
+    mfsim_nam = 'mfsim.nam'
 
     def __init__(
-            self,
-            sim_path,
-            dll_path=None,
-            use_modflow_api=True,
-            advance_first_step=True,
-            verbose=False,
-            new_step_only=False,
-            do_solution_loop=False,
-            _develop=False,
-            ):
-
+        self,
+        sim_path,
+        dll_path=None,
+        use_modflow_api=True,
+        advance_first_step=True,
+        verbose=False,
+        new_step_only=False,
+        do_solution_loop=True,
+        _develop=False,
+    ):
         def init_mf6(sim_path):
             # Finalize if initialized instance exists.
             # This is helpful for interactive work in Notebooks.
@@ -76,7 +77,8 @@ class MF6:
                     sim_path,
                     verbose=verbose,
                     do_solution_loop=do_solution_loop,
-                    _develop=_develop)
+                    _develop=_develop,
+                )
                 # pylint: disable=protected-access
                 self._mf6 = self._simulator._mf6
                 self.api = self._simulator.api
@@ -90,8 +92,10 @@ class MF6:
             warn(
                 '\nPlease provide the simulation path as first argument to MF6.'
                 f'\nThe file name {self.mfsim_nam} will be added automatically.',
-                DeprecationWarning)
+                DeprecationWarning,
+            )
             self.sim_path = self.sim_path.parent
+        self.do_solution_loop = do_solution_loop
         self.nam_file = self.sim_path / self.mfsim_nam
         self.advance_first_step = advance_first_step
         self.verbose = verbose
@@ -106,6 +110,7 @@ class MF6:
         ini_data = read_ini()
         self.ini_path = ini_data['ini_path']
         self.sim_values = SimValues(self)
+        self.current_model_step = None
 
         if dll_path is None:
             self.dll_path = ini_data['dll_path']
@@ -119,9 +124,8 @@ class MF6:
             init_mf6(str(self.nam_file.parent))
             self.__class__.is_initialized = True
             self.simulation = Simulation(
-                self._mf6,
-                self.nam_file,
-                self.mf6_docs)
+                self._mf6, self.nam_file, self.mf6_docs
+            )
             self.vars = self._get_vars()
         if use_modflow_api:
             self.sol_loop = self._simulator.loop()
@@ -132,7 +136,8 @@ class MF6:
         self._reverse_names = {}
         type_mapping = {
             entry['modelname'].lower(): entry['modeltype']
-            for entry in self.simulation.models_meta}
+            for entry in self.simulation.models_meta
+        }
         if use_modflow_api:
             not_found_names = set()
             for name in self.api.model_names:
@@ -153,7 +158,12 @@ class MF6:
             self.steps = self._steps(new_step_only)
         if advance_first_step:
             if use_modflow_api:
-                next(self.sol_loop)
+                simulation_group, state = next(self.sol_loop)
+                self.current_model_step = ModelStep(
+                    simulation_group=simulation_group,
+                    state=state,
+                    do_solution_loop=self.do_solution_loop,
+                )
             else:
                 for step in self.steps:
                     if step > 0:
@@ -161,10 +171,16 @@ class MF6:
 
     def model_loop(self):
         """Time step loop over all models."""
-        for sol_group, state in self.sol_loop:
-            mf6_model = sol_group.get_model()
-            model_type = self._reverse_names[mf6_model.name.lower()]
-            yield Model(mf6_model=mf6_model, state=state, type=model_type)
+        for simulation_group, state in self.sol_loop:
+            # mf6_model = sol_group.get_model()
+            # model_type = self._reverse_names[mf6_model.name.lower()]
+            self.current_model_step = ModelStep(
+                simulation_group=simulation_group,
+                state=state,
+                do_solution_loop=self.do_solution_loop,
+            )
+            yield (self.current_model_step)
+            # yield Model(mf6_model=mf6_model, state=state, type=model_type)
 
     def _repr_html_(self):
         """
@@ -274,8 +290,10 @@ class MF6:
                             yield current_time
                         if has_converged:
                             if self.verbose:
-                                print(f'solution {sol_number} has converged with'
-                                    f' {iter} iterations')
+                                print(
+                                    f'solution {sol_number} has converged with'
+                                    f' {iter} iterations'
+                                )
                             break
                     self._mf6.finalize_solve(sol_number)
                 self._mf6.finalize_time_step()
@@ -331,7 +349,6 @@ class Model:
         """Get all public attribute names of the model."""
         return [attr for attr in dir(self._model) if not attr.startswith('_')]
 
-
     def __getattr__(self, name):
         return getattr(self._model, name)
 
@@ -340,7 +357,6 @@ class Packages:
     """Available packages for one model."""
 
     def __init__(self, package_dict):
-
         def as_mutable_bc(self):
             """Turn package in a mutable boundary condition."""
             return create_mutable_bc(self)
@@ -351,7 +367,7 @@ class Packages:
                 'name': name,
                 'description': str(obj).splitlines()[0].strip(),
                 'is_mutable': False,
-                'package': obj
+                'package': obj,
             }
             if hasattr(obj, 'stress_period_data'):
                 meth = MethodType(as_mutable_bc, obj)
@@ -362,8 +378,12 @@ class Packages:
             _packages.append(meta)
         self._packages = pd.DataFrame(_packages).set_index('name')
         info_path = Path(__file__).parent / 'resources' / 'infos' / 'out'
-        self._html_description = (info_path / 'packages.html').read_text(encoding='utf-8')
-        self._description = (info_path / 'packages.txt').read_text(encoding='utf-8')
+        self._html_description = (info_path / 'packages.html').read_text(
+            encoding='utf-8'
+        )
+        self._description = (info_path / 'packages.txt').read_text(
+            encoding='utf-8'
+        )
         self._package_dict = package_dict
 
     def __repr__(self):
@@ -381,3 +401,30 @@ class Packages:
 
     def get_package(self, name):
         return self._package_dict[name]
+
+
+class ModelStep:
+    """Object holding information about the current step."""
+
+    def __init__(self, simulation_group, state, do_solution_loop):
+        self.simulation_group = simulation_group
+        self.state = state
+        self.do_solution_loop = do_solution_loop
+
+    @property
+    def available_states(self):
+        """Available callback states."""
+        all_names = list(
+            name for name in dir(States) if not name.startswith('_')
+        )
+        if not self.do_solution_loop:
+            selection = []
+            for name in all_names:
+                for prefix in ['iteration_', 'stress_period_']:
+                    if prefix in name:
+                        break
+                else:
+                    selection.append(name)
+        else:
+            selection = all_names
+        return [getattr(States, name) for name in selection]
