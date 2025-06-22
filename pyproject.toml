@@ -30,7 +30,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Hydrology"
 ]
 
-# dependencies = ["pandas", "modflowapi", "matplotlib"]
+# dependencies = ["modflowapi"]
 dynamic = ["version"]
 
 [project.scripts]
@@ -58,17 +58,20 @@ write_to = "src/pymf6/_version.py"
 channels = ["conda-forge"]
 platforms = ["osx-arm64"]
 
+[tool.pixi.dependencies]
+pandas = "*"
+matplotlib = "*"
+xmipy = "*"
+
+
 [tool.pixi.pypi-dependencies]
 pymf6 = { path = ".", editable = true }
-pymf6-tools = { path = "../pymf6-tools", editable = true }
-jbmagics = { path = "../jbmagics", editable = true }
-
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 analytic = { features = ["test", "analytic"], solve-group = "default" }
-develop = { features = ["develop"], solve-group = "develop" }
+develop = { features = ["develop"], solve-group = "default" }
 
 [tool.pixi.tasks]
 
@@ -85,6 +88,7 @@ ipympl = ">=0.9.5,<0.10"
 # [tool.pixi.feature.test.pypi-dependencies]
 
 [tool.pixi.feature.analytic.dependencies]
+python = ">=3.13,<3.14"
 ttim = "*"
 numpy = "*"
 scipy = "*"
@@ -111,12 +115,10 @@ recommonmark = "*"
 git = "*"
 jupyterlab-spellchecker = "*"
 pytables = ">=3.10.2,<4"
+pooch = "*"
 
 [tool.pixi.feature.develop.pypi-dependencies]
+pymf6-tools = { path = "../pymf6-tools", editable = true }
+jbmagics = { path = "../jbmagics", editable = true }
+modflowapi = { path = "../modflowapi/orig/modflowapi", editable = true }
 lxml_html_clean = "*"
-
-[tool.pixi.feature.develop.tasks]
-uninstall = "pip uninstall modflowapi"
-postinstall = "pip install -e ../modflowapi --no-deps"
-pixiinstall = "pixi install"
-install = { depends-on = ["pixiinstall", "postinstall"] }
