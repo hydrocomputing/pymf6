@@ -397,7 +397,13 @@ class Packages:
         return text
 
     def __getattr__(self, name):
-        return getattr(self._packages, name, None)
+        try:
+            return getattr(self._packages, name)
+        except AttributeError:
+            msg = f'No package "{name}".\n'
+            msg += 'Available packages are:\n'
+            msg += '\n'.join(f'    {key}' for key in self._package_dict)
+            raise AttributeError(msg)
 
     def get_package(self, name):
         return self._package_dict[name]
