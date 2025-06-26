@@ -72,6 +72,7 @@ default = { solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 analytic = { features = ["test", "analytic"], solve-group = "default" }
 develop = { features = ["develop"], solve-group = "default" }
+conda = ["conda"]
 
 [tool.pixi.tasks]
 
@@ -122,3 +123,12 @@ pymf6-tools = { path = "../pymf6-tools", editable = true }
 jbmagics = { path = "../jbmagics", editable = true }
 modflowapi = { path = "../modflowapi/orig/modflowapi", editable = true }
 lxml_html_clean = "*"
+
+[tool.pixi.feature.conda.dependencies]
+conda-build = "*"
+setuptools = "*"
+setuptools-scm = "*"
+
+[tool.pixi.feature.conda.tasks]
+set-version = { cmd = "python -m setuptools_scm --force-write-version-files", description = "set version with setuptools-scm"}
+build = { cmd = "conda-build -c conda-forge pymf6", cwd = "conda_package", description = "build conda package"}
