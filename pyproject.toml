@@ -30,7 +30,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Hydrology"
 ]
 
-# dependencies = ["modflowapi"]
+dependencies = ["modflowapi"]
 dynamic = ["version"]
 
 [project.scripts]
