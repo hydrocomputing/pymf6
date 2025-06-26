@@ -209,6 +209,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstandard-0.23.0-py313h90d716c_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-h6491c7d_1.conda
       - pypi: https://files.pythonhosted.org/packages/e6/ff/8e6f264f633c704ee52dbf56e7a7cb8458aee0da77804c5e3e6976835779/timml-6.4.1-py3-none-any.whl
+      - pypi: ../modflowapi/orig/modflowapi
       - pypi: ./
   default:
     channels:
@@ -286,6 +287,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/xorg-libxau-1.0.12-h5505292_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/xorg-libxdmcp-1.1.5-hd74edd7_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-h6491c7d_1.conda
+      - pypi: ../modflowapi/orig/modflowapi
       - pypi: ./
   develop:
     channels:
@@ -743,6 +745,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-3.21.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstandard-0.23.0-py313h90d716c_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-h6491c7d_1.conda
+      - pypi: ../modflowapi/orig/modflowapi
       - pypi: ./
 packages:
 - pypi: https://files.pythonhosted.org/packages/1b/9a/e4886864ce06e1579bd428208127fbdc0d62049c751e4e9e3b509c0059dc/aiohappyeyeballs-2.5.0-py3-none-any.whl
@@ -3406,16 +3409,19 @@ packages:
   timestamp: 1736243563082
 - pypi: ./
   name: pymf6
-  version: 1.4.1.dev78+ge07d1de9.d20250622
-  sha256: da600e58649617d26c469955a3a2ded83fd65b8a83fa5f014692590ca7ac6c5f
+  version: 1.5.1.dev2+gc5408376
+  sha256: 5e0ece6fc48557ce552e8cf9a415090999c9dc42fdb8d64391f718d432909c85
+  requires_dist:
+  - modflowapi
   requires_python: '>=3.8'
   editable: true
 - pypi: ../pymf6-tools
   name: pymf6-tools
-  version: 0.1.1.dev115+g80e06943
-  sha256: 580b2d0f8ab41e760d08cc14b77db9da2e0479b36d2156ec4d6d2e1f10bfcd31
+  version: 0.1.4.dev0+gb8782128.d20250626
+  sha256: fe940e413536d9838ef760199728f08b8f3e81d02558d17eeda069cdaba91801
   requires_dist:
   - flopy
+  - pymf6
   requires_python: '>=3.9'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyobjc-core-11.0-py313hb6afeec_0.conda
