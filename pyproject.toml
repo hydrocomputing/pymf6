@@ -55,13 +55,14 @@ pymf6 = "src/pymf6"
 write_to = "src/pymf6/_version.py"
 
 [tool.pixi.project]
-channels = ["conda-forge"]
+channels = ["hydrocomputing", "conda-forge"]
 platforms = ["osx-arm64"]
 
 [tool.pixi.dependencies]
 pandas = "*"
 matplotlib = "*"
 xmipy = "*"
+modflowapi = ">=0.3.0,<0.4"
 
 
 [tool.pixi.pypi-dependencies]
@@ -120,8 +121,8 @@ pooch = "*"
 
 [tool.pixi.feature.develop.pypi-dependencies]
 pymf6-tools = { path = "../pymf6-tools", editable = true }
-jbmagics = { path = "../jbmagics", editable = true }
-modflowapi = { path = "../modflowapi/orig/modflowapi", editable = true }
+jbmagics = { path = "../../jbmagics", editable = true }
+modflowapi = { path = "../../modflow/modflowapi/orig/modflowapi", editable = true }
 lxml_html_clean = "*"
 
 [tool.pixi.feature.conda.dependencies]
