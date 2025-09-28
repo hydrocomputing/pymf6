@@ -4366,15 +4366,7 @@ packages:
   timestamp: 1750615908735
 - pypi: ./
   name: pymf6
-  version: 1.5.3
-  sha256: c4d286a4c75bc8bd7e779e81350108d65ae15f76e50ee7987c0404782536c2bd
-  requires_dist:
-  - modflowapi
-  requires_python: '>=3.8'
-  editable: true
-- pypi: ./
-  name: pymf6
-  version: 1.5.3
+  version: 1.5.4.dev0+g2148ef803.d20250928
   sha256: c4d286a4c75bc8bd7e779e81350108d65ae15f76e50ee7987c0404782536c2bd
   requires_dist:
   - modflowapi
