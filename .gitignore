@@ -49,9 +49,12 @@ doc/examples/**/models/**
 **/scratch/**
 **/Scratch.ipynb
 doc/examples/simple_transport/Export.ipynb
+doc/examples/simple_transport/API.ipynb
+doc/examples/simple_transport/Controlled_Simple_Transpor_alt.ipynb
 **/*.svg
-tests/*error*.txt
-tests/mf6_examples/models
+doc/examples/ex-gwe-geotherm
+doc/examples/head_controlled_well
+doc/examples/heat/
 # pixi environments
 .pixi
 *.egg-info
