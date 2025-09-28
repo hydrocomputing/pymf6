@@ -98,19 +98,19 @@ the USGS website (see chapter "Installation" above).
 
 On the command line run:
 
-    pymf6
+    pymf6.show_info()
 
 The output should look similar to this on Windows:
 
     ========================
     pymf6 configuration data
     ========================
-    pymf6 version: 1.4.1.dev62+gffa7102c.d20250314
+    pymf6 version: 1.5.3
     xmipy version: 1.3.1
-    modflowapi version: 0.3.0.dev0
+    modflowapi version: 0.3.0
     ini file path: HOME/pymf6.ini
     dll file path: path/to/dll/libmf6.dll
-    MODFLOW version: 6.6.1
+    MODFLOW version: 6.7.0
     MODFLOW Fortan variable documentation is available.
 
 Where `<Home>` is the your absolute home path.
