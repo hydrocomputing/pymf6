@@ -4374,7 +4374,7 @@ packages:
   editable: true
 - pypi: ./
   name: pymf6
-  version: 1.5.4.dev1+g05bb22f51
+  version: 1.5.3
   sha256: c4d286a4c75bc8bd7e779e81350108d65ae15f76e50ee7987c0404782536c2bd
   requires_dist:
   - modflowapi
