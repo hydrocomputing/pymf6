@@ -1,6 +1,6 @@
 """High-level interface to MODFLOW 6."""
 
-from .tools.info import get_info_data
+from .tools.info import get_info_data, show_info
 
 info = get_info_data()
 

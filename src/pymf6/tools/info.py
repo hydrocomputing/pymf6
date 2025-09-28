@@ -110,12 +110,19 @@ def make_info_texts(info_data=None, demo=False):
     """Show version and paths information."""
     if info_data is None:
         info_data = get_info_data()
+    pymf6_version = info_data['pymf6_version']
+    modflow_version = info_data['modflow_version']
+    modflowapi_version = info_data['modflowapi_version']
+    if demo:
+        pymf6_version = pymf6_version.split('.dev')[0]
+        modflow_version = modflow_version.split('.dev')[0]
+        modflowapi_version = modflowapi_version.split('.dev')[0]
     info_texts = {}
     info_texts['header'] = 'pymf6 configuration data'
     info_texts['entries'] = [
-        ('pymf6 version', f'{info_data["pymf6_version"]}'),
+        ('pymf6 version', pymf6_version),
         ('xmipy version', f'{info_data["xmipy_version"]}'),
-        ('modflowapi version', f'{info_data["modflowapi_version"]}'),
+        ('modflowapi version', modflowapi_version),
     ]
     if demo:
         info_texts['entries'].extend([
@@ -129,7 +136,7 @@ def make_info_texts(info_data=None, demo=False):
             ])
     if info_data["modflow_version"]:
         info_texts['entries'].append(
-            ('MODFLOW version', f'{info_data["modflow_version"]}')
+            ('MODFLOW version', modflow_version)
         )
     has_docs = 'is NOT'
     if info_data['mf6_doc_path']:
@@ -180,10 +187,10 @@ def make_info_html(info_texts=None):
     return html_text
 
 
-def show_info(info_texts=None):
-    """Show verion and path info as text."""
+def show_info(info_texts=None, demo=False):
+    """Show version and path info as text."""
     if info_texts is None:
-        info_texts = make_info_texts()
+        info_texts = make_info_texts(demo=demo)
     header = info_texts['header']
     print('=' * len(header))
     print(header)
